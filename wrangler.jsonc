@@ -1,0 +1,14 @@
+{
+  "name": "my-qhse-api-ci",
+  "main": "worker.js",
+  "compatibility_date": "2025-09-01",
+  "workers_dev": true,
+  "keep_vars": true,
+  "d1_databases": [
+    {
+      "binding": "DB",
+      "database_name": "my-qhse-db",
+      "database_id": "f7c11e61-e3b0-4938-8067-b1fd4937e932"
+    }
+  ]
+}
