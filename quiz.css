@@ -1,0 +1,27 @@
+/* ==========================================================
+   My-QHSE Tools – quiz.css (rubrique Quiz QHSE)
+   Réutilise les variables et classes de style.css.
+   ========================================================== */
+.hero .btn + .btn { margin-left: 8px; margin-top: 8px; }
+
+.quiz-meta { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; }
+.quiz-badge { background: var(--vert-clair); color: var(--vert-fonce); }
+#quiz-q { margin: 0 0 14px; font-size: 1.1rem; color: var(--texte); outline: none; }
+
+.quiz-opts { display: grid; gap: 10px; margin-bottom: 14px; }
+.quiz-opt {
+  text-align: left; padding: 12px 14px; font: inherit; color: var(--texte);
+  background: #fff; border: 2px solid var(--bordure); border-radius: 8px; cursor: pointer;
+}
+.quiz-opt:hover:not(:disabled) { border-color: var(--vert); background: var(--vert-clair); }
+.quiz-opt:disabled { cursor: default; color: var(--texte); }
+.quiz-opt.juste { background: var(--faible); border-color: var(--vert); font-weight: 600; }
+.quiz-opt.faux { background: var(--critique); border-color: #8a1c1c; }
+
+.quiz-expl { padding: 12px 14px; border-radius: 8px; margin-bottom: 14px; }
+.quiz-expl p { margin: 4px 0; }
+.quiz-expl.juste { background: var(--faible); }
+.quiz-expl.faux { background: #fdecea; }
+
+.quiz-score { margin: 0 0 14px; background: var(--vert-clair); }
+.quiz-score .score { outline: none; }
