@@ -1,0 +1,114 @@
+/* ==========================================================
+   My-QHSE Tools – style.css
+   Pour changer les couleurs de la marque, modifiez les
+   variables --vert-* ci-dessous.
+   ========================================================== */
+:root {
+  --vert-fonce: #0f5132;
+  --vert: #198754;
+  --vert-clair: #e8f5ee;
+  --texte: #1b2b24;
+  --gris: #5b6b63;
+  --bordure: #d5e3db;
+  --fond: #f6faf8;
+
+  /* Couleurs des niveaux (le texte du niveau est toujours affiché,
+     la couleur n'est jamais le seul indicateur) */
+  --faible: #cfeedd;
+  --modere: #fff1b8;
+  --eleve: #ffd2a3;
+  --critique: #f5b3b0;
+}
+
+* { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  font-family: "Segoe UI", system-ui, -apple-system, Roboto, Arial, sans-serif;
+  color: var(--texte);
+  background: var(--fond);
+  line-height: 1.5;
+}
+
+.wrap { max-width: 920px; margin: 0 auto; padding: 0 16px; }
+.sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+.skip { position: absolute; left: -999px; }
+.skip:focus { left: 8px; top: 8px; background: #fff; padding: 8px; z-index: 10; }
+
+/* Focus clavier bien visible */
+a:focus-visible, button:focus-visible, input:focus-visible, select:focus-visible {
+  outline: 3px solid #f2a900; outline-offset: 2px;
+}
+
+/* ----- En-tête ----- */
+.site-header { background: var(--vert-fonce); color: #fff; padding-top: env(safe-area-inset-top, 0); }
+.header-in { display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap; padding-top: 12px; padding-bottom: 12px; }
+.brand { margin: 0; font-size: 1.35rem; font-weight: 800; letter-spacing: .2px; }
+.brand span { font-weight: 400; color: #b7e4c7; }
+.site-header nav a { color: #fff; text-decoration: none; margin-left: 14px; font-size: .95rem; }
+.site-header nav a:hover { text-decoration: underline; }
+
+/* ----- Accueil ----- */
+.hero { background: linear-gradient(180deg, var(--vert-clair), var(--fond)); padding: 40px 0 24px; }
+h1 { margin: 0 0 12px; font-size: clamp(1.6rem, 5vw, 2.3rem); line-height: 1.2; color: var(--vert-fonce); max-width: 22ch; }
+.lead { max-width: 62ch; color: var(--gris); margin: 0 0 20px; }
+
+/* ----- Cartes et textes ----- */
+.card { background: #fff; border: 1px solid var(--bordure); border-radius: 10px; padding: 20px; margin: 20px 0; }
+h2 { margin: 0 0 14px; font-size: 1.25rem; color: var(--vert-fonce); }
+.aide { color: var(--gris); font-size: .92rem; margin: 0 0 12px; }
+.notice { background: #fff8e1; border-left: 4px solid #f2a900; padding: 10px 14px; border-radius: 6px; margin: 8px 0; font-size: .93rem; }
+
+/* ----- Formulaire ----- */
+.field { margin-bottom: 14px; flex: 1; }
+.row { display: flex; gap: 14px; flex-wrap: wrap; }
+.row .field { min-width: 200px; }
+label { display: block; font-weight: 600; margin-bottom: 4px; }
+input, select {
+  width: 100%; padding: 10px 12px; font: inherit; color: inherit;
+  border: 1px solid #9db8a9; border-radius: 6px; background: #fff;
+}
+.erreur { color: #8a1c1c; background: #fdecea; padding: 8px 12px; border-radius: 6px; margin: 0 0 12px; }
+.actions { display: flex; gap: 10px; flex-wrap: wrap; }
+
+.btn {
+  display: inline-block; padding: 11px 20px; font: inherit; font-weight: 600;
+  background: var(--vert); color: #fff; border: 2px solid var(--vert);
+  border-radius: 6px; cursor: pointer; text-decoration: none;
+}
+.btn:hover { background: var(--vert-fonce); border-color: var(--vert-fonce); }
+.btn-sec { background: #fff; color: var(--vert-fonce); border-color: var(--vert); }
+.btn-sec:hover { background: var(--vert-clair); color: var(--vert-fonce); }
+
+/* ----- Résultat ----- */
+.resultat { margin-top: 18px; padding: 16px; border-radius: 8px; border: 2px solid var(--bordure); }
+.resultat .score { font-size: clamp(1.5rem, 7vw, 2rem); font-weight: 800; margin: 0; }
+.resultat p { margin: 4px 0; }
+.niv-faible { background: var(--faible); }
+.niv-modere { background: var(--modere); }
+.niv-eleve { background: var(--eleve); }
+.niv-critique { background: var(--critique); }
+
+/* ----- Matrice ----- */
+.scroll { overflow-x: auto; position: relative; } /* position: garde les textes .sr dans la zone défilante */
+.matrice { border-collapse: separate; border-spacing: 4px; margin: 0 auto; }
+.matrice th { font-size: .8rem; font-weight: 600; color: var(--gris); padding: 4px; text-align: center; }
+.matrice td { width: 56px; height: 48px; text-align: center; font-weight: 700; border-radius: 6px; }
+.matrice td.actif { outline: 3px solid var(--texte); outline-offset: 1px; }
+.legende { list-style: none; padding: 0; margin: 14px 0 0; display: flex; flex-wrap: wrap; gap: 8px 16px; font-size: .9rem; }
+.legende li::before { content: ""; display: inline-block; width: 14px; height: 14px; margin-right: 6px; border-radius: 3px; vertical-align: -2px; border: 1px solid #0003; background: var(--c); }
+
+/* ----- Tableau historique ----- */
+.liste { width: 100%; border-collapse: collapse; min-width: 560px; font-size: .93rem; }
+.liste th, .liste td { text-align: left; padding: 8px; border-bottom: 1px solid var(--bordure); }
+.liste th { background: var(--vert-clair); color: var(--vert-fonce); }
+.pastille { display: inline-block; padding: 2px 10px; border-radius: 12px; font-weight: 600; font-size: .85rem; }
+.liste button { background: none; border: 0; color: #8a1c1c; cursor: pointer; font: inherit; text-decoration: underline; }
+
+.site-footer { padding: 24px 0 calc(24px + env(safe-area-inset-bottom, 0)); color: var(--gris); font-size: .85rem; }
+
+@media (max-width: 480px) {
+  .matrice td { width: 44px; height: 42px; }
+  .card { padding: 16px; }
+}
+@media (prefers-reduced-motion: reduce) { * { scroll-behavior: auto !important; } }
