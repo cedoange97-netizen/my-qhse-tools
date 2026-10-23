@@ -234,20 +234,27 @@
   const CLE_HIST = "myqhse_quiz_historique";
   const esc = s => String(s == null ? "" : s).replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
   const fmt = ts => { try { return new Date(ts).toLocaleString("fr-FR", { dateStyle: "short", timeStyle: "short" }); } catch (e) { return ""; } };
-  const lireHist = () => { try { const h = JSON.parse(localStorage.getItem(CLE_HIST)); return Array.isArray(h) ? h : []; } catch (e) { return []; } };
+  let histOk = true;   // false si le navigateur refuse d’enregistrer (navigation privée, stockage plein ou bloqué)
+  const lireHist = () => {
+    try {
+      const h = JSON.parse(localStorage.getItem(CLE_HIST));
+      return Array.isArray(h) ? h.filter(e => e && typeof e.date === "number" && e.total > 0 && Array.isArray(e.rep)) : [];
+    } catch (e) { return []; }
+  };
   const ecrireHist = h => {
     for (let n = h.length; n > 0; n--) {          // si le stockage est plein, on retire les plus anciens
       try { localStorage.setItem(CLE_HIST, JSON.stringify(h.slice(-n))); return true; } catch (e) { /* on réessaie avec moins */ }
     }
     return false;
   };
-  /** Enregistre le quiz terminé (questions, réponses données, bonnes réponses, explications). */
-  function sauverHist(n) {
+  /** Enregistre (ou met à jour) le quiz en cours : à chaque réponse, puis à la fin. La date de début sert d’identifiant. */
+  function sauverHist(fini) {
     const fam = FAMILLES.find(f => f[0] === choix.f);
-    const e = { date: Date.now(), theme: choix.t !== "tous" ? THEMES[choix.t] : (fam ? fam[1] : "Tous les thèmes"),
-      score: score, total: n, rep: reps.slice() };
-    if (reprise) e.theme += " (erreurs refaites)";
-    ecrireHist(lireHist().concat([e]).slice(-30));
+    const n = reps.length;
+    const e = { date: debut, theme: (choix.t !== "tous" ? THEMES[choix.t] : (fam ? fam[1] : "Tous les thèmes")) + (reprise ? " (erreurs refaites)" : ""),
+      score: score, total: n, prevu: serie.length, partiel: !fini || n < serie.length, rep: reps.slice() };
+    if (n > 0) histOk = ecrireHist(lireHist().filter(x => x.date !== debut).concat([e]).slice(-30));
+    majOnglet();
     return e;
   }
 
@@ -274,22 +281,36 @@
     dessiner();
   }
 
+  /** Lignes de l’historique (les plus récentes d’abord) et boutons « Relire ». */
+  const lignesHist = h => '<ul class="quiz-hist">' + h.map(e =>
+    `<li><div><strong>${esc(e.theme)}</strong><br><span class="aide">${fmt(e.date)} · ${e.score} / ${e.total} (${Math.round(e.score / e.total * 100)} %)` +
+    `${e.partiel ? " · arrêté (" + e.total + "/" + (e.prevu || e.total) + " questions)" : ""}</span></div>` +
+    `<button type="button" class="btn btn-sec" data-d="${e.date}">Relire</button></li>`).join("") + '</ul>';
+  const lierLignes = (cont, retour) => cont.querySelectorAll("[data-d]").forEach(b => { b.onclick = () => {
+    const e = lireHist().find(x => String(x.date) === b.dataset.d);
+    if (!e) return;
+    const o = document.querySelector('.onglet[data-ecran="quiz"]'); if (o) o.click();   // ouvre l’onglet Quiz si on vient de Historique
+    relecture(e, retour);
+  }; });
+  /** Copie de l’historique dans l’onglet « Historique » de l’application. */
+  function majOnglet() {
+    const c = $("hist-quiz-liste");
+    if (!c) return;
+    const h = lireHist().slice().reverse();
+    c.innerHTML = h.length ? lignesHist(h) : '<p class="aide">Aucun quiz enregistré pour l’instant. Répondez à une question du quiz : il apparaîtra ici.</p>';
+    lierLignes(c, historique);
+  }
+
   /** Liste des quiz déjà terminés (les plus récents d’abord). */
   function historique() {
     const h = lireHist().slice().reverse();
     zone.innerHTML = '<h3 id="quiz-hh" tabindex="-1">Historique des quiz</h3>' +
-      (h.length ? '<ul class="quiz-hist">' + h.map(e =>
-        `<li><div><strong>${esc(e.theme)}</strong><br><span class="aide">${fmt(e.date)} · ${e.score} / ${e.total} (${Math.round(e.score / e.total * 100)} %)</span></div>` +
-        `<button type="button" class="btn btn-sec" data-d="${e.date}">Relire</button></li>`).join("") + '</ul>' +
-        '<button id="hist-vider" type="button" class="btn btn-sec">Effacer l’historique</button> '
+      (h.length ? lignesHist(h) + '<button id="hist-vider" type="button" class="btn btn-sec">Effacer l’historique</button> '
         : '<p class="aide">Aucun quiz terminé pour l’instant. Terminez un quiz : il apparaîtra ici avec ses corrections.</p>') +
       '<button id="hist-retour" type="button" class="btn">Retour au quiz</button>';
-    zone.querySelectorAll("[data-d]").forEach(b => { b.onclick = () => {
-      const e = lireHist().find(x => String(x.date) === b.dataset.d);
-      if (e) relecture(e, historique);
-    }; });
+    lierLignes(zone, historique);
     const v = $("hist-vider");
-    if (v) v.onclick = () => { if (confirm("Effacer tout l’historique des quiz de cet appareil ?")) { try { localStorage.removeItem(CLE_HIST); } catch (e) {} historique(); } };
+    if (v) v.onclick = () => { if (confirm("Effacer tout l’historique des quiz de cet appareil ?")) { try { localStorage.removeItem(CLE_HIST); } catch (e) {} majOnglet(); historique(); } };
     $("hist-retour").onclick = accueil;
     $("quiz-hh").focus();
   }
@@ -345,9 +366,21 @@
       `${THEMES[q.t]} · Question ${i + 1} / ${serie.length}</p>` +
       `<h3 id="quiz-q" tabindex="-1">${q.q}</h3><div class="quiz-opts">` +
       opts.map((o, k) => `<button type="button" class="quiz-opt" data-k="${k}">${o}</button>`).join("") +
-      '</div><div id="quiz-fb" aria-live="polite"></div>';
+      '</div><div id="quiz-fb" aria-live="polite"></div>' +
+      '<div class="actions quiz-fin"><button id="quiz-stop" type="button" class="btn btn-sec">Terminer le quiz</button></div>';
+    $("quiz-stop").onclick = terminer;
     zone.querySelectorAll(".quiz-opt").forEach(b => { b.onclick = () => repondre(Number(b.dataset.k)); });
     $("quiz-q").focus();
+  }
+
+  /** Arrêt anticipé : le score porte sur les questions déjà traitées, et le quiz est conservé dans l’historique. */
+  function terminer() {
+    if (!reps.length) {
+      if (confirm("Aucune question n’a encore reçu de réponse : rien ne sera enregistré. Quitter ce quiz ?")) accueil();
+      return;
+    }
+    if (!confirm("Terminer maintenant ? Votre score sera enregistré avec les " + reps.length + " question(s) déjà traitée(s).")) return;
+    afficherResultat(sauverHist(true));
   }
 
   /** Correction immédiate avec explication. */
@@ -357,6 +390,7 @@
     const ok = k === bon;
     if (ok) score++;
     reps.push({ q: q.q, o: courant.opts.slice(), b: bon, c: k, e: q.e });
+    sauverHist(false);
     zone.querySelectorAll(".quiz-opt").forEach((b, n) => {
       b.disabled = true;
       if (n === bon) { b.classList.add("juste"); b.insertAdjacentText("afterbegin", "✔ "); }
@@ -386,18 +420,19 @@
   /** Score final. */
   function resultat() {
     const n = serie.length;
-    if (!reprise) envoyerResultat(n);   // les séries « erreurs refaites » ne faussent pas les statistiques
-    afficherResultat(sauverHist(n));
+    if (!reprise) envoyerResultat(n);   // les séries « erreurs refaites » ou arrêtées ne faussent pas les statistiques
+    afficherResultat(sauverHist(true));
   }
 
   function afficherResultat(entree) {
-    const n = serie.length, pct = Math.round(score / n * 100);
+    const n = entree.total, sc = entree.score, pct = Math.round(sc / n * 100);
     const msg = pct >= 80 ? "Excellent travail !" : pct >= 50 ? "Bien, continuez à réviser." :
       "À revoir : relisez les explications et réessayez.";
-    const nbErr = n - score;
+    const nbErr = n - sc;
     zone.innerHTML =
-      `<div class="resultat quiz-score"><p class="score" id="quiz-res" tabindex="-1">Score : ${score} / ${n}</p>` +
-      `<p>${pct} % · ${msg}</p></div>` +
+      `<div class="resultat quiz-score"><p class="score" id="quiz-res" tabindex="-1">Score : ${sc} / ${n}</p>` +
+      `<p>${pct} % · ${msg}</p>` + (entree.partiel ? `<p>Quiz arrêté : ${n} question(s) sur ${entree.prevu}.</p>` : "") + "</div>" +
+      (histOk ? "" : '<p class="erreur" role="alert">Impossible d’enregistrer l’historique sur cet appareil (stockage bloqué ou plein, navigation privée ?). Le score reste affiché ici.</p>') +
       '<div class="actions"><button id="quiz-rel-go" type="button" class="btn">Relire mes réponses</button>' +
       (nbErr ? '<button id="quiz-err" type="button" class="btn">Refaire mes erreurs (' + nbErr + ')</button>' : '') +
       '<button id="quiz-again" type="button" class="btn btn-sec">Rejouer</button>' +
@@ -410,8 +445,7 @@
   }
 
   accueil();
-  const bh = $("btn-hist-quiz");   // bouton de l’onglet Historique
-  if (bh) bh.onclick = () => { const o = document.querySelector('.onglet[data-ecran="quiz"]'); if (o) o.click(); historique(); };
+  majOnglet();   // affiche l’historique dans l’onglet « Historique »
 
   // Synchronisation centrale des résultats (facultative : le quiz fonctionne sans).
   try { const s = document.createElement("script"); s.src = "cloud-sync.js"; s.async = true; document.head.appendChild(s); } catch (e) { /* ignoré */ }
