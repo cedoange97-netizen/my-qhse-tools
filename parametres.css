@@ -82,3 +82,25 @@ html[data-taille="tres-grand"] { --echelle: 1.3; }
 .pref-apercu { margin: 12px 0 0; padding: 10px 14px; border-radius: 10px; background: var(--vert-clair); }
 .pref-etat { min-height: 1.5em; margin: 8px 0 0; font-size: .92rem; color: var(--titre); font-weight: 600; }
 .pref-etat.alerte { color: var(--danger); }
+
+/* ----- Lien « À propos » dans Paramètres et page À propos ----- */
+.lien-ecran {
+  appearance: none; width: 100%; display: flex; align-items: center; gap: 12px; text-align: left;
+  min-height: 48px; padding: 4px 0; font: inherit; color: var(--texte); background: none; border: 0; cursor: pointer;
+}
+.lien-txt { flex: 1; min-width: 0; }
+.lien-txt strong { display: block; color: var(--titre); font-size: 1.05rem; }
+.lien-txt small { display: block; color: var(--gris); font-size: .85rem; }
+.lien-ecran svg { flex: none; width: 22px; height: 22px; fill: none; stroke: var(--titre); stroke-width: 2.5; stroke-linecap: round; stroke-linejoin: round; }
+.lien-ecran:focus-visible { outline: 3px solid #f2a900; outline-offset: 4px; border-radius: 6px; }
+
+.apropos-tete { display: flex; align-items: center; gap: 12px; margin-bottom: 14px; }
+.apropos-tete h2 { margin: 0; font-size: 1.35rem; line-height: 1.25; }
+.apropos-logo { width: 48px; height: 48px; background: var(--vert); color: var(--sur-accent); }
+.apropos-logo svg { width: 28px; height: 28px; }
+.apropos p { margin: 0 0 14px; line-height: 1.7; max-width: 70ch; }
+.apropos-devise { margin: 18px 0 0; padding: 14px 16px; border-left: 4px solid var(--vert); border-radius: 12px; }
+.apropos-devise small { display: block; color: var(--gris); font-size: .8rem; text-transform: uppercase; letter-spacing: .06em; }
+.apropos-devise strong { display: block; color: var(--titre); font-size: 1.1rem; line-height: 1.4; }
+.apropos-nav .btn { flex: 1 1 200px; text-align: center; }
+html[data-theme="sombre"] .apropos-logo { background: var(--vert); color: var(--sur-accent); }
