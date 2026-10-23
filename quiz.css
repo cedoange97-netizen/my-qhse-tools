@@ -25,3 +25,14 @@
 
 .quiz-score { margin: 0 0 14px; background: var(--vert-clair); }
 .quiz-score .score { outline: none; }
+
+/* ----- Historique des quiz et relecture ----- */
+.quiz-hist { list-style: none; margin: 0 0 14px; padding: 0; }
+.quiz-hist li { display: flex; justify-content: space-between; align-items: center; gap: 10px; padding: 10px 0; border-bottom: 1px solid var(--bordure); }
+.quiz-hist .btn { padding: 8px 14px; flex-shrink: 0; }
+.quiz-rel-item { border: 1px solid var(--bordure); border-radius: 8px; padding: 12px; margin: 12px 0; }
+.quiz-rel-item h4 { margin: 4px 0 8px; font-size: 1rem; }
+.quiz-rel-opts { list-style: none; margin: 0 0 8px; padding: 0; display: grid; gap: 6px; }
+.quiz-rel-opts li { padding: 8px 10px; border: 1px solid var(--bordure); border-radius: 6px; }
+.quiz-rel-opts li.juste { background: var(--ok-bg); border-color: var(--vert); font-weight: 600; }
+.quiz-rel-opts li.faux { background: var(--ko-bg); border-color: var(--danger); }

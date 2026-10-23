@@ -200,7 +200,7 @@
 
   (window.QHSE_BANQUES || []).forEach(b => b.forEach(q => QUESTIONS.push(q))); // questions des fichiers banque-*.js
 
-  let serie = [], i = 0, score = 0, debut = 0, choix = { f: "tous", t: "tous" }, courant = null;
+  let serie = [], i = 0, score = 0, debut = 0, choix = { f: "tous", t: "tous" }, courant = null, reps = [], reprise = false;
 
   const $ = id => document.getElementById(id);
   const melanger = a => {
@@ -230,6 +230,70 @@
     .filter(f => f[2].length);
   const nbQ = th => QUESTIONS.filter(q => q.t === th).length;
 
+  /* ---------- Historique des quiz terminés + relecture ---------- */
+  const CLE_HIST = "myqhse_quiz_historique";
+  const esc = s => String(s == null ? "" : s).replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
+  const fmt = ts => { try { return new Date(ts).toLocaleString("fr-FR", { dateStyle: "short", timeStyle: "short" }); } catch (e) { return ""; } };
+  const lireHist = () => { try { const h = JSON.parse(localStorage.getItem(CLE_HIST)); return Array.isArray(h) ? h : []; } catch (e) { return []; } };
+  const ecrireHist = h => {
+    for (let n = h.length; n > 0; n--) {          // si le stockage est plein, on retire les plus anciens
+      try { localStorage.setItem(CLE_HIST, JSON.stringify(h.slice(-n))); return true; } catch (e) { /* on réessaie avec moins */ }
+    }
+    return false;
+  };
+  /** Enregistre le quiz terminé (questions, réponses données, bonnes réponses, explications). */
+  function sauverHist(n) {
+    const fam = FAMILLES.find(f => f[0] === choix.f);
+    const e = { date: Date.now(), theme: choix.t !== "tous" ? THEMES[choix.t] : (fam ? fam[1] : "Tous les thèmes"),
+      score: score, total: n, rep: reps.slice() };
+    if (reprise) e.theme += " (erreurs refaites)";
+    ecrireHist(lireHist().concat([e]).slice(-30));
+    return e;
+  }
+
+  /** Relecture : toutes les questions avec votre réponse, la bonne réponse et l’explication. */
+  function relecture(e, retour) {
+    let erreurs = false;
+    const dessiner = () => {
+      const l = e.rep.map((r, n) => [r, n]).filter(x => !erreurs || x[0].c !== x[0].b);
+      zone.innerHTML =
+        `<h3 id="quiz-rel" tabindex="-1">Relecture · ${esc(e.theme)}</h3>` +
+        `<p class="aide">${fmt(e.date)} · Score ${e.score} / ${e.total}</p>` +
+        '<div class="actions"><button id="rel-filtre" type="button" class="btn btn-sec">' +
+        (erreurs ? "Voir toutes les questions" : "Voir mes erreurs seulement") + '</button>' +
+        '<button id="rel-retour" type="button" class="btn btn-sec">Retour</button></div>' +
+        (l.length ? l.map(([r, n]) =>
+          `<div class="quiz-rel-item"><p class="aide">Question ${n + 1} · ${r.c === r.b ? "✔ juste" : "✘ à revoir"}</p><h4>${esc(r.q)}</h4><ul class="quiz-rel-opts">` +
+          r.o.map((o, k) => `<li class="${k === r.b ? "juste" : k === r.c ? "faux" : ""}">${k === r.b ? "✔ " : k === r.c ? "✘ " : ""}${esc(o)}${k === r.c && k !== r.b ? " (votre réponse)" : ""}</li>`).join("") +
+          `</ul><p class="quiz-expl ${r.c === r.b ? "juste" : "faux"}">${esc(r.e)}</p></div>`).join("")
+          : '<p class="aide">Aucune erreur dans ce quiz : toutes les réponses étaient justes.</p>');
+      $("rel-filtre").onclick = () => { erreurs = !erreurs; dessiner(); };
+      $("rel-retour").onclick = retour;
+      $("quiz-rel").focus();
+    };
+    dessiner();
+  }
+
+  /** Liste des quiz déjà terminés (les plus récents d’abord). */
+  function historique() {
+    const h = lireHist().slice().reverse();
+    zone.innerHTML = '<h3 id="quiz-hh" tabindex="-1">Historique des quiz</h3>' +
+      (h.length ? '<ul class="quiz-hist">' + h.map(e =>
+        `<li><div><strong>${esc(e.theme)}</strong><br><span class="aide">${fmt(e.date)} · ${e.score} / ${e.total} (${Math.round(e.score / e.total * 100)} %)</span></div>` +
+        `<button type="button" class="btn btn-sec" data-d="${e.date}">Relire</button></li>`).join("") + '</ul>' +
+        '<button id="hist-vider" type="button" class="btn btn-sec">Effacer l’historique</button> '
+        : '<p class="aide">Aucun quiz terminé pour l’instant. Terminez un quiz : il apparaîtra ici avec ses corrections.</p>') +
+      '<button id="hist-retour" type="button" class="btn">Retour au quiz</button>';
+    zone.querySelectorAll("[data-d]").forEach(b => { b.onclick = () => {
+      const e = lireHist().find(x => String(x.date) === b.dataset.d);
+      if (e) relecture(e, historique);
+    }; });
+    const v = $("hist-vider");
+    if (v) v.onclick = () => { if (confirm("Effacer tout l’historique des quiz de cet appareil ?")) { try { localStorage.removeItem(CLE_HIST); } catch (e) {} historique(); } };
+    $("hist-retour").onclick = accueil;
+    $("quiz-hh").focus();
+  }
+
   /** Écran d’accueil : choix de la famille, puis du thème. */
   function accueil() {
     const fams = disponibles();
@@ -238,7 +302,8 @@
       '<div class="field"><label for="quiz-fam">Famille</label><select id="quiz-fam"><option value="tous">Toutes les familles</option>' +
       fams.map(f => `<option value="${f[0]}">${f[1]}</option>`).join("") + '</select></div>' +
       '<div class="field"><label for="quiz-theme">Thème</label><select id="quiz-theme"></select></div>' +
-      '<button id="quiz-go" type="button" class="btn">Commencer le quiz</button>';
+      '<div class="actions"><button id="quiz-go" type="button" class="btn">Commencer le quiz</button>' +
+      `<button id="quiz-hist" type="button" class="btn btn-sec">Historique (${lireHist().length})</button></div>`;
     const remplir = () => {
       const ths = themesDe($("quiz-fam").value);
       const total = ths.reduce((s, t) => s + nbQ(t[0]), 0);
@@ -249,22 +314,24 @@
     remplir();
     $("quiz-theme").value = choix.t; if (!$("quiz-theme").value) $("quiz-theme").value = "tous";
     $("quiz-fam").onchange = remplir;
+    $("quiz-hist").onclick = historique;
     $("quiz-go").onclick = () => demarrer({ f: $("quiz-fam").value, t: $("quiz-theme").value });
   }
 
   /** Tirage aléatoire : questions jamais vues d’abord, puis les plus anciennes ; ordre de passage mélangé. */
-  function demarrer(c) {
+  function demarrer(c, imposee) {
     choix = c;
     const ths = c.t !== "tous" ? [c.t] :
       [].concat(...disponibles().filter(f => c.f === "tous" || f[0] === c.f).map(f => f[2].map(t => t[0])));
     const base = QUESTIONS.filter(q => ths.indexOf(q.t) !== -1);
     const vues = lireVues();
     const rang = q => vues.lastIndexOf(q.q); // -1 = jamais vue
-    const choisies = melanger(base).sort((a, b) => rang(a) - rang(b)).slice(0, Math.min(NB_QUIZ, base.length));
+    const choisies = imposee || melanger(base).sort((a, b) => rang(a) - rang(b)).slice(0, Math.min(NB_QUIZ, base.length));
     serie = melanger(choisies);
     const ids = serie.map(q => q.q);
     ecrireVues(vues.filter(t => ids.indexOf(t) === -1).concat(ids));
-    i = 0; score = 0; debut = Date.now();
+    reprise = !!imposee;
+    i = 0; score = 0; reps = []; debut = Date.now();
     question();
   }
 
@@ -289,6 +356,7 @@
     const bon = courant.bon;
     const ok = k === bon;
     if (ok) score++;
+    reps.push({ q: q.q, o: courant.opts.slice(), b: bon, c: k, e: q.e });
     zone.querySelectorAll(".quiz-opt").forEach((b, n) => {
       b.disabled = true;
       if (n === bon) { b.classList.add("juste"); b.insertAdjacentText("afterbegin", "✔ "); }
@@ -317,21 +385,33 @@
 
   /** Score final. */
   function resultat() {
+    const n = serie.length;
+    if (!reprise) envoyerResultat(n);   // les séries « erreurs refaites » ne faussent pas les statistiques
+    afficherResultat(sauverHist(n));
+  }
+
+  function afficherResultat(entree) {
     const n = serie.length, pct = Math.round(score / n * 100);
     const msg = pct >= 80 ? "Excellent travail !" : pct >= 50 ? "Bien, continuez à réviser." :
       "À revoir : relisez les explications et réessayez.";
-    envoyerResultat(n);
+    const nbErr = n - score;
     zone.innerHTML =
       `<div class="resultat quiz-score"><p class="score" id="quiz-res" tabindex="-1">Score : ${score} / ${n}</p>` +
       `<p>${pct} % · ${msg}</p></div>` +
-      '<div class="actions"><button id="quiz-again" type="button" class="btn">Rejouer</button>' +
+      '<div class="actions"><button id="quiz-rel-go" type="button" class="btn">Relire mes réponses</button>' +
+      (nbErr ? '<button id="quiz-err" type="button" class="btn">Refaire mes erreurs (' + nbErr + ')</button>' : '') +
+      '<button id="quiz-again" type="button" class="btn btn-sec">Rejouer</button>' +
       '<button id="quiz-menu" type="button" class="btn btn-sec">Changer de thème</button></div>';
+    $("quiz-rel-go").onclick = () => relecture(entree, () => afficherResultat(entree));
+    if (nbErr) $("quiz-err").onclick = () => demarrer(choix, serie.filter((_, n) => reps[n] && reps[n].c !== reps[n].b));
     $("quiz-again").onclick = () => demarrer(choix);
     $("quiz-menu").onclick = accueil;
     $("quiz-res").focus();
   }
 
   accueil();
+  const bh = $("btn-hist-quiz");   // bouton de l’onglet Historique
+  if (bh) bh.onclick = () => { const o = document.querySelector('.onglet[data-ecran="quiz"]'); if (o) o.click(); historique(); };
 
   // Synchronisation centrale des résultats (facultative : le quiz fonctionne sans).
   try { const s = document.createElement("script"); s.src = "cloud-sync.js"; s.async = true; document.head.appendChild(s); } catch (e) { /* ignoré */ }
