@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>My-QHSE Tools – Calculateur de risques professionnels</title>
+  <meta name="description" content="Outil gratuit d'évaluation des risques professionnels (matrice 5 × 5) pour les étudiants et professionnels QHSE.">
+  <meta name="theme-color" content="#075e54">
+  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="quiz.css">
+  <link rel="stylesheet" href="bibliotheque.css">
+</head>
+<body>
+
+  <a class="skip" href="#calculateur">Aller au calculateur</a>
+
+  <!-- ===== EN-TÊTE ===== -->
+  <header class="barre-haut">
+    <div class="wrap barre-in">
+      <span class="logo"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M12 2 4 5v6c0 5 3.4 9.4 8 11 4.6-1.6 8-6 8-11V5l-8-3z"/><path d="m9 12 2 2 4-4"/></svg></span>
+      <div class="titres">
+        <h1 class="brand">My-QHSE <span>Tools</span></h1>
+        <p id="titre-ecran" class="sous-titre">Risques</p>
+      </div>
+    </div>
+  </header>
+
+  <main class="wrap app">
+    <div class="ecran" id="ecran-risques">
+      <div class="intro bulle"><strong>Évaluez un risque professionnel en moins d'une minute.</strong> Un outil gratuit pour les étudiants et professionnels de la Qualité, Hygiène, Sécurité et Environnement en Afrique francophone. Choisissez une probabilité et une gravité : My-QHSE Tools calcule le score et le place sur la matrice 5 × 5.</div>
+      <p class="notice" role="note">
+        <strong>Seuils provisoires.</strong> Les niveaux de risque ci-dessous sont indicatifs. Ils seront ajustés après validation d'une méthode QHSE documentée.
+      </p>
+
+      <section id="calculateur" class="card" aria-labelledby="t-calc">
+        <h2 id="t-calc">Calculateur de risque</h2>
+        <form id="form-risque" novalidate>
+          <div class="field">
+            <label for="activite">Activité</label>
+            <input id="activite" name="activite" type="text" maxlength="120" placeholder="Ex. : Manutention de fûts en entrepôt" required>
+          </div>
+          <div class="field">
+            <label for="danger">Danger</label>
+            <input id="danger" name="danger" type="text" maxlength="120" placeholder="Ex. : Chute d'objets" required>
+          </div>
+          <div class="row">
+            <div class="field">
+              <label for="probabilite">Probabilité</label>
+              <select id="probabilite" name="probabilite" required></select>
+            </div>
+            <div class="field">
+              <label for="gravite">Gravité</label>
+              <select id="gravite" name="gravite" required></select>
+            </div>
+          </div>
+          <p id="erreur" class="erreur" role="alert" hidden></p>
+          <div class="actions">
+            <button type="submit" class="btn">Calculer et enregistrer</button>
+            <button type="reset" class="btn btn-sec">Effacer</button>
+          </div>
+        </form>
+
+        <!-- Résultat (rempli par app.js) -->
+        <div id="resultat" class="resultat" aria-live="polite" hidden></div>
+      </section>
+
+      <section id="matrice" class="card" aria-labelledby="t-mat">
+        <h2 id="t-mat">Matrice des risques 5 × 5</h2>
+        <p class="aide">Chaque case affiche le score (probabilité × gravité). La case de votre dernière évaluation est entourée.</p>
+        <div class="scroll"><table id="matrice-table" class="matrice"></table></div>
+        <ul id="legende" class="legende"></ul>
+      </section>
+    </div>
+
+    <div class="ecran" id="ecran-quiz" hidden>
+      <section id="quiz" class="card" aria-labelledby="t-quiz">
+        <h2 id="t-quiz">Quiz QHSE</h2>
+        <p class="aide">Testez vos connaissances : questions Vrai ou Faux et QCM, avec correction et explication après chaque réponse, puis votre score final.</p>
+        <div id="quiz-zone">
+          <p class="aide">Chargement du quiz… Si ce message reste affiché, vérifiez que le fichier quiz.js est bien dans le même dossier que index.html.</p>
+        </div>
+      </section>
+    </div>
+
+    <div class="ecran" id="ecran-sujets" hidden>
+      <section id="bibliotheque" class="card" aria-labelledby="t-bib">
+        <h2 id="t-bib">Bibliothèque de sujets</h2>
+        <div id="sujets-zone-liste">
+          <p class="aide">Des sujets QHSE à lire : introduction, développement et conclusion. Recherchez par mot-clé ou par numéro.</p>
+          <div class="field">
+            <label for="sujets-recherche">Rechercher un sujet</label>
+            <input id="sujets-recherche" type="search" placeholder="Ex. : audit, déchets, 14" autocomplete="off">
+          </div>
+          <p id="sujets-compte" class="aide" aria-live="polite"></p>
+          <ul id="sujets-liste" class="sujets-liste"></ul>
+          <p id="sujets-vide" class="aide" hidden>Aucun sujet ne correspond à votre recherche.</p>
+        </div>
+        <div id="sujets-lecture" hidden></div>
+      </section>
+    </div>
+
+    <div class="ecran" id="ecran-historique" hidden>
+      <section id="historique" class="card" aria-labelledby="t-hist">
+        <h2 id="t-hist">Évaluations de la session</h2>
+        <p class="aide">Les données restent dans votre navigateur et disparaissent à la fermeture ou au rechargement de la page.</p>
+        <div class="scroll">
+          <table class="liste">
+            <caption class="sr">Liste des évaluations effectuées pendant la session</caption>
+            <thead>
+              <tr>
+                <th scope="col">N°</th><th scope="col">Activité</th><th scope="col">Danger</th>
+                <th scope="col">P</th><th scope="col">G</th><th scope="col">Score</th>
+                <th scope="col">Niveau</th><th scope="col"><span class="sr">Action</span></th>
+              </tr>
+            </thead>
+            <tbody id="historique-corps"></tbody>
+          </table>
+        </div>
+        <p id="vide" class="aide">Aucune évaluation pour l'instant. Remplissez le calculateur ci-dessus.</p>
+        <button id="vider" type="button" class="btn btn-sec" hidden>Vider la liste</button>
+      </section>
+    </div>
+
+  </main>
+
+  <footer class="site-footer">
+    <div class="wrap">My-QHSE Afrique · Outil pédagogique, ne remplace pas l'évaluation d'un professionnel qualifié.</div>
+  </footer>
+
+  <!-- ===== BARRE DE NAVIGATION FIXE ===== -->
+  <nav class="onglets" aria-label="Navigation principale">
+    <button type="button" class="onglet" data-ecran="risques"><span class="ico"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M10.29 3.86 1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><path d="M12 9v4M12 17h.01"/></svg></span>Risques</button>
+    <button type="button" class="onglet" data-ecran="quiz"><span class="ico"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3M12 17h.01"/></svg></span>Quiz</button>
+    <button type="button" class="onglet" data-ecran="sujets"><span class="ico"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg></span>Sujets</button>
+    <button type="button" class="onglet" data-ecran="historique"><span class="ico"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg></span>Historique</button>
+  </nav>
+
+  <script src="app.js"></script>
+  <script src="sujets.js"></script>
+  <script src="bibliotheque.js"></script>
+  <script src="banque-management.js"></script>
+  <script src="banque-qualite.js"></script>
+  <script src="banque-sante-securite.js"></script>
+  <script src="banque-hygiene.js"></script>
+  <script src="banque-environnement.js"></script>
+  <script src="banque-transversal.js"></script>
+  <script src="quiz.js"></script>
+
+  <script>
+    /* Navigation par onglets : un seul écran affiché à la fois.
+       N'agit que sur l'affichage : calculateur, quiz et bibliothèque restent gérés par leurs propres fichiers. */
+    (function () {
+      var NOMS = ["risques", "quiz", "sujets", "historique"];
+      var TITRES = { risques: "Risques", quiz: "Quiz QHSE", sujets: "Sujets QHSE", historique: "Historique" };
+      var ANCRES = { risques: "risques", calculateur: "risques", matrice: "risques", quiz: "quiz", sujets: "sujets", bibliotheque: "sujets", historique: "historique" };
+      var boutons = document.querySelectorAll(".onglet");
+      function afficher(nom, majUrl) {
+        if (NOMS.indexOf(nom) === -1) nom = "risques";
+        NOMS.forEach(function (n) { document.getElementById("ecran-" + n).hidden = (n !== nom); });
+        Array.prototype.forEach.call(boutons, function (b) {
+          if (b.getAttribute("data-ecran") === nom) b.setAttribute("aria-current", "page"); else b.removeAttribute("aria-current");
+        });
+        document.getElementById("titre-ecran").textContent = TITRES[nom];
+        if (majUrl) { try { history.replaceState(null, "", "#" + nom); } catch (e) {} }
+        window.scrollTo(0, 0);
+      }
+      Array.prototype.forEach.call(boutons, function (b) {
+        b.addEventListener("click", function () { afficher(b.getAttribute("data-ecran"), true); });
+      });
+      function depuisUrl() { afficher(ANCRES[(location.hash || "").replace("#", "")] || "risques", false); }
+      window.addEventListener("hashchange", depuisUrl);
+      depuisUrl();
+      /* Pendant la saisie au clavier, la barre est masquée pour ne pas gêner. */
+      document.addEventListener("focusin", function (e) { if (e.target && e.target.tagName === "INPUT") document.body.classList.add("clavier"); });
+      document.addEventListener("focusout", function () { document.body.classList.remove("clavier"); });
+    })();
+  </script>
+
+  <!-- Contrôle de chargement : s'affiche seulement si style.css ou app.js manquent
+       (cas fréquent sur Android quand index.html est ouvert depuis un aperçu de fichier). -->
+  <script>
+    window.addEventListener("load", function () {
+      var cssOk = getComputedStyle(document.body).backgroundColor === "rgb(246, 250, 248)";
+      var jsOk = typeof calculerScore === "function";
+      if (cssOk && jsOk) return;
+      var b = document.createElement("div");
+      b.setAttribute("role", "alert");
+      b.style.cssText = "background:#fff3cd;color:#222;border:2px solid #f2a900;padding:12px;margin:0;font:16px sans-serif";
+      b.textContent = "Fichiers manquants : " + (cssOk ? "" : "style.css ") + (jsOk ? "" : "app.js ") +
+        "n'a pas été chargé. Placez index.html, style.css et app.js dans le même dossier et ouvrez index.html depuis Chrome, ou utilisez le fichier index-autonome.html.";
+      document.body.insertBefore(b, document.body.firstChild);
+    });
+  </script>
+</body>
+</html>
