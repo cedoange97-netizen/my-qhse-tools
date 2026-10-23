@@ -32,7 +32,8 @@
     ["sst", "Santé et sécurité", [["t19", "ISO 45001 : exigences"], ["t20", "Dangers et risques professionnels"], ["t21", "Évaluation des risques"], ["t22", "Hiérarchie de prévention"], ["t23", "EPI et signalisation"], ["t24", "Accidents du travail et maladies professionnelles"], ["t25", "Analyse d’accident (arbre des causes)"], ["t26", "Risques chimiques et FDS"], ["t27", "Risques électriques"], ["t28", "Travail en hauteur et levage"], ["t29", "Manutention, ergonomie et TMS"], ["t30", "Incendie et évacuation"], ["t31", "Permis de travail et consignation"], ["t32", "Risques psychosociaux"]]],
     ["hyg", "Hygiène", [["t33", "Hygiène des aliments (HACCP)"], ["t34", "Nettoyage et désinfection"], ["t35", "Eau potable et assainissement"], ["t36", "Ambiances de travail (bruit, éclairage, chaleur)"], ["t37", "Premiers secours"]]],
     ["env", "Environnement", [["t38", "ISO 14001 : exigences"], ["t39", "Aspects et impacts environnementaux"], ["t40", "Gestion des déchets"], ["t41", "Pollution de l’eau, de l’air et du sol"], ["t42", "Énergie"], ["t43", "Changement climatique et empreinte carbone"], ["t44", "Économie circulaire et 3R"]]],
-    ["trans", "Transversal", [["t45", "Réglementation et veille"], ["t46", "Retour d’expérience (REX)"], ["t47", "Gestion de crise et plans d’urgence"], ["t48", "Culture de sécurité"], ["t49", "Compétences et formation"], ["t50", "Gestion des risques et opportunités"]]]
+    ["trans", "Transversal", [["t45", "Réglementation et veille"], ["t46", "Retour d’expérience (REX)"], ["t47", "Gestion de crise et plans d’urgence"], ["t48", "Culture de sécurité"], ["t49", "Compétences et formation"], ["t50", "Gestion des risques et opportunités"]]],
+    ["img", "Quiz en images (Livret sécurité)", [["img01", "Livret sécurité : panneaux et pictogrammes"], ["img02", "Livret sécurité : gestes, postures et étiquettes"]]],
   ];
   FAMILLES.forEach(f => f[2].forEach(t => { THEMES[t[0]] = t[1]; }));
 
@@ -270,7 +271,7 @@
         (erreurs ? "Voir toutes les questions" : "Voir mes erreurs seulement") + '</button>' +
         '<button id="rel-retour" type="button" class="btn btn-sec">Retour</button></div>' +
         (l.length ? l.map(([r, n]) =>
-          `<div class="quiz-rel-item"><p class="aide">Question ${n + 1} · ${r.c === r.b ? "✔ juste" : "✘ à revoir"}</p><h4>${esc(r.q)}</h4><ul class="quiz-rel-opts">` +
+          `<div class="quiz-rel-item"><p class="aide">Question ${n + 1} · ${r.c === r.b ? "✔ juste" : "✘ à revoir"}</p><h4>${esc(r.q)}</h4>${r.i ? `<img class="quiz-img" src="${esc(r.i)}" alt="Image de la question">` : ""}<ul class="quiz-rel-opts">` +
           r.o.map((o, k) => `<li class="${k === r.b ? "juste" : k === r.c ? "faux" : ""}">${k === r.b ? "✔ " : k === r.c ? "✘ " : ""}${esc(o)}${k === r.c && k !== r.b ? " (votre réponse)" : ""}</li>`).join("") +
           `</ul><p class="quiz-expl ${r.c === r.b ? "juste" : "faux"}">${esc(r.e)}</p></div>`).join("")
           : '<p class="aide">Aucune erreur dans ce quiz : toutes les réponses étaient justes.</p>');
@@ -323,20 +324,23 @@
       '<div class="field"><label for="quiz-fam">Famille</label><select id="quiz-fam"><option value="tous">Toutes les familles</option>' +
       fams.map(f => `<option value="${f[0]}">${f[1]}</option>`).join("") + '</select></div>' +
       '<div class="field"><label for="quiz-theme">Thème</label><select id="quiz-theme"></select></div>' +
+      '<div class="field"><label for="quiz-nb">Nombre de questions</label><select id="quiz-nb"><option value="10">10 questions</option><option value="15">15 questions</option><option value="20">20 questions</option></select></div>' +
       '<div class="actions"><button id="quiz-go" type="button" class="btn">Commencer le quiz</button>' +
       `<button id="quiz-hist" type="button" class="btn btn-sec">Historique (${lireHist().length})</button></div>`;
     const remplir = () => {
       const ths = themesDe($("quiz-fam").value);
       const total = ths.reduce((s, t) => s + nbQ(t[0]), 0);
-      $("quiz-theme").innerHTML = `<option value="tous">Tous les thèmes (${Math.min(NB_QUIZ, total)} questions au hasard)</option>` +
+      $("quiz-theme").innerHTML = `<option value="tous">Tous les thèmes (${Math.min(Number($("quiz-nb").value), total)} questions au hasard)</option>` +
         ths.map(t => `<option value="${t[0]}">${t[1]} (${nbQ(t[0])} questions)</option>`).join("");
     };
+    $("quiz-nb").value = String(choix.n || NB_QUIZ);
     $("quiz-fam").value = choix.f; if (!$("quiz-fam").value) $("quiz-fam").value = "tous";
     remplir();
     $("quiz-theme").value = choix.t; if (!$("quiz-theme").value) $("quiz-theme").value = "tous";
+    $("quiz-nb").onchange = () => { const t = $("quiz-theme").value; remplir(); $("quiz-theme").value = t; };
     $("quiz-fam").onchange = remplir;
     $("quiz-hist").onclick = historique;
-    $("quiz-go").onclick = () => demarrer({ f: $("quiz-fam").value, t: $("quiz-theme").value });
+    $("quiz-go").onclick = () => demarrer({ f: $("quiz-fam").value, t: $("quiz-theme").value, n: Number($("quiz-nb").value) });
   }
 
   /** Tirage aléatoire : questions jamais vues d’abord, puis les plus anciennes ; ordre de passage mélangé. */
@@ -347,7 +351,7 @@
     const base = QUESTIONS.filter(q => ths.indexOf(q.t) !== -1);
     const vues = lireVues();
     const rang = q => vues.lastIndexOf(q.q); // -1 = jamais vue
-    const choisies = imposee || melanger(base).sort((a, b) => rang(a) - rang(b)).slice(0, Math.min(NB_QUIZ, base.length));
+    const choisies = imposee || melanger(base).sort((a, b) => rang(a) - rang(b)).slice(0, Math.min(c.n || NB_QUIZ, base.length));
     serie = melanger(choisies);
     const ids = serie.map(q => q.q);
     ecrireVues(vues.filter(t => ids.indexOf(t) === -1).concat(ids));
@@ -364,7 +368,8 @@
     zone.innerHTML =
       `<p class="aide quiz-meta"><span class="pastille quiz-badge">${q.o ? "QCM" : "Vrai ou faux"}</span> ` +
       `${THEMES[q.t]} · Question ${i + 1} / ${serie.length}</p>` +
-      `<h3 id="quiz-q" tabindex="-1">${q.q}</h3><div class="quiz-opts">` +
+      `<h3 id="quiz-q" tabindex="-1">${q.q}</h3>` +
+      (q.img ? `<img class="quiz-img" src="${esc(q.img)}" alt="Image à identifier">` : "") + '<div class="quiz-opts">' +
       opts.map((o, k) => `<button type="button" class="quiz-opt" data-k="${k}">${o}</button>`).join("") +
       '</div><div id="quiz-fb" aria-live="polite"></div>' +
       '<div class="actions quiz-fin"><button id="quiz-stop" type="button" class="btn btn-sec">Terminer le quiz</button></div>';
@@ -389,7 +394,7 @@
     const bon = courant.bon;
     const ok = k === bon;
     if (ok) score++;
-    reps.push({ q: q.q, o: courant.opts.slice(), b: bon, c: k, e: q.e });
+    reps.push({ q: q.q, o: courant.opts.slice(), b: bon, c: k, e: q.e, i: q.img || "" });
     sauverHist(false);
     zone.querySelectorAll(".quiz-opt").forEach((b, n) => {
       b.disabled = true;

@@ -36,3 +36,7 @@
 .quiz-rel-opts li { padding: 8px 10px; border: 1px solid var(--bordure); border-radius: 6px; }
 .quiz-rel-opts li.juste { background: var(--ok-bg); border-color: var(--vert); font-weight: 600; }
 .quiz-rel-opts li.faux { background: var(--ko-bg); border-color: var(--danger); }
+
+/* ----- Quiz en images ----- */
+.quiz-img { display: block; margin: 4px auto 16px; height: 150px; max-width: 100%; object-fit: contain; background: #fff; border: 1px solid var(--bordure); border-radius: 8px; padding: 6px; box-sizing: content-box; }
+.quiz-rel-item .quiz-img { height: 110px; margin: 4px 0 10px; }
