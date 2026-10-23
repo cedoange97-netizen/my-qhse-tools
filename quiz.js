@@ -233,6 +233,8 @@
 
   /* ---------- Historique des quiz terminés + relecture ---------- */
   const CLE_HIST = "myqhse_quiz_historique";
+  /** Image d’une question : version intégrée (images-livret.js) sinon fichier du dossier img/. */
+  const srcImg = p => (window.QHSE_IMAGES && window.QHSE_IMAGES[p]) || p;
   const esc = s => String(s == null ? "" : s).replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
   const fmt = ts => { try { return new Date(ts).toLocaleString("fr-FR", { dateStyle: "short", timeStyle: "short" }); } catch (e) { return ""; } };
   let histOk = true;   // false si le navigateur refuse d’enregistrer (navigation privée, stockage plein ou bloqué)
@@ -271,7 +273,7 @@
         (erreurs ? "Voir toutes les questions" : "Voir mes erreurs seulement") + '</button>' +
         '<button id="rel-retour" type="button" class="btn btn-sec">Retour</button></div>' +
         (l.length ? l.map(([r, n]) =>
-          `<div class="quiz-rel-item"><p class="aide">Question ${n + 1} · ${r.c === r.b ? "✔ juste" : "✘ à revoir"}</p><h4>${esc(r.q)}</h4>${r.i ? `<img class="quiz-img" src="${esc(r.i)}" alt="Image de la question">` : ""}<ul class="quiz-rel-opts">` +
+          `<div class="quiz-rel-item"><p class="aide">Question ${n + 1} · ${r.c === r.b ? "✔ juste" : "✘ à revoir"}</p><h4>${esc(r.q)}</h4>${r.i ? `<img class="quiz-img" src="${esc(srcImg(r.i))}" alt="Image non chargée">` : ""}<ul class="quiz-rel-opts">` +
           r.o.map((o, k) => `<li class="${k === r.b ? "juste" : k === r.c ? "faux" : ""}">${k === r.b ? "✔ " : k === r.c ? "✘ " : ""}${esc(o)}${k === r.c && k !== r.b ? " (votre réponse)" : ""}</li>`).join("") +
           `</ul><p class="quiz-expl ${r.c === r.b ? "juste" : "faux"}">${esc(r.e)}</p></div>`).join("")
           : '<p class="aide">Aucune erreur dans ce quiz : toutes les réponses étaient justes.</p>');
@@ -369,7 +371,7 @@
       `<p class="aide quiz-meta"><span class="pastille quiz-badge">${q.o ? "QCM" : "Vrai ou faux"}</span> ` +
       `${THEMES[q.t]} · Question ${i + 1} / ${serie.length}</p>` +
       `<h3 id="quiz-q" tabindex="-1">${q.q}</h3>` +
-      (q.img ? `<img class="quiz-img" src="${esc(q.img)}" alt="Image à identifier">` : "") + '<div class="quiz-opts">' +
+      (q.img ? `<img class="quiz-img" src="${esc(srcImg(q.img))}" alt="Image non chargée : vérifiez le dossier img/ ou images-livret.js">` : "") + '<div class="quiz-opts">' +
       opts.map((o, k) => `<button type="button" class="quiz-opt" data-k="${k}">${o}</button>`).join("") +
       '</div><div id="quiz-fb" aria-live="polite"></div>' +
       '<div class="actions quiz-fin"><button id="quiz-stop" type="button" class="btn btn-sec">Terminer le quiz</button></div>';
