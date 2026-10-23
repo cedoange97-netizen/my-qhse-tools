@@ -1,6 +1,8 @@
 // My-QHSE Tools API — Cloudflare Worker (liaison D1 : DB, secret : ADMIN_TOKEN)
 const ALLOWED_ORIGIN = "https://cedoange97-netizen.github.io";
 const MAX_BODY = 20000;
+const MAX_PHOTO = 450000;                          // taille max d'une photo (JSON)
+const PHOTO_LIMIT = { max: 30, windowSec: 600 };   // 30 photos / 10 min / IP
 const POST_LIMIT = { max: 10, windowSec: 600 };   // 10 envois / 10 min / IP
 const ADMIN_LIMIT = { max: 20, windowSec: 600 };  // 20 requêtes admin / 10 min / IP
 
@@ -110,6 +112,27 @@ export default {
         return respond({ success: true, message: created ? "Résultat enregistré" : "Résultat déjà enregistré" }, created ? 201 : 200);
       }
 
+      // ---- Photos (copie cloud facultative, anonyme) ----
+      if (request.method === "POST" && path === "/api/photos") {
+        if (!(request.headers.get("Content-Type") || "").includes("application/json")) return respond({ error: "Format JSON requis" }, 415);
+        if (Number(request.headers.get("Content-Length") || 0) > MAX_PHOTO) return respond({ error: "Photo trop volumineuse" }, 413);
+        if (!(await rateLimit(env, "ph:" + ipHash, PHOTO_LIMIT))) return respond({ error: "Trop de requêtes, réessayez plus tard" }, 429, { "Retry-After": "600" });
+        const raw = await request.text();
+        if (raw.length > MAX_PHOTO) return respond({ error: "Photo trop volumineuse" }, 413);
+        let d;
+        try { d = JSON.parse(raw); } catch { return respond({ error: "JSON invalide" }, 400); }
+        const okId = (s, min) => typeof s === "string" && new RegExp("^[A-Za-z0-9_-]{" + min + ",64}$").test(s);
+        if (!d || !["incident", "inspection", "epi"].includes(d.kind)) return respond({ error: "kind invalide" }, 400);
+        if (!okId(d.photoId, 8) || !okId(d.reportRef, 2)) return respond({ error: "identifiant invalide" }, 400);
+        if (d.participantId !== undefined && !okId(d.participantId, 1)) return respond({ error: "participantId invalide" }, 400);
+        if (typeof d.dataUrl !== "string" || !/^data:image\/jpeg;base64,[A-Za-z0-9+\/=]+$/.test(d.dataUrl)) return respond({ error: "Image JPEG requise" }, 400);
+        const res = await env.DB.prepare(
+          "INSERT OR IGNORE INTO photos (participant_id, kind, report_ref, client_photo_id, data) VALUES (?, ?, ?, ?, ?)"
+        ).bind(d.participantId ?? null, d.kind, d.reportRef, d.photoId, d.dataUrl).run();
+        const created = res.meta.changes > 0;
+        return respond({ success: true, message: created ? "Photo enregistrée" : "Photo déjà enregistrée" }, created ? 201 : 200);
+      }
+
       // ---- Administration ----
       if (path.startsWith("/api/admin/")) {
         if (request.method !== "GET") return respond({ error: "Méthode non autorisée" }, 405);
@@ -136,6 +159,15 @@ export default {
             "SELECT id, participant_id, theme, score, total, correct_count, wrong_count, duration_seconds, created_at " +
             "FROM quiz_attempts ORDER BY id DESC LIMIT ? OFFSET ?").bind(limit, offset).all();
           return respond({ limit, offset, attempts: r.results });
+        }
+        if (path === "/api/admin/photos") {
+          const r = await env.DB.prepare("SELECT id, participant_id, kind, report_ref, length(data) AS size, created_at FROM photos ORDER BY id DESC LIMIT 100").all();
+          return respond({ photos: r.results });
+        }
+        if (path === "/api/admin/photo") {
+          const id = parseInt(url.searchParams.get("id") || "", 10);
+          const r = isInt(id) ? await env.DB.prepare("SELECT id, kind, report_ref, data, created_at FROM photos WHERE id = ?").bind(id).first() : null;
+          return r ? respond(r) : respond({ error: "Photo introuvable" }, 404);
         }
         return respond({ error: "Route introuvable" }, 404);
       }
