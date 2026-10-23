@@ -4,6 +4,7 @@ const MAX_BODY = 20000;
 const MAX_PHOTO = 450000;                          // taille max d'une photo (JSON)
 const PHOTO_LIMIT = { max: 30, windowSec: 600 };   // 30 photos / 10 min / IP
 const POST_LIMIT = { max: 10, windowSec: 600 };   // 10 envois / 10 min / IP
+const CK_LIMIT = { max: 20, windowSec: 600 };     // 20 résultats de checklist / 10 min / IP
 const ADMIN_LIMIT = { max: 20, windowSec: 600 };  // 20 requêtes admin / 10 min / IP
 
 const enc = new TextEncoder();
@@ -49,6 +50,28 @@ function validate(d) {
   if (d.answers !== undefined && (!Array.isArray(d.answers) || d.answers.length > 50)) return "answers invalide";
   if (d.participantId !== undefined && !/^[A-Za-z0-9_-]{1,64}$/.test(d.participantId)) return "participantId invalide";
   if (d.clientAttemptId !== undefined && !/^[A-Za-z0-9_-]{8,64}$/.test(d.clientAttemptId)) return "clientAttemptId invalide";
+  return null;
+}
+
+// Résultat d'une checklist pédagogique (anonyme). Table : checklist_results (voir schema-checklists.sql)
+function validateChecklist(d) {
+  if (!d || typeof d !== "object") return "Corps JSON invalide";
+  const okId = (s, min) => typeof s === "string" && new RegExp("^[A-Za-z0-9_-]{" + min + ",64}$").test(s);
+  if (!okId(d.themeId, 2)) return "themeId invalide";
+  if (typeof d.themeTitle !== "string" || !d.themeTitle.trim() || d.themeTitle.length > 150) return "themeTitle invalide";
+  if (d.sector !== undefined && (typeof d.sector !== "string" || d.sector.length > 40)) return "sector invalide";
+  if (d.mode !== undefined && !["audit", "entrainement"].includes(d.mode)) return "mode invalide";
+  if (!isInt(d.total) || d.total < 1 || d.total > 60) return "total invalide";
+  for (const k of ["conform", "nonConform", "naCount", "accuracy"]) {
+    if (!isInt(d[k]) || d[k] < 0 || d[k] > d.total) return k + " invalide";
+  }
+  if (d.conform + d.nonConform + d.naCount > d.total) return "répartition incohérente";
+  if (d.accuracy > d.total) return "accuracy invalide";
+  if (!isInt(d.score) || d.score < 0 || !isInt(d.scoreMax) || d.scoreMax < d.score || d.scoreMax > d.total * 2) return "score invalide";
+  if (typeof d.answers !== "string" || d.answers.length !== d.total || !/^[ona-]+$/.test(d.answers)) return "answers invalide";
+  if (d.durationSeconds !== undefined && (!isInt(d.durationSeconds) || d.durationSeconds < 0 || d.durationSeconds > 86400)) return "durationSeconds invalide";
+  if (d.participantId !== undefined && !okId(d.participantId, 1)) return "participantId invalide";
+  if (d.clientAttemptId !== undefined && !okId(d.clientAttemptId, 8)) return "clientAttemptId invalide";
   return null;
 }
 
@@ -133,6 +156,27 @@ export default {
         return respond({ success: true, message: created ? "Photo enregistrée" : "Photo déjà enregistrée" }, created ? 201 : 200);
       }
 
+      // ---- Résultats de checklists (anonyme, facultatif) ----
+      if (request.method === "POST" && path === "/api/checklist-results") {
+        if (!(request.headers.get("Content-Type") || "").includes("application/json")) return respond({ error: "Format JSON requis" }, 415);
+        if (Number(request.headers.get("Content-Length") || 0) > MAX_BODY) return respond({ error: "Données trop volumineuses" }, 413);
+        if (!(await rateLimit(env, "ck:" + ipHash, CK_LIMIT))) return respond({ error: "Trop de requêtes, réessayez plus tard" }, 429, { "Retry-After": "600" });
+        const raw = await request.text();
+        if (raw.length > MAX_BODY) return respond({ error: "Données trop volumineuses" }, 413);
+        let d;
+        try { d = JSON.parse(raw); } catch { return respond({ error: "JSON invalide" }, 400); }
+        const err = validateChecklist(d);
+        if (err) return respond({ error: "Données de checklist invalides : " + err }, 400);
+        const res = await env.DB.prepare(
+          "INSERT OR IGNORE INTO checklist_results " +
+          "(participant_id, theme_id, theme_title, sector, mode, total, conform_count, non_conform_count, na_count, score, score_max, accuracy_correct, answers, duration_seconds, client_attempt_id) " +
+          "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)"
+        ).bind(d.participantId ?? null, d.themeId, d.themeTitle.trim(), d.sector ?? null, d.mode ?? null, d.total, d.conform, d.nonConform, d.naCount,
+               d.score, d.scoreMax, d.accuracy, d.answers, d.durationSeconds ?? null, d.clientAttemptId ?? null).run();
+        const created = res.meta.changes > 0;
+        return respond({ success: true, message: created ? "Résultat enregistré" : "Résultat déjà enregistré" }, created ? 201 : 200);
+      }
+
       // ---- Administration ----
       if (path.startsWith("/api/admin/")) {
         if (request.method !== "GET") return respond({ error: "Méthode non autorisée" }, 405);
@@ -159,6 +203,16 @@ export default {
             "SELECT id, participant_id, theme, score, total, correct_count, wrong_count, duration_seconds, created_at " +
             "FROM quiz_attempts ORDER BY id DESC LIMIT ? OFFSET ?").bind(limit, offset).all();
           return respond({ limit, offset, attempts: r.results });
+        }
+        if (path === "/api/admin/checklists") {
+          const [tot, byTheme] = await Promise.all([
+            env.DB.prepare("SELECT COUNT(*) AS attempts, COUNT(DISTINCT participant_id) AS participants, " +
+              "ROUND(AVG(100.0*accuracy_correct/total),1) AS avg_accuracy_percent FROM checklist_results").first(),
+            env.DB.prepare("SELECT theme_id, theme_title, COUNT(*) AS attempts, ROUND(AVG(100.0*accuracy_correct/total),1) AS avg_accuracy_percent, " +
+              "ROUND(AVG(CASE WHEN score_max > 0 THEN 100.0*score/score_max END),1) AS avg_conformity_percent " +
+              "FROM checklist_results GROUP BY theme_id, theme_title ORDER BY attempts DESC LIMIT 50").all()
+          ]);
+          return respond({ totals: tot, byTheme: byTheme.results });
         }
         if (path === "/api/admin/photos") {
           const r = await env.DB.prepare("SELECT id, participant_id, kind, report_ref, length(data) AS size, created_at FROM photos ORDER BY id DESC LIMIT 100").all();

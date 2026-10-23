@@ -11,6 +11,7 @@
   <link rel="stylesheet" href="bibliotheque.css">
   <link rel="stylesheet" href="outils.css">
   <link rel="stylesheet" href="terrain.css">
+  <link rel="stylesheet" href="checklists.css">
   <link rel="stylesheet" href="parametres.css">
   <!-- Préférences (langue, thème, couleur, taille) : appliquées avant l'affichage -->
   <script src="parametres.js"></script>
@@ -112,6 +113,7 @@
         <button type="button" class="btn btn-sec" data-outil="incident" aria-pressed="false">Incident</button>
         <button type="button" class="btn btn-sec" data-outil="inspection" aria-pressed="false">Inspection</button>
         <button type="button" class="btn btn-sec" data-outil="epi" aria-pressed="false">Registre EPI</button>
+        <button type="button" class="btn btn-sec" data-outil="checklists" aria-pressed="false">Checklists</button>
       </div>
 
       <section id="causes" class="card" aria-labelledby="t-causes">
@@ -142,6 +144,11 @@
         <h2 id="t-ins">Inspection sécurité</h2>
         <p class="aide">Parcourez la checklist, notez les points non conformes et joignez des photos.</p>
         <div id="inspection-zone"></div>
+      </section>
+
+      <section id="checklists" class="card" aria-labelledby="t-ck" hidden>
+        <h2 id="t-ck">Checklists et exercices QHSE</h2>
+        <div id="checklists-zone"><p class="aide">Chargement… Vérifiez que checklists.js et les fichiers checklists-data-1/2/3.js sont dans le même dossier que index.html.</p></div>
       </section>
 
       <section id="epi" class="card" aria-labelledby="t-epi" hidden>
@@ -282,6 +289,10 @@
   <script src="causes.js"></script>
   <script src="glossaire.js"></script>
   <script src="terrain.js"></script>
+  <script src="checklists-data-1.js"></script>
+  <script src="checklists-data-2.js"></script>
+  <script src="checklists-data-3.js"></script>
+  <script src="checklists.js"></script>
   <script src="quiz.js"></script>
 
   <script>
@@ -292,7 +303,7 @@
       var TITRES = { risques: "Risques", quiz: "Quiz QHSE", sujets: "Sujets QHSE", outils: "Outils QHSE", historique: "Historique", parametres: "Paramètres", apropos: "À propos" };
       var ecranCourant = "risques";
       function titre(nom) { return window.QHSEPrefs ? window.QHSEPrefs.t("titre." + nom) : TITRES[nom]; }
-      var ANCRES = { risques: "risques", calculateur: "risques", matrice: "risques", quiz: "quiz", sujets: "sujets", bibliotheque: "sujets", outils: "outils", causes: "outils", glossaire: "outils", incident: "outils", inspection: "outils", epi: "outils", historique: "historique", parametres: "parametres", apropos: "apropos" };
+      var ANCRES = { risques: "risques", calculateur: "risques", matrice: "risques", quiz: "quiz", sujets: "sujets", bibliotheque: "sujets", outils: "outils", causes: "outils", glossaire: "outils", incident: "outils", inspection: "outils", epi: "outils", checklists: "outils", historique: "historique", parametres: "parametres", apropos: "apropos" };
       var boutons = document.querySelectorAll(".onglet, .btn-param, .lien-ecran, .lien-ecran-btn");
       function afficher(nom, majUrl) {
         if (NOMS.indexOf(nom) === -1) nom = "risques";
@@ -324,7 +335,7 @@
     (function () {
       var boutons = document.querySelectorAll("[data-outil]");
       function montrer(nom) {
-        ["causes", "glossaire", "incident", "inspection", "epi"].forEach(function (n) { document.getElementById(n).hidden = (n !== nom); });
+        ["causes", "glossaire", "incident", "inspection", "epi", "checklists"].forEach(function (n) { document.getElementById(n).hidden = (n !== nom); });
         Array.prototype.forEach.call(boutons, function (b) {
           var actif = b.getAttribute("data-outil") === nom;
           b.className = "btn" + (actif ? "" : " btn-sec");
@@ -332,7 +343,7 @@
         });
       }
       Array.prototype.forEach.call(boutons, function (b) { b.addEventListener("click", function () { montrer(b.getAttribute("data-outil")); }); });
-      function depuisUrl() { var m = location.hash.replace("#", ""); montrer(["glossaire", "incident", "inspection", "epi"].indexOf(m) > -1 ? m : "causes"); }
+      function depuisUrl() { var m = location.hash.replace("#", ""); montrer(["glossaire", "incident", "inspection", "epi", "checklists"].indexOf(m) > -1 ? m : "causes"); }
       window.addEventListener("hashchange", depuisUrl);
       depuisUrl();
     })();
