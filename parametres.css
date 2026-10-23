@@ -1,0 +1,84 @@
+/* ==========================================================
+   My-QHSE Tools – parametres.css
+   1) Thèmes : mode clair / sombre et couleur principale.
+      Chargé en dernier : ne fait que redéfinir les variables
+      déclarées dans style.css (aucune règle de mise en page cassée).
+   2) Taille du texte
+   3) Page Paramètres et bouton roue dentée
+   ========================================================== */
+
+/* ----- 1a) Couleur principale (mode clair) ----- */
+html[data-couleur="vert"]   { --vert-fonce:#075e54; --vert:#0f7a6b; --vert-clair:#e3f4f0; --bulle:#d9fdd3; --titre:#075e54; --survol:#075e54; --sous-entete:#cdeee6; --sur-accent:#fff; --sur-entete:#fff; }
+html[data-couleur="bleu"]   { --vert-fonce:#0d4a8a; --vert:#1565c0; --vert-clair:#e5f0fb; --bulle:#d3e6fb; --titre:#0d4a8a; --survol:#0d4a8a; --sous-entete:#d0e4fa; --sur-accent:#fff; --sur-entete:#fff; }
+html[data-couleur="violet"] { --vert-fonce:#4527a0; --vert:#6a3fb5; --vert-clair:#eee8fa; --bulle:#e1d6f7; --titre:#4527a0; --survol:#4527a0; --sous-entete:#e0d4f7; --sur-accent:#fff; --sur-entete:#fff; }
+html[data-couleur="orange"] { --vert-fonce:#a34400; --vert:#c2570c; --vert-clair:#fdeee0; --bulle:#fddcc0; --titre:#a34400; --survol:#a34400; --sous-entete:#ffe3cc; --sur-accent:#fff; --sur-entete:#fff; }
+html[data-couleur="noir"]   { --vert-fonce:#111827; --vert:#1f2937; --vert-clair:#eceef1; --bulle:#dde0e5; --titre:#111827; --survol:#000; --sous-entete:#cfd4db; --sur-accent:#fff; --sur-entete:#fff; }
+
+/* ----- 1b) Mode sombre : fonds, textes, états ----- */
+html[data-theme="clair"]  { color-scheme: light; }
+html[data-theme="sombre"] {
+  color-scheme: dark;
+  --fond:#0f1412; --surface:#1a211e; --texte:#e8eeeb; --gris:#a7b5ae; --bordure:#2f3b36; --champ:#55655d;
+  --danger:#ff9b94; --erreur-bg:#3a1f1e; --notice-bg:#3a3115; --ok-bg:#1d3b2a; --ko-bg:#4a2322;
+}
+/* ----- 1c) Couleur principale en mode sombre ----- */
+html[data-theme="sombre"][data-couleur="vert"]   { --vert-fonce:#064a42; --vert:#178172; --vert-clair:#17302b; --bulle:#1f4a3f; --titre:#7fd9c6; --survol:#1d9886; --sous-entete:#b9e6dd; --sur-accent:#fff; --sur-entete:#fff; }
+html[data-theme="sombre"][data-couleur="bleu"]   { --vert-fonce:#0d3a66; --vert:#1e6fc4; --vert-clair:#14283d; --bulle:#1d3d61; --titre:#8cc4ff; --survol:#2a80da; --sous-entete:#bcd9fa; --sur-accent:#fff; --sur-entete:#fff; }
+html[data-theme="sombre"][data-couleur="violet"] { --vert-fonce:#3b1a78; --vert:#7b4fd1; --vert-clair:#271a42; --bulle:#3a2866; --titre:#c9b0ff; --survol:#8c63e0; --sous-entete:#d9c8fa; --sur-accent:#fff; --sur-entete:#fff; }
+html[data-theme="sombre"][data-couleur="orange"] { --vert-fonce:#7a3300; --vert:#b45309; --vert-clair:#3a2312; --bulle:#5a3a1c; --titre:#ffb877; --survol:#c2570c; --sous-entete:#ffd9b8; --sur-accent:#fff; --sur-entete:#fff; }
+html[data-theme="sombre"][data-couleur="noir"]   { --vert-fonce:#000; --vert:#d9dde3; --vert-clair:#242a2f; --bulle:#30363d; --titre:#f1f3f5; --survol:#fff; --sous-entete:#c4c9cf; --sur-accent:#111; --sur-entete:#fff; }
+html[data-theme="sombre"] .barre-haut { box-shadow: 0 1px 0 #ffffff22; }
+html[data-theme="sombre"] .card { box-shadow: none; }
+html[data-theme="sombre"] .logo { background: #fff; color: #111; }
+
+/* ----- 2) Taille du texte (tout le texte est en rem) ----- */
+html[data-taille="petit"]      { --echelle: .9; }
+html[data-taille="normal"]     { --echelle: 1; }
+html[data-taille="grand"]      { --echelle: 1.15; }
+html[data-taille="tres-grand"] { --echelle: 1.3; }
+/* Les libellés de la barre d'onglets ne grossissent que de moitié, pour que 5 onglets tiennent sur 360 px */
+.onglet { font-size: calc(.74rem / var(--echelle, 1) * (1 + (var(--echelle, 1) - 1) * .2)); min-width: 0; }
+.onglet > span:not(.ico) { max-width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+
+/* ----- 3) Bouton Paramètres (roue dentée) dans l'en-tête ----- */
+.barre-in { position: relative; }
+.btn-param {
+  appearance: none; margin-left: auto; flex: none; width: 44px; height: 44px; border-radius: 50%;
+  background: transparent; color: var(--sur-entete); border: 0; cursor: pointer;
+  display: grid; place-items: center; -webkit-tap-highlight-color: transparent;
+}
+.btn-param svg { width: 24px; height: 24px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+.btn-param[aria-current="page"] { background: rgba(255,255,255,.2); }
+.btn-param:focus-visible { outline: 3px solid #f2a900; outline-offset: 2px; }
+/* Ordinateur : la barre d'onglets est fixée à droite de l'en-tête, on la décale pour laisser la place à la roue */
+@media (min-width: 820px) {
+  .onglets { right: max(60px, calc((100vw - 920px) / 2 + 60px)); }
+  .btn-param { margin-right: 0; }
+}
+
+/* ----- Page Paramètres ----- */
+.pref { border: 0; margin: 0; padding: 0; min-width: 0; }
+.pref legend { padding: 0; margin: 0 0 4px; font-size: 1.15rem; font-weight: 700; color: var(--titre); }
+.pref-liste { display: grid; gap: 8px; margin-top: 10px; }
+.pref-liste.pref-couleurs, .pref-liste.pref-taille { grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); }
+.pref-opt { position: relative; display: block; margin: 0; font-weight: 600; cursor: pointer; }
+.pref-opt input { position: absolute; inset: 0; width: 100%; height: 100%; margin: 0; padding: 0; opacity: 0; cursor: pointer; }
+.pref-box {
+  display: flex; align-items: center; gap: 10px; min-height: 48px; padding: 10px 14px;
+  border: 2px solid var(--bordure); border-radius: 10px; background: var(--surface); color: var(--texte);
+}
+.pref-box small { display: block; font-weight: 400; color: var(--gris); font-size: .82rem; line-height: 1.3; }
+.pref-opt input:checked + .pref-box { border-color: var(--vert); background: var(--vert-clair); }
+.pref-opt input:checked + .pref-box::after {
+  content: "✓"; margin-left: auto; font-weight: 800; color: var(--titre);
+}
+.pref-opt input:focus-visible + .pref-box { outline: 3px solid #f2a900; outline-offset: 2px; }
+.pref-pastille { flex: none; width: 24px; height: 24px; border-radius: 50%; border: 2px solid rgba(128,128,128,.55); }
+.pref-pastille[data-c="vert"]   { background: #0f7a6b; }
+.pref-pastille[data-c="bleu"]   { background: #1565c0; }
+.pref-pastille[data-c="violet"] { background: #6a3fb5; }
+.pref-pastille[data-c="orange"] { background: #c2570c; }
+.pref-pastille[data-c="noir"]   { background: #111; border-color: #fff8; }
+.pref-apercu { margin: 12px 0 0; padding: 10px 14px; border-radius: 10px; background: var(--vert-clair); }
+.pref-etat { min-height: 1.5em; margin: 8px 0 0; font-size: .92rem; color: var(--titre); font-weight: 600; }
+.pref-etat.alerte { color: var(--danger); }

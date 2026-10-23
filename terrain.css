@@ -1,7 +1,7 @@
 /* My-QHSE Tools – terrain.css : incidents, inspections, registre EPI */
 .outils-choix { flex-wrap: wrap; }
 .outils-choix .btn { flex: 1 1 45%; }
-.field textarea { width: 100%; font: inherit; padding: 10px; min-height: 84px; border: 1px solid var(--bordure); border-radius: 8px; box-sizing: border-box; }
+.field textarea { width: 100%; font: inherit; padding: 10px; min-height: 84px; border: 1px solid var(--bordure); border-radius: 8px; box-sizing: border-box; background: var(--surface); color: inherit; }
 .t-check { display: grid; gap: 8px; margin-bottom: 14px; }
 .t-check label { font-size: .93rem; }
 .t-check select { width: 100%; margin-top: 2px; }
@@ -13,6 +13,6 @@
 .t-fiche { border: 1px solid var(--bordure); border-radius: 8px; padding: 12px; margin: 10px 0; }
 .t-fiche p { margin: 4px 0; }
 .t-fiche .t-photos { margin: 8px 0; }
-.t-fiche button.t-sup { background: none; border: 0; color: #8a1c1c; text-decoration: underline; font: inherit; padding: 0; }
+.t-fiche button.t-sup { background: none; border: 0; color: var(--danger); text-decoration: underline; font: inherit; padding: 0; }
 .t-cloud input { width: auto; margin-top: 3px; }
 .t-cloud label { font-weight: 400; margin: 0; }
