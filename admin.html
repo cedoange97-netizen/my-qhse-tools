@@ -12,6 +12,8 @@
   body { margin:0; font:16px/1.45 system-ui, sans-serif; color:var(--texte); background:var(--fond); padding:12px; max-width:900px; margin-inline:auto; }
   h1 { font-size:1.3rem; color:var(--vert); margin:.2rem 0 .8rem; }
   h2 { font-size:1.05rem; margin:1.4rem 0 .5rem; color:var(--vert); }
+  h3 { font-size:.95rem; margin:1rem 0 .4rem; }
+  .note { font-size:.85rem; opacity:.85; margin:.3rem 0; }
   form { display:flex; gap:8px; flex-wrap:wrap; }
   input { flex:1 1 200px; padding:12px; font-size:1rem; border:1px solid var(--bord); border-radius:8px; background:var(--fond); color:var(--texte); }
   button { padding:12px 16px; font-size:1rem; border:0; border-radius:8px; background:var(--vert); color:#fff; font-weight:600; }
@@ -37,11 +39,34 @@
 <p id="msg" role="status" aria-live="polite">Saisissez votre jeton. Il n'est ni enregistré ni affiché.</p>
 
 <div id="tableau" class="cache">
+  <h2>Vue d'ensemble</h2>
+  <div class="kpis" id="kpis-global"></div>
+
+  <h2>Quiz</h2>
   <div class="kpis" id="kpis"></div>
-  <h2>Par thème</h2><div class="wrap"><table id="themes"></table></div>
-  <h2>30 derniers jours</h2><div id="jours"></div>
-  <h2>Dernières tentatives</h2><div class="wrap"><table id="tentatives"></table></div>
+  <h3>Par thème</h3><div class="wrap"><table id="themes"></table></div>
+  <h3>30 derniers jours</h3><div id="jours"></div>
+  <h3>Dernières tentatives</h3><div class="wrap"><table id="tentatives"></table></div>
   <p><button class="sec" id="plus" type="button">Voir plus de résultats</button></p>
+
+  <h2>Checklists</h2>
+  <div class="kpis" id="ck-kpis"></div>
+  <div class="wrap"><table id="ck-themes"></table></div>
+
+  <h2>Rapports terrain (photos envoyées)</h2>
+  <p class="note">Seuls les rapports dont l'utilisateur a coché l'envoi des photos dans le cloud apparaissent ici.</p>
+  <div class="wrap"><table id="terrain"></table></div>
+
+  <h2>Usage de l'application</h2>
+  <p class="note" id="usage-msg"></p>
+  <div class="kpis" id="usage-kpis"></div>
+  <h3>Par type d'activité</h3><div class="wrap"><table id="usage-types"></table></div>
+  <h3>Écrans les plus visités</h3><div class="wrap"><table id="usage-ecrans"></table></div>
+  <h3>Outils les plus ouverts</h3><div class="wrap"><table id="usage-outils"></table></div>
+  <h3>Sujets les plus lus</h3><div class="wrap"><table id="usage-sujets"></table></div>
+  <h3>Documents les plus ouverts</h3><div class="wrap"><table id="usage-docs"></table></div>
+  <h3>30 derniers jours (actions)</h3><div id="usage-jours"></div>
+
   <p><button class="sec" id="rafraichir" type="button">Actualiser</button> <button class="sec" id="quitter" type="button">Verrouiller</button></p>
 </div>
 
@@ -92,32 +117,78 @@
     }).catch(function (e) { msg(e.message === "Failed to fetch" ? "Réseau indisponible." : e.message, true); });
   }
 
-  function afficher(stats, liste) {
-    var t = stats.totals || {}, k = $("kpis"); k.textContent = "";
-    [["Tentatives", nb(t.attempts)], ["Participants", nb(t.participants)], ["Score moyen", nb(t.avg_percent, " %")], ["Durée moyenne", duree(t.avg_duration_s)]]
-      .forEach(function (x) { var d = el("div", null, "kpi"); d.appendChild(el("b", x[1])); d.appendChild(el("span", x[0])); k.appendChild(d); });
+  var NOMS_ECRANS = { risques: "Risques (calculateur)", quiz: "Quiz", sujets: "Sujets", outils: "Outils", documents: "Documents", historique: "Historique", liens: "Liens", parametres: "Paramètres", apropos: "À propos" };
+  var NOMS_OUTILS = { causes: "Analyse des causes", glossaire: "Glossaire", incident: "Rapport d'incident", inspection: "Inspection", epi: "EPI", checklists: "Checklists" };
+  var NOMS_TYPES = { ecran: "Écrans visités", outil: "Outils ouverts", sujet: "Sujets lus", doc: "Documents ouverts", calcul: "Calculs de risque" };
+  var NOMS_TERRAIN = { incident: "Incidents", inspection: "Inspections", epi: "EPI" };
 
-    tableau("themes", ["Thème", "Tentatives", "Score moyen"], (stats.byTheme || []).map(function (r) { return [r.theme, r.attempts, nb(r.avg_percent, " %")]; }));
-
-    var j = $("jours"); j.textContent = "";
-    var jours = stats.last30Days || [], max = Math.max.apply(null, [1].concat(jours.map(function (d) { return d.attempts; })));
-    if (!jours.length) j.appendChild(el("p", "Aucune tentative sur les 30 derniers jours."));
+  function kpis(id, paires) {
+    var k = $(id); k.textContent = "";
+    paires.forEach(function (x) { var d = el("div", null, "kpi"); d.appendChild(el("b", x[1])); d.appendChild(el("span", x[0])); k.appendChild(d); });
+  }
+  function barres(id, jours, cle, vide) {
+    var j = $(id); j.textContent = "";
+    var max = Math.max.apply(null, [1].concat(jours.map(function (d) { return d[cle]; })));
+    if (!jours.length) j.appendChild(el("p", vide));
     jours.forEach(function (d) {
       var l = el("div", null, "jour"); l.appendChild(el("span", d.day));
-      var b = el("div", null, "barre"); b.style.width = Math.max(2, Math.round(d.attempts / max * 100)) + "%"; l.appendChild(b);
-      l.appendChild(el("span", d.attempts)); j.appendChild(l);
+      var b = el("div", null, "barre"); b.style.width = Math.max(2, Math.round(d[cle] / max * 100)) + "%"; l.appendChild(b);
+      l.appendChild(el("span", d[cle])); j.appendChild(l);
     });
+  }
 
+  function afficher(stats, liste, ck, photos, usage) {
+    var t = stats.totals || {};
+    var cT = ck && ck.totals ? ck.totals : null, usageOk = !!(usage && usage.available), uT = usageOk ? usage.totals : {};
+    var nbPhotos = photos && photos.byKind ? photos.byKind.reduce(function (a, r) { return a + r.photos; }, 0) : null;
+
+    kpis("kpis-global", [
+      ["Quiz terminés", nb(t.attempts)],
+      ["Checklists envoyées", cT ? nb(cT.attempts) : "–"],
+      ["Photos de rapports", nbPhotos === null ? "–" : nbPhotos],
+      ["Actions suivies (usage)", usageOk ? nb(uT.events) : "–"],
+      ["Visiteurs (usage)", usageOk ? nb(uT.participants) : "–"],
+      ["Participants au quiz", nb(t.participants)]
+    ]);
+
+    kpis("kpis", [["Tentatives", nb(t.attempts)], ["Participants", nb(t.participants)], ["Score moyen", nb(t.avg_percent, " %")], ["Durée moyenne", duree(t.avg_duration_s)]]);
+    tableau("themes", ["Thème", "Tentatives", "Score moyen"], (stats.byTheme || []).map(function (r) { return [r.theme, r.attempts, nb(r.avg_percent, " %")]; }));
+    barres("jours", stats.last30Days || [], "attempts", "Aucune tentative sur les 30 derniers jours.");
     tableau("tentatives", ["Date (UTC)", "Thème", "Score", "Bonnes", "Mauvaises", "Durée", "Participant"], lignesTentatives(liste));
     decalage = (liste.attempts || []).length;
     $("plus").className = decalage < PAGE ? "cache" : "sec";
+
+    kpis("ck-kpis", cT ? [["Résultats", nb(cT.attempts)], ["Participants", nb(cT.participants)], ["Justesse moyenne", nb(cT.avg_accuracy_percent, " %")]] : [["Résultats", "–"]]);
+    tableau("ck-themes", ["Checklist", "Résultats", "Justesse", "Conformité"], ck && ck.byTheme ? ck.byTheme.map(function (r) { return [r.theme_title, r.attempts, nb(r.avg_accuracy_percent, " %"), nb(r.avg_conformity_percent, " %")]; }) : []);
+
+    tableau("terrain", ["Type", "Photos", "Rapports"], photos && photos.byKind ? photos.byKind.map(function (r) { return [NOMS_TERRAIN[r.kind] || r.kind, r.photos, r.reports]; }) : []);
+
+    if (!usageOk) {
+      $("usage-msg").textContent = "Le suivi d'usage n'est pas encore activé sur le serveur (table activity_events à créer, voir outils-admin/schema-activite.sql).";
+      kpis("usage-kpis", []);
+    } else {
+      $("usage-msg").textContent = "Comptage anonyme : seuls le nom de l'écran, de l'outil, du sujet ou du document de la bibliothèque sont enregistrés.";
+      kpis("usage-kpis", [["Actions suivies", nb(uT.events)], ["Visiteurs", nb(uT.participants)]]);
+    }
+    var top = usageOk ? usage.top || [] : [];
+    function haut(kind, noms) { return top.filter(function (r) { return r.kind === kind; }).slice(0, 15).map(function (r) { return [noms ? (noms[r.label] || r.label) : r.label, r.n, r.visitors]; }); }
+    tableau("usage-types", ["Type", "Actions"], usageOk ? (usage.byKind || []).map(function (r) { return [NOMS_TYPES[r.kind] || r.kind, r.n]; }) : []);
+    tableau("usage-ecrans", ["Écran", "Visites", "Visiteurs"], haut("ecran", NOMS_ECRANS));
+    tableau("usage-outils", ["Outil", "Ouvertures", "Visiteurs"], haut("outil", NOMS_OUTILS));
+    tableau("usage-sujets", ["Sujet", "Lectures", "Visiteurs"], haut("sujet"));
+    tableau("usage-docs", ["Document", "Ouvertures", "Visiteurs"], haut("doc"));
+    barres("usage-jours", usageOk ? usage.last30Days || [] : [], "events", "Aucune activité sur les 30 derniers jours.");
+
     $("tableau").className = "";
   }
 
+  function optionnel(chemin) { return appel(chemin).catch(function () { return null; }); }
+
   function charger() {
     msg("Chargement…");
-    return Promise.all([appel("/api/admin/stats"), appel("/api/admin/attempts?limit=" + PAGE)])
-      .then(function (r) { afficher(r[0], r[1]); msg("Données à jour."); })
+    return Promise.all([appel("/api/admin/stats"), appel("/api/admin/attempts?limit=" + PAGE),
+                        optionnel("/api/admin/checklists"), optionnel("/api/admin/photos"), optionnel("/api/admin/activity")])
+      .then(function (r) { afficher(r[0], r[1], r[2], r[3], r[4]); msg("Données à jour."); })
       .catch(function (e) { $("tableau").className = "cache"; msg(e.message === "Failed to fetch" ? "Réseau indisponible." : e.message, true); });
   }
 
