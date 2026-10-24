@@ -24,14 +24,29 @@
   <!-- ===== EN-TÊTE ===== -->
   <header class="barre-haut">
     <div class="wrap barre-in">
+      <button type="button" id="btn-menu" class="btn-menu" aria-label="Ouvrir le menu" data-i18n-aria="menu.ouvrir" aria-controls="tiroir" aria-expanded="false"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M4 7h16M4 12h16M4 17h16"/></svg></button>
       <span class="logo"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M12 2 4 5v6c0 5 3.4 9.4 8 11 4.6-1.6 8-6 8-11V5l-8-3z"/><path d="m9 12 2 2 4-4"/></svg></span>
       <div class="titres">
         <h1 class="brand">My-QHSE <span>Tools</span></h1>
         <p id="titre-ecran" class="sous-titre">Risques</p>
       </div>
-      <button type="button" id="btn-parametres" class="btn-param" data-ecran="parametres" aria-label="Paramètres" data-i18n-aria="param.bouton"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 1 1-4 0v-.09a1.65 1.65 0 0 0-1-1.51 1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 1 1 0-4h.09a1.65 1.65 0 0 0 1.51-1 1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33h0a1.65 1.65 0 0 0 1-1.51V3a2 2 0 1 1 4 0v.09a1.65 1.65 0 0 0 1 1.51h0a1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82v0a1.65 1.65 0 0 0 1.51 1H21a2 2 0 1 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg></button>
     </div>
   </header>
+
+  <!-- ===== MENU LATÉRAL (3 traits) ===== -->
+  <div class="tiroir-voile" id="tiroir-voile"></div>
+  <aside class="tiroir" id="tiroir" aria-label="Menu" data-i18n-aria="menu.titre">
+    <div class="tiroir-tete">
+      <span class="logo"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M12 2 4 5v6c0 5 3.4 9.4 8 11 4.6-1.6 8-6 8-11V5l-8-3z"/><path d="m9 12 2 2 4-4"/></svg></span>
+      <strong class="tiroir-marque">My-QHSE <span>Tools</span></strong>
+      <button type="button" class="tiroir-fermer" id="tiroir-fermer" aria-label="Fermer le menu" data-i18n-aria="menu.fermer"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M6 6l12 12M18 6 6 18"/></svg></button>
+    </div>
+    <nav class="tiroir-liste" aria-label="Menu">
+      <button type="button" class="tiroir-item" data-ecran="liens"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg><span data-i18n="nav.liens">Liens</span><svg class="tiroir-fleche" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="m9 6 6 6-6 6"/></svg></button>
+      <button type="button" class="tiroir-item" data-ecran="historique"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg><span data-i18n="nav.historique">Historique</span><svg class="tiroir-fleche" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="m9 6 6 6-6 6"/></svg></button>
+      <button type="button" class="tiroir-item" data-ecran="parametres"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 1 1-4 0v-.09a1.65 1.65 0 0 0-1-1.51 1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 1 1 0-4h.09a1.65 1.65 0 0 0 1.51-1 1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33h0a1.65 1.65 0 0 0 1-1.51V3a2 2 0 1 1 4 0v.09a1.65 1.65 0 0 0 1 1.51h0a1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82v0a1.65 1.65 0 0 0 1.51 1H21a2 2 0 1 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg><span data-i18n="titre.parametres">Paramètres</span><svg class="tiroir-fleche" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="m9 6 6 6-6 6"/></svg></button>
+    </nav>
+  </aside>
 
   <main class="wrap app">
     <div class="ecran" id="ecran-risques">
@@ -358,8 +373,6 @@
     <button type="button" class="onglet" data-ecran="quiz"><span class="ico"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3M12 17h.01"/></svg></span><span data-i18n="nav.quiz">Quiz</span></button>
     <button type="button" class="onglet" data-ecran="sujets"><span class="ico"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg></span><span data-i18n="nav.sujets">Sujets</span></button>
     <button type="button" class="onglet" data-ecran="outils"><span class="ico"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></svg></span><span data-i18n="nav.outils">Outils</span></button>
-    <button type="button" class="onglet" data-ecran="historique"><span class="ico"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg></span><span data-i18n="nav.historique">Historique</span></button>
-    <button type="button" class="onglet" data-ecran="liens"><span class="ico"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg></span><span data-i18n="nav.liens">Liens</span></button>
   </nav>
 
   <script src="app.js"></script>
@@ -393,7 +406,7 @@
       var ecranCourant = "risques";
       function titre(nom) { return window.QHSEPrefs ? window.QHSEPrefs.t("titre." + nom) : TITRES[nom]; }
       var ANCRES = { risques: "risques", calculateur: "risques", matrice: "risques", quiz: "quiz", sujets: "sujets", bibliotheque: "sujets", outils: "outils", causes: "outils", glossaire: "outils", incident: "outils", inspection: "outils", epi: "outils", checklists: "outils", historique: "historique", liens: "liens", parametres: "parametres", apropos: "apropos" };
-      var boutons = document.querySelectorAll(".onglet, .btn-param, .lien-ecran, .lien-ecran-btn");
+      var boutons = document.querySelectorAll(".onglet, .btn-param, .tiroir-item, .lien-ecran, .lien-ecran-btn");
       function afficher(nom, majUrl) {
         if (NOMS.indexOf(nom) === -1) nom = "risques";
         NOMS.forEach(function (n) { document.getElementById("ecran-" + n).hidden = (n !== nom); });

@@ -99,8 +99,67 @@ html[data-theme="sombre"] .liens-hero { box-shadow: 0 0 0 1px #ffffff22; }
   a.lien-ligne, .lien-copier, .liens-hero .btn-clair, .liens-hero .btn-contour { transition: background-color .15s; }
 }
 
-/* Six onglets dans la barre du bas : libellés un peu plus petits pour que « Historique » tienne en entier */
-@media (max-width: 819px) {
-  .onglet { padding-left: 0; padding-right: 0; letter-spacing: -.01em; font-size: calc(.62rem / var(--echelle, 1) * (1 + (var(--echelle, 1) - 1) * .2)); }
-  .onglet .ico { width: 50px; }
+/* ==========================================================
+   Menu latéral (bouton 3 traits) : Liens, Historique, Paramètres
+   ========================================================== */
+.btn-menu {
+  appearance: none; flex: none; width: 44px; height: 44px; margin-left: -8px; border-radius: 50%;
+  background: transparent; color: var(--sur-entete); border: 0; cursor: pointer;
+  display: grid; place-items: center; -webkit-tap-highlight-color: transparent;
+}
+.btn-menu:hover { background: rgba(255,255,255,.14); }
+.btn-menu svg, .tiroir-fermer svg { width: 26px; height: 26px; fill: none; stroke: currentColor; stroke-width: 2.2; stroke-linecap: round; stroke-linejoin: round; }
+.btn-menu:focus-visible, .tiroir-fermer:focus-visible, .tiroir-item:focus-visible { outline: 3px solid #f2a900; outline-offset: 2px; }
+
+.tiroir-voile {
+  position: fixed; inset: 0; z-index: 90; background: rgba(0,0,0,.5);
+  opacity: 0; visibility: hidden;
+}
+.tiroir {
+  position: fixed; top: 0; bottom: 0; left: 0; z-index: 100;
+  width: min(84vw, 320px); display: flex; flex-direction: column;
+  background: var(--surface); color: var(--texte);
+  box-shadow: 4px 0 24px rgba(0,0,0,.3);
+  padding-bottom: env(safe-area-inset-bottom, 0px);
+  transform: translateX(-100%); visibility: hidden;
+}
+body.tiroir-ouvert .tiroir { transform: none; visibility: visible; }
+body.tiroir-ouvert .tiroir-voile { opacity: 1; visibility: visible; }
+body.tiroir-ouvert { overflow: hidden; }
+
+.tiroir-tete {
+  display: flex; align-items: center; gap: 12px;
+  padding: calc(14px + env(safe-area-inset-top, 0px)) 12px 14px 16px;
+  background: var(--vert-fonce); color: var(--sur-entete);
+}
+.tiroir-marque { flex: 1; font-size: 1.15rem; line-height: 1.2; }
+.tiroir-marque span { font-weight: 400; color: var(--sous-entete); }
+.tiroir-fermer {
+  appearance: none; flex: none; width: 44px; height: 44px; border-radius: 50%;
+  background: transparent; color: var(--sur-entete); border: 0; cursor: pointer; display: grid; place-items: center;
+}
+.tiroir-fermer:hover { background: rgba(255,255,255,.14); }
+
+.tiroir-liste { display: flex; flex-direction: column; padding: 10px 10px; gap: 2px; overflow-y: auto; }
+.tiroir-item {
+  appearance: none; font: inherit; font-size: 1.02rem; font-weight: 600; text-align: left; cursor: pointer;
+  display: flex; align-items: center; gap: 14px; width: 100%; min-height: 52px; padding: 0 12px;
+  background: transparent; color: var(--texte); border: 0; border-radius: 12px;
+  -webkit-tap-highlight-color: transparent;
+}
+.tiroir-item svg { width: 24px; height: 24px; flex: none; fill: none; stroke: var(--titre); stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+.tiroir-item span { flex: 1; }
+.tiroir-item .tiroir-fleche { width: 18px; height: 18px; stroke: var(--gris); stroke-width: 2.5; }
+.tiroir-item:hover { background: var(--vert-clair); }
+.tiroir-item[aria-current="page"] { background: var(--bulle); color: var(--titre); }
+
+/* Ordinateur : plus de roue dentée à droite, les onglets reprennent la place */
+@media (min-width: 820px) {
+  .onglets { right: max(16px, calc((100vw - 920px) / 2 + 16px)); }
+}
+@media (prefers-reduced-motion: no-preference) {
+  .tiroir { transition: transform .25s ease, visibility 0s linear .25s; }
+  body.tiroir-ouvert .tiroir { transition: transform .25s ease, visibility 0s; }
+  .tiroir-voile { transition: opacity .25s ease, visibility 0s linear .25s; }
+  body.tiroir-ouvert .tiroir-voile { transition: opacity .25s ease, visibility 0s; }
 }

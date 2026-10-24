@@ -43,4 +43,32 @@
       copier(url, "Lien de la page copié.");
     }
   });
+
+  /* ----- Menu latéral (3 traits) ----- */
+  var burger = document.getElementById("btn-menu");
+  var tiroir = document.getElementById("tiroir");
+  var voile = document.getElementById("tiroir-voile");
+  var fermer = document.getElementById("tiroir-fermer");
+
+  function ouvrir() {
+    document.body.classList.add("tiroir-ouvert");
+    burger.setAttribute("aria-expanded", "true");
+    setTimeout(function () { var p = tiroir.querySelector(".tiroir-item[aria-current='page']") || tiroir.querySelector(".tiroir-item"); if (p) p.focus(); }, 60);
+  }
+  function fermerTiroir(rendreFocus) {
+    if (!document.body.classList.contains("tiroir-ouvert")) return;
+    document.body.classList.remove("tiroir-ouvert");
+    burger.setAttribute("aria-expanded", "false");
+    if (rendreFocus) burger.focus();
+  }
+  if (burger && tiroir) {
+    burger.addEventListener("click", ouvrir);
+    voile.addEventListener("click", function () { fermerTiroir(true); });
+    fermer.addEventListener("click", function () { fermerTiroir(true); });
+    document.addEventListener("keydown", function (e) { if (e.key === "Escape") fermerTiroir(true); });
+    /* Choisir une page dans le menu : le menu se referme (la navigation est gérée par index.html) */
+    Array.prototype.forEach.call(tiroir.querySelectorAll(".tiroir-item"), function (b) {
+      b.addEventListener("click", function () { fermerTiroir(false); });
+    });
+  }
 })();
