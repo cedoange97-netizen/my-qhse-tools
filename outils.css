@@ -4,8 +4,8 @@
    Les deux premières règles adaptent la barre d'onglets à 5 onglets
    sans modifier style.css.
    ========================================================== */
-.onglets { grid-template-columns: repeat(5, 1fr); }
-@media (min-width: 820px) { .onglets { width: 560px; } }
+.onglets { grid-template-columns: repeat(6, 1fr); }
+@media (min-width: 820px) { .onglets { width: 640px; } .onglet { font-size: .85rem; gap: 6px; } }
 
 .outils-choix { display: flex; gap: 8px; margin: 12px 0 0; }
 .outils-choix .btn { flex: 1; padding: 10px 8px; }

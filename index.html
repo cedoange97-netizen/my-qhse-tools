@@ -13,6 +13,7 @@
   <link rel="stylesheet" href="terrain.css">
   <link rel="stylesheet" href="checklists.css">
   <link rel="stylesheet" href="parametres.css">
+  <link rel="stylesheet" href="liens.css">
   <!-- Préférences (langue, thème, couleur, taille) : appliquées avant l'affichage -->
   <script src="parametres.js"></script>
 </head>
@@ -186,6 +187,91 @@
       </section>
     </div>
 
+    <div class="ecran" id="ecran-liens" hidden>
+      <section id="liens" class="liens-hero" aria-labelledby="t-liens">
+        <div class="liens-id">
+          <img class="liens-logo" width="104" height="104" alt="Logo My-QHSE Afrique : mascotte casquée devant la carte de l’Afrique">
+          <div>
+            <h2 id="t-liens">MY(QHSE)-AFRIQUE</h2>
+            <p class="liens-meta" data-i18n="liens.meta">Chaîne WhatsApp · plus de 1 200 abonnés</p>
+          </div>
+        </div>
+        <p class="liens-texte" data-i18n="liens.texte">Actualités, bonnes pratiques et conseils en qualité, hygiène, sécurité et environnement, pour les professionnels et les passionnés du BTP, des mines et de l’industrie chimique.</p>
+        <div class="liens-hero-actions">
+          <a class="btn-clair" href="https://whatsapp.com/channel/0029Vb7h34L3QxS3fL5i1c3Q" target="_blank" rel="noopener noreferrer"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/></svg><span data-i18n="liens.suivre">Suivre la chaîne WhatsApp</span></a>
+          <a class="btn-contour" href="https://chat.whatsapp.com/EFci0vu3qlZ71zicjbSooZ" target="_blank" rel="noopener noreferrer"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/></svg><span data-i18n="liens.rejoindre">Rejoindre les groupes WhatsApp</span></a>
+          <button type="button" class="btn-contour" id="liens-partager"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><path d="m8.59 13.51 6.83 3.98M15.41 6.51l-6.82 3.98"/></svg><span data-i18n="liens.partager">Partager cette page</span></button>
+        </div>
+      </section>
+
+      <section class="liens-groupe" aria-labelledby="t-lg1">
+        <h3 id="t-lg1" data-i18n="liens.g1">Rejoindre la communauté</h3>
+        <ul class="liens-liste">
+          <li><a class="lien-ligne" href="https://whatsapp.com/channel/0029Vb7h34L3QxS3fL5i1c3Q" target="_blank" rel="noopener noreferrer">
+            <span class="lien-pastille" data-reseau="whatsapp"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/></svg></span>
+            <span class="lien-corps"><strong data-i18n="liens.canal">Chaîne WhatsApp</strong><span data-i18n="liens.canal.d">Actualités et conseils QHSE, directement sur votre téléphone.</span><span class="lien-adresse">whatsapp.com/channel</span></span>
+            <svg class="lien-fleche" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="m9 6 6 6-6 6"/></svg>
+          </a></li>
+          <li><a class="lien-ligne" href="https://chat.whatsapp.com/EFci0vu3qlZ71zicjbSooZ" target="_blank" rel="noopener noreferrer">
+            <span class="lien-pastille" data-reseau="whatsapp"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/></svg></span>
+            <span class="lien-corps"><strong data-i18n="liens.wa">Groupes WhatsApp</strong><span data-i18n="liens.wa.d">Échangez avec d’autres professionnels et étudiants QHSE.</span><span class="lien-adresse">chat.whatsapp.com</span></span>
+            <svg class="lien-fleche" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="m9 6 6 6-6 6"/></svg>
+          </a></li>
+          <li><a class="lien-ligne" href="https://www.facebook.com/profile.php?id=61579781634820" target="_blank" rel="noopener noreferrer">
+            <span class="lien-pastille" data-reseau="facebook"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"/></svg></span>
+            <span class="lien-corps"><strong data-i18n="liens.fb">Page Facebook</strong><span data-i18n="liens.fb.d">Retrouvez nos publications et nos actualités · 7 540 abonnés.</span><span class="lien-adresse">facebook.com</span></span>
+            <svg class="lien-fleche" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="m9 6 6 6-6 6"/></svg>
+          </a></li>
+          <li><a class="lien-ligne" href="https://youtube.com/@my-qhse" target="_blank" rel="noopener noreferrer">
+            <span class="lien-pastille" data-reseau="youtube"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M22.54 6.42a2.78 2.78 0 0 0-1.94-2C18.88 4 12 4 12 4s-6.88 0-8.6.46a2.78 2.78 0 0 0-1.94 2A29 29 0 0 0 1 11.75a29 29 0 0 0 .46 5.33A2.78 2.78 0 0 0 3.4 19c1.72.46 8.6.46 8.6.46s6.88 0 8.6-.46a2.78 2.78 0 0 0 1.94-2 29 29 0 0 0 .46-5.25 29 29 0 0 0-.46-5.33z"/><path d="m9.75 15.02 5.75-3.27-5.75-3.27z"/></svg></span>
+            <span class="lien-corps"><strong data-i18n="liens.yt">Chaîne YouTube</strong><span data-i18n="liens.yt.d">Regardez nos vidéos QHSE.</span><span class="lien-adresse">youtube.com/@my-qhse</span></span>
+            <svg class="lien-fleche" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="m9 6 6 6-6 6"/></svg>
+          </a></li>
+        </ul>
+      </section>
+
+      <section class="liens-groupe" aria-labelledby="t-lg2">
+        <h3 id="t-lg2" data-i18n="liens.g2">Boutique</h3>
+        <ul class="liens-liste">
+          <li><a class="lien-ligne" href="https://xynljdne.mychariow.shop" target="_blank" rel="noopener noreferrer">
+            <span class="lien-pastille" data-reseau="shop"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><path d="M3 6h18M16 10a4 4 0 0 1-8 0"/></svg></span>
+            <span class="lien-corps"><strong data-i18n="liens.shop">Notre boutique en ligne</strong><span data-i18n="liens.shop.d">Découvrez nos produits et passez commande.</span><span class="lien-adresse">xynljdne.mychariow.shop</span></span>
+            <svg class="lien-fleche" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="m9 6 6 6-6 6"/></svg>
+          </a></li>
+        </ul>
+      </section>
+
+      <section class="liens-groupe" aria-labelledby="t-lg3">
+        <h3 id="t-lg3" data-i18n="liens.g3">Nous contacter</h3>
+        <ul class="liens-liste">
+          <li><a class="lien-ligne" href="https://wa.me/qr/4YBMRFYHVE6BH1?s=v" target="_blank" rel="noopener noreferrer">
+            <span class="lien-pastille" data-reseau="whatsapp"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/></svg></span>
+            <span class="lien-corps"><strong data-i18n="liens.contact">Écrire sur WhatsApp</strong><span data-i18n="liens.contact.d">Posez-nous vos questions directement.</span><span class="lien-adresse">wa.me</span></span>
+            <svg class="lien-fleche" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="m9 6 6 6-6 6"/></svg>
+          </a></li>
+          <li class="lien-ligne">
+            <span class="lien-pastille" data-reseau="mail"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><path d="m22 6-10 7L2 6"/></svg></span>
+            <span class="lien-corps"><strong data-i18n="liens.mail">Adresse e-mail</strong><a href="mailto:myqhse2@gmail.com" class="lien-adresse" style="color:var(--titre);font-weight:600">myqhse2@gmail.com</a></span>
+            <button type="button" class="lien-copier" id="liens-copier-mail" data-i18n="liens.copier">Copier</button>
+          </li>
+        </ul>
+        <p id="liens-etat" class="liens-etat" role="status" aria-live="polite"></p>
+      </section>
+
+      <div class="liens-pied">
+        <div class="apropos-devise bulle">
+          <small data-i18n="apropos.devise.label">Notre devise</small>
+          <strong data-i18n="apropos.devise">Prévenir, protéger et progresser ensemble.</strong>
+        </div>
+        <section class="card">
+          <button type="button" class="lien-ecran" data-ecran="apropos">
+            <span class="lien-txt"><strong data-i18n="param.apropos">À propos de My-QHSE Afrique</strong><small data-i18n="param.apropos.aide">Notre mission et notre application.</small></span>
+            <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="m9 6 6 6-6 6"/></svg>
+          </button>
+        </section>
+      </div>
+    </div>
+
     <div class="ecran" id="ecran-parametres" hidden>
       <section id="parametres" class="card" aria-labelledby="t-param">
         <h2 id="t-param" data-i18n="param.titre">Paramètres</h2>
@@ -273,6 +359,7 @@
     <button type="button" class="onglet" data-ecran="sujets"><span class="ico"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg></span><span data-i18n="nav.sujets">Sujets</span></button>
     <button type="button" class="onglet" data-ecran="outils"><span class="ico"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></svg></span><span data-i18n="nav.outils">Outils</span></button>
     <button type="button" class="onglet" data-ecran="historique"><span class="ico"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg></span><span data-i18n="nav.historique">Historique</span></button>
+    <button type="button" class="onglet" data-ecran="liens"><span class="ico"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg></span><span data-i18n="nav.liens">Liens</span></button>
   </nav>
 
   <script src="app.js"></script>
@@ -294,16 +381,18 @@
   <script src="checklists-data-3.js"></script>
   <script src="checklists.js"></script>
   <script src="quiz.js"></script>
+  <script src="logo-myqhse.js"></script>
+  <script src="liens.js"></script>
 
   <script>
     /* Navigation par onglets : un seul écran affiché à la fois.
        N'agit que sur l'affichage : calculateur, quiz et bibliothèque restent gérés par leurs propres fichiers. */
     (function () {
-      var NOMS = ["risques", "quiz", "sujets", "outils", "historique", "parametres", "apropos"];
-      var TITRES = { risques: "Risques", quiz: "Quiz QHSE", sujets: "Sujets QHSE", outils: "Outils QHSE", historique: "Historique", parametres: "Paramètres", apropos: "À propos" };
+      var NOMS = ["risques", "quiz", "sujets", "outils", "historique", "liens", "parametres", "apropos"];
+      var TITRES = { risques: "Risques", quiz: "Quiz QHSE", sujets: "Sujets QHSE", outils: "Outils QHSE", historique: "Historique", liens: "Liens", parametres: "Paramètres", apropos: "À propos" };
       var ecranCourant = "risques";
       function titre(nom) { return window.QHSEPrefs ? window.QHSEPrefs.t("titre." + nom) : TITRES[nom]; }
-      var ANCRES = { risques: "risques", calculateur: "risques", matrice: "risques", quiz: "quiz", sujets: "sujets", bibliotheque: "sujets", outils: "outils", causes: "outils", glossaire: "outils", incident: "outils", inspection: "outils", epi: "outils", checklists: "outils", historique: "historique", parametres: "parametres", apropos: "apropos" };
+      var ANCRES = { risques: "risques", calculateur: "risques", matrice: "risques", quiz: "quiz", sujets: "sujets", bibliotheque: "sujets", outils: "outils", causes: "outils", glossaire: "outils", incident: "outils", inspection: "outils", epi: "outils", checklists: "outils", historique: "historique", liens: "liens", parametres: "parametres", apropos: "apropos" };
       var boutons = document.querySelectorAll(".onglet, .btn-param, .lien-ecran, .lien-ecran-btn");
       function afficher(nom, majUrl) {
         if (NOMS.indexOf(nom) === -1) nom = "risques";
