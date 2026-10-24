@@ -1,11 +1,15 @@
 // My-QHSE Tools API — Cloudflare Worker (liaison D1 : DB, secret : ADMIN_TOKEN)
-const ALLOWED_ORIGIN = "https://cedoange97-netizen.github.io";
+const ALLOWED_ORIGINS = [
+  "https://myqhse2-blip.github.io",      // nouveau site
+  "https://cedoange97-netizen.github.io" // ancien site (à retirer une fois la migration terminée)
+];
 const MAX_BODY = 20000;
 const MAX_PHOTO = 450000;                          // taille max d'une photo (JSON)
 const PHOTO_LIMIT = { max: 30, windowSec: 600 };   // 30 photos / 10 min / IP
 const POST_LIMIT = { max: 10, windowSec: 600 };   // 10 envois / 10 min / IP
 const CK_LIMIT = { max: 20, windowSec: 600 };     // 20 résultats de checklist / 10 min / IP
-const ADMIN_LIMIT = { max: 20, windowSec: 600 };  // 20 requêtes admin / 10 min / IP
+const ADMIN_LIMIT = { max: 40, windowSec: 600 };  // 40 requêtes admin / 10 min / IP
+const EV_LIMIT = { max: 60, windowSec: 600 };     // 60 envois d'activité / 10 min / IP
 
 const enc = new TextEncoder();
 const sha256 = async (s) => new Uint8Array(await crypto.subtle.digest("SHA-256", enc.encode(s)));
@@ -75,16 +79,30 @@ function validateChecklist(d) {
   return null;
 }
 
+// Activité d'usage (anonyme) : écrans, outils, sujets, documents, calculs. Table : activity_events (voir schema-activite.sql)
+const EV_KINDS = ["ecran", "outil", "sujet", "doc", "calcul"];
+function validateEvents(d) {
+  if (!d || typeof d !== "object") return "Corps JSON invalide";
+  if (d.participantId !== undefined && !/^[A-Za-z0-9_-]{1,64}$/.test(d.participantId)) return "participantId invalide";
+  if (!Array.isArray(d.events) || d.events.length < 1 || d.events.length > 20) return "events invalide";
+  for (const e of d.events) {
+    if (!e || !EV_KINDS.includes(e.kind)) return "kind invalide";
+    if (e.label !== undefined && (typeof e.label !== "string" || e.label.length > 100)) return "label invalide";
+  }
+  return null;
+}
+
 export default {
   async fetch(request, env) {
     const origin = request.headers.get("Origin");
+    const originOk = ALLOWED_ORIGINS.includes(origin);
     const headers = {
       "Content-Type": "application/json; charset=utf-8",
       "Cache-Control": "no-store",
       "X-Content-Type-Options": "nosniff",
       "Vary": "Origin",
-      ...(origin === ALLOWED_ORIGIN ? {
-        "Access-Control-Allow-Origin": ALLOWED_ORIGIN,
+      ...(originOk ? {
+        "Access-Control-Allow-Origin": origin,
         "Access-Control-Allow-Methods": "GET, POST, OPTIONS",
         "Access-Control-Allow-Headers": "Content-Type, Authorization",
         "Access-Control-Max-Age": "86400"
@@ -93,7 +111,7 @@ export default {
     const respond = (data, status = 200, extra = {}) =>
       new Response(JSON.stringify(data), { status, headers: { ...headers, ...extra } });
 
-    if (origin && origin !== ALLOWED_ORIGIN) return respond({ error: "Origine non autorisée" }, 403);
+    if (origin && !originOk) return respond({ error: "Origine non autorisée" }, 403);
     if (request.method === "OPTIONS") return new Response(null, { status: 204, headers });
 
     const url = new URL(request.url);
@@ -177,6 +195,22 @@ export default {
         return respond({ success: true, message: created ? "Résultat enregistré" : "Résultat déjà enregistré" }, created ? 201 : 200);
       }
 
+      // ---- Activité d'usage (anonyme, sans contenu personnel) ----
+      if (request.method === "POST" && path === "/api/events") {
+        if (!(request.headers.get("Content-Type") || "").includes("application/json")) return respond({ error: "Format JSON requis" }, 415);
+        if (Number(request.headers.get("Content-Length") || 0) > MAX_BODY) return respond({ error: "Données trop volumineuses" }, 413);
+        if (!(await rateLimit(env, "ev:" + ipHash, EV_LIMIT))) return respond({ error: "Trop de requêtes, réessayez plus tard" }, 429, { "Retry-After": "600" });
+        const raw = await request.text();
+        if (raw.length > MAX_BODY) return respond({ error: "Données trop volumineuses" }, 413);
+        let d;
+        try { d = JSON.parse(raw); } catch { return respond({ error: "JSON invalide" }, 400); }
+        const err = validateEvents(d);
+        if (err) return respond({ error: "Données d'activité invalides : " + err }, 400);
+        const ins = env.DB.prepare("INSERT INTO activity_events (participant_id, kind, label) VALUES (?, ?, ?)");
+        await env.DB.batch(d.events.map((e) => ins.bind(d.participantId ?? null, e.kind, ((e.label || "").trim().slice(0, 100)) || null)));
+        return respond({ success: true }, 201);
+      }
+
       // ---- Administration ----
       if (path.startsWith("/api/admin/")) {
         if (request.method !== "GET") return respond({ error: "Méthode non autorisée" }, 405);
@@ -215,8 +249,22 @@ export default {
           return respond({ totals: tot, byTheme: byTheme.results });
         }
         if (path === "/api/admin/photos") {
-          const r = await env.DB.prepare("SELECT id, participant_id, kind, report_ref, length(data) AS size, created_at FROM photos ORDER BY id DESC LIMIT 100").all();
-          return respond({ photos: r.results });
+          const [r, k] = await Promise.all([
+            env.DB.prepare("SELECT id, participant_id, kind, report_ref, length(data) AS size, created_at FROM photos ORDER BY id DESC LIMIT 100").all(),
+            env.DB.prepare("SELECT kind, COUNT(*) AS photos, COUNT(DISTINCT report_ref) AS reports FROM photos GROUP BY kind ORDER BY photos DESC").all()
+          ]);
+          return respond({ photos: r.results, byKind: k.results });
+        }
+        if (path === "/api/admin/activity") {
+          try {
+            const [tot, byKind, top, byDay] = await Promise.all([
+              env.DB.prepare("SELECT COUNT(*) AS events, COUNT(DISTINCT participant_id) AS participants FROM activity_events").first(),
+              env.DB.prepare("SELECT kind, COUNT(*) AS n FROM activity_events GROUP BY kind ORDER BY n DESC").all(),
+              env.DB.prepare("SELECT kind, label, COUNT(*) AS n, COUNT(DISTINCT participant_id) AS visitors FROM activity_events WHERE label IS NOT NULL GROUP BY kind, label ORDER BY n DESC LIMIT 80").all(),
+              env.DB.prepare("SELECT substr(created_at,1,10) AS day, COUNT(*) AS events, COUNT(DISTINCT participant_id) AS visitors FROM activity_events WHERE created_at >= date('now','-30 day') GROUP BY day ORDER BY day").all()
+            ]);
+            return respond({ available: true, totals: tot, byKind: byKind.results, top: top.results, last30Days: byDay.results });
+          } catch (e) { return respond({ available: false }); }   // table pas encore créée
         }
         if (path === "/api/admin/photo") {
           const id = parseInt(url.searchParams.get("id") || "", 10);
