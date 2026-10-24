@@ -1,0 +1,16 @@
+name: Corriger l'alerte liens.css
+on: workflow_dispatch
+permissions:
+  contents: write
+jobs:
+  corriger:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: |
+          sed -i 's#link\[href^="liens\.css"\]#link[href*="liens.css"]#' index.html
+          git config user.name "rangement"
+          git config user.email "rangement@users.noreply.github.com"
+          git add -A
+          git commit -m "Corrige le contrôle de chargement de liens.css"
+          git push
