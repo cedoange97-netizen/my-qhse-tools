@@ -20,10 +20,10 @@
   function typeDe(d) {
     if (d.type) return d.type;
     var ext = (String(d.fichier && d.fichier.name ? d.fichier.name : d.fichier || "").split("?")[0].split(".").pop() || "").toLowerCase();
-    return ext === "docx" ? "word" : (ext === "xlsx" || ext === "xlsm") ? "excel" : "autre";
+    return ext === "docx" ? "word" : (ext === "xlsx" || ext === "xlsm") ? "excel" : ext === "pdf" ? "pdf" : "autre";
   }
-  var LIBELLES = { word: "Document Word", excel: "Classeur Excel", pages: "Document PDF", autre: "Document" };
-  var BADGES = { word: "W", excel: "X", pages: "PDF", autre: "?" };
+  var LIBELLES = { word: "Document Word", excel: "Classeur Excel", pages: "Document PDF", pdf: "Document PDF", autre: "Document" };
+  var BADGES = { word: "W", excel: "X", pages: "PDF", pdf: "PDF", autre: "?" };
   function el(nom, classe, texte) { var e = document.createElement(nom); if (classe) e.className = classe; if (texte) e.textContent = texte; return e; }
   function admin() { return !!(Acces && Acces.actif()); }
   function reserve(d) { return d.acces === "admin"; }
@@ -72,7 +72,7 @@
     if (nBientot) parties.push(nBientot + (nBientot > 1 ? " bientôt disponibles" : " bientôt disponible"));
     compte.textContent = parties.join(" · ");
     vide.hidden = res.length > 0;
-    vide.textContent = docs.length ? "Aucun document ne correspond à votre recherche." : "Aucun document pour le moment. Ils seront ajoutés prochainement. Vous pouvez déjà ouvrir un fichier Word ou Excel de votre appareil ci-dessous.";
+    vide.textContent = docs.length ? "Aucun document ne correspond à votre recherche." : "Aucun document pour le moment. Ils seront ajoutés prochainement. Vous pouvez déjà ouvrir un fichier Word, Excel ou PDF de votre appareil ci-dessous.";
   }
 
   /* ----- Lecteur ----- */
@@ -123,6 +123,9 @@
     }
     if (mon !== jeton) return;
     try {
+      var t4 = new Uint8Array(buffer.slice(0, 4));
+      var estPdf = t4[0] === 0x25 && t4[1] === 0x50 && t4[2] === 0x44 && t4[3] === 0x46;
+      if (src.type === "pdf" || estPdf) { await afficherPdf(buffer, mon); if (mon === jeton) { etat.textContent = ""; reessayer.hidden = true; } return; }
       if (src.type === "pages") { afficherPages(buffer); etat.textContent = ""; reessayer.hidden = true; return; }
       var doc = await window.QHSEOffice.lire(buffer);
       if (mon !== jeton) { if (doc.liberer) doc.liberer(); return; }
@@ -132,6 +135,68 @@
     } catch (e) {
       if (mon !== jeton) return;
       message((e && e.message) || "Ce document n’a pas pu être lu.", true, false);
+    }
+  }
+
+  /* ----- Lecteur PDF (pdf.js, chargé seulement à l'ouverture d'un PDF) ----- */
+  var PDFJS = "https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/", pdfjsPret = null;
+  function chargerPdfJs() {
+    if (window.pdfjsLib) return Promise.resolve(window.pdfjsLib);
+    if (!pdfjsPret) pdfjsPret = new Promise(function (ok, ko) {
+      var sc = document.createElement("script"); sc.src = PDFJS + "pdf.min.js"; sc.async = true;
+      sc.onload = function () {
+        if (window.pdfjsLib) { window.pdfjsLib.GlobalWorkerOptions.workerSrc = PDFJS + "pdf.worker.min.js"; ok(window.pdfjsLib); }
+        else { pdfjsPret = null; ko(new Error("pdfjs")); }
+      };
+      sc.onerror = function () { pdfjsPret = null; ko(new Error("pdfjs")); };
+      document.head.appendChild(sc);
+    });
+    return pdfjsPret;
+  }
+  async function afficherPdf(buffer, mon) {
+    var lib;
+    try { lib = await chargerPdfJs(); }
+    catch (e) { throw new Error("Le lecteur PDF n’a pas pu être chargé. Vérifiez votre connexion internet puis réessayez."); }
+    if (mon !== jeton) return;
+    var pdf;
+    try { pdf = await lib.getDocument({ data: new Uint8Array(buffer) }).promise; }
+    catch (e) { throw new Error(e && e.name === "PasswordException" ? "Ce PDF est protégé par un mot de passe : il ne peut pas être ouvert ici." : "Ce PDF n’a pas pu être lu. Il est peut-être endommagé."); }
+    if (mon !== jeton) { try { pdf.destroy(); } catch (e) {} return; }
+    var n = pdf.numPages, dpr = Math.min(window.devicePixelRatio || 1, 2);
+    var largeur = Math.min(1400, Math.round((page.clientWidth || 360) * dpr * 1.6));
+    var premiere = await pdf.getPage(1), v1 = premiere.getViewport({ scale: 1 });
+    var ratio = v1.width + " / " + v1.height, file = Promise.resolve(), obs = null, rendu = {};
+    page.className = "doc-page doc-page-pages";
+    ouvert = { liberer: function () { if (obs) obs.disconnect(); try { pdf.destroy(); } catch (e) {} } };
+    function dessiner(i, cv) {
+      file = file.then(async function () {
+        if (mon !== jeton || rendu[i] || !cv._vu) return;
+        try {
+          var p = await pdf.getPage(i), v0 = p.getViewport({ scale: 1 }), v = p.getViewport({ scale: largeur / v0.width });
+          cv.width = Math.round(v.width); cv.height = Math.round(v.height);
+          cv.style.aspectRatio = v0.width + " / " + v0.height;
+          await p.render({ canvasContext: cv.getContext("2d"), viewport: v }).promise;
+          rendu[i] = true;
+        } catch (e) { /* page ignorée : elle sera retentée au prochain passage */ }
+      });
+    }
+    function liberer(i, cv) { if (rendu[i]) { rendu[i] = false; cv.width = 1; cv.height = 1; } }
+    if (window.IntersectionObserver) {
+      obs = new IntersectionObserver(function (entrees) {
+        entrees.forEach(function (en) {
+          var cv = en.target, i = cv._num;
+          cv._vu = en.isIntersecting;
+          if (en.isIntersecting) dessiner(i, cv); else liberer(i, cv);
+        });
+      }, { rootMargin: "1200px 0px" });
+    }
+    for (var i = 1; i <= n; i++) {
+      var fig = el("figure", "doc-feuillet"), cv = el("canvas", "doc-pageimg");
+      cv._num = i; cv._vu = !obs; cv.style.aspectRatio = ratio;
+      cv.setAttribute("role", "img"); cv.setAttribute("aria-label", "Page " + i + " sur " + n);
+      fig.appendChild(cv); fig.appendChild(el("figcaption", "", "Page " + i + " / " + n));
+      page.appendChild(fig);
+      if (obs) obs.observe(cv); else dessiner(i, cv);
     }
   }
 

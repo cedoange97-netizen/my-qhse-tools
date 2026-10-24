@@ -63,7 +63,7 @@
     }
     var i = u.length - 22, min = Math.max(0, u.length - 65557);
     for (; i >= min; i--) if (dv.getUint32(i, true) === 0x06054b50) break;
-    if (i < min) throw new Error("Fichier non reconnu : seuls les documents Word (.docx) et Excel (.xlsx) sont pris en charge.");
+    if (i < min) throw new Error("Fichier non reconnu : seuls les documents Word (.docx), Excel (.xlsx) et PDF sont pris en charge.");
     var n = dv.getUint16(i + 10, true), off = dv.getUint32(i + 16, true), fichiers = {};
     for (var k = 0; k < n; k++) {
       if (dv.getUint32(off, true) !== 0x02014b50) break;
@@ -678,7 +678,7 @@
       var zip = await lireZip(buffer);
       if (zip.existe("word/document.xml")) return lireDocx(zip);
       if (zip.existe("xl/workbook.xml")) return lireXlsx(zip);
-      throw new Error("Fichier non reconnu : seuls les documents Word (.docx) et Excel (.xlsx) sont pris en charge.");
+      throw new Error("Fichier non reconnu : seuls les documents Word (.docx), Excel (.xlsx) et PDF sont pris en charge.");
     }
   };
 })();
