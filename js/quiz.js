@@ -455,5 +455,5 @@
   majOnglet();   // affiche l’historique dans l’onglet « Historique »
 
   // Synchronisation centrale des résultats (facultative : le quiz fonctionne sans).
-  try { const s = document.createElement("script"); s.src = "cloud-sync.js"; s.async = true; document.head.appendChild(s); } catch (e) { /* ignoré */ }
+  try { const s = document.createElement("script"); s.src = "js/cloud-sync.js"; s.async = true; document.head.appendChild(s); } catch (e) { /* ignoré */ }
 })();

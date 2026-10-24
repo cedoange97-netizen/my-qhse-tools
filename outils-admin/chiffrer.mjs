@@ -11,7 +11,7 @@ if (!entree || !sortie || !code) {
   console.error('Usage : QHSE_CODE="XXXX-XXXX-XXXX-XXXX" node chiffrer.mjs <fichier> <fichier.enc>');
   process.exit(1);
 }
-const conf = readFileSync(new URL("../documents-acces.js", import.meta.url), "utf8");
+const conf = readFileSync(new URL("../js/documents-acces.js", import.meta.url), "utf8");
 const sel = Buffer.from(/sel:\s*"([^"]+)"/.exec(conf)[1], "base64");
 const iterations = parseInt(/iterations:\s*(\d+)/.exec(conf)[1], 10);
 
