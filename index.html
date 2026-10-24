@@ -6,13 +6,13 @@
   <title>My-QHSE Tools – Calculateur de risques professionnels</title>
   <meta name="description" content="Outil gratuit d'évaluation des risques professionnels (matrice 5 × 5) pour les étudiants et professionnels QHSE.">
   <meta name="theme-color" content="#075e54">
-  <link rel="stylesheet" href="style.css">
-  <link rel="stylesheet" href="quiz.css">
-  <link rel="stylesheet" href="bibliotheque.css">
-  <link rel="stylesheet" href="outils.css">
-  <link rel="stylesheet" href="terrain.css">
-  <link rel="stylesheet" href="checklists.css">
-  <link rel="stylesheet" href="parametres.css">
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/quiz.css">
+  <link rel="stylesheet" href="css/bibliotheque.css">
+  <link rel="stylesheet" href="css/outils.css">
+  <link rel="stylesheet" href="css/terrain.css">
+  <link rel="stylesheet" href="css/checklists.css">
+  <link rel="stylesheet" href="css/parametres.css">
   <style id="style-menu">
 /* ==========================================================
    Menu latéral (bouton 3 traits) : Liens, Historique, Paramètres
@@ -79,10 +79,10 @@ body.tiroir-ouvert { overflow: hidden; }
   body.tiroir-ouvert .tiroir-voile { transition: opacity .25s ease, visibility 0s; }
 }
   </style>
-  <link rel="stylesheet" href="liens.css?v=2">
-  <link rel="stylesheet" href="documents.css?v=2">
+  <link rel="stylesheet" href="css/liens.css?v=2">
+  <link rel="stylesheet" href="css/documents.css?v=2">
   <!-- Préférences (langue, thème, couleur, taille) : appliquées avant l'affichage -->
-  <script src="parametres.js"></script>
+  <script src="js/parametres.js"></script>
 </head>
 <body>
 
@@ -256,8 +256,8 @@ body.tiroir-ouvert { overflow: hidden; }
           <p id="doc-vide" class="aide" hidden></p>
           <div class="doc-local">
             <button type="button" class="btn btn-sec" id="doc-ouvrir-local">Ouvrir un fichier de mon appareil</button>
-            <input type="file" id="doc-fichier" hidden accept=".docx,.xlsx,.xlsm,application/vnd.openxmlformats-officedocument.wordprocessingml.document,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet">
-            <p class="aide">Word (.docx) et Excel (.xlsx). Le fichier est lu sur votre appareil, il n’est envoyé nulle part.</p>
+            <input type="file" id="doc-fichier" hidden>
+            <p class="aide">Word (.docx), Excel (.xlsx) et PDF. Le fichier est lu sur votre appareil, il n’est envoyé nulle part.</p>
           </div>
           <div id="doc-admin" class="doc-admin" hidden>
             <div id="doc-admin-actif" class="doc-admin-actif" hidden>
@@ -493,31 +493,31 @@ body.tiroir-ouvert { overflow: hidden; }
     <button type="button" class="onglet" data-ecran="documents"><span class="ico"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6M8 13h8M8 17h8M8 9h2"/></svg></span><span data-i18n="nav.documents">Docs</span></button>
   </nav>
 
-  <script src="app.js"></script>
-  <script src="sujets.js"></script>
-  <script src="bibliotheque.js"></script>
-  <script src="banque-management.js"></script>
-  <script src="banque-qualite.js"></script>
-  <script src="banque-sante-securite.js"></script>
-  <script src="banque-hygiene.js"></script>
-  <script src="banque-environnement.js"></script>
-  <script src="banque-transversal.js"></script>
-  <script src="banque-livret.js"></script>
-  <script src="images-livret.js"></script>
-  <script src="causes.js"></script>
-  <script src="glossaire.js"></script>
-  <script src="terrain.js"></script>
-  <script src="checklists-data-1.js"></script>
-  <script src="checklists-data-2.js"></script>
-  <script src="checklists-data-3.js"></script>
-  <script src="checklists.js"></script>
-  <script src="quiz.js"></script>
-  <script src="logo-myqhse.js?v=2"></script>
-  <script src="lecteur-office.js?v=2"></script>
-  <script src="documents-liste.js?v=2"></script>
-  <script src="documents-acces.js?v=1"></script>
-  <script src="documents.js?v=2"></script>
-  <script src="liens.js?v=2"></script>
+  <script src="js/app.js"></script>
+  <script src="js/data/sujets.js"></script>
+  <script src="js/bibliotheque.js"></script>
+  <script src="js/data/banque-management.js"></script>
+  <script src="js/data/banque-qualite.js"></script>
+  <script src="js/data/banque-sante-securite.js"></script>
+  <script src="js/data/banque-hygiene.js"></script>
+  <script src="js/data/banque-environnement.js"></script>
+  <script src="js/data/banque-transversal.js"></script>
+  <script src="js/data/banque-livret.js"></script>
+  <script src="js/data/images-livret.js"></script>
+  <script src="js/data/causes.js"></script>
+  <script src="js/data/glossaire.js"></script>
+  <script src="js/terrain.js"></script>
+  <script src="js/data/checklists-data-1.js"></script>
+  <script src="js/data/checklists-data-2.js"></script>
+  <script src="js/data/checklists-data-3.js"></script>
+  <script src="js/checklists.js"></script>
+  <script src="js/quiz.js"></script>
+  <script src="js/data/logo-myqhse.js?v=2"></script>
+  <script src="js/lecteur-office.js?v=3"></script>
+  <script src="js/data/documents-liste.js?v=2"></script>
+  <script src="js/documents-acces.js?v=1"></script>
+  <script src="js/documents.js?v=4"></script>
+  <script src="js/liens.js?v=2"></script>
 
   <script>
     /* Navigation par onglets : un seul écran affiché à la fois.
@@ -579,7 +579,7 @@ body.tiroir-ouvert { overflow: hidden; }
     window.addEventListener("load", function () {
       var cssOk = getComputedStyle(document.documentElement).getPropertyValue("--surface").trim() !== "";   /* variable définie par style.css, valable dans tous les thèmes */
       var jsOk = typeof calculerScore === "function";
-      var liensOk = !!document.querySelector('link[href^="liens.css"]') && Array.prototype.some.call(document.styleSheets, function (f) { try { return f.href && /liens\.css/.test(f.href) && f.cssRules.length > 0; } catch (e) { return true; } });
+      var liensOk = !!document.querySelector('link[href*="liens.css"]') && Array.prototype.some.call(document.styleSheets, function (f) { try { return f.href && /liens\.css/.test(f.href) && f.cssRules.length > 0; } catch (e) { return true; } });
       if (cssOk && jsOk && liensOk) return;
       var b = document.createElement("div");
       b.setAttribute("role", "alert");
@@ -589,5 +589,6 @@ body.tiroir-ouvert { overflow: hidden; }
       document.body.insertBefore(b, document.body.firstChild);
     });
   </script>
+  <script src="js/activite.js?v=1"></script>
 </body>
 </html>
