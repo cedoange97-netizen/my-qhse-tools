@@ -579,7 +579,7 @@ body.tiroir-ouvert { overflow: hidden; }
     window.addEventListener("load", function () {
       var cssOk = getComputedStyle(document.documentElement).getPropertyValue("--surface").trim() !== "";   /* variable définie par style.css, valable dans tous les thèmes */
       var jsOk = typeof calculerScore === "function";
-      var liensOk = !!document.querySelector('link[href^="liens.css"]') && Array.prototype.some.call(document.styleSheets, function (f) { try { return f.href && /liens\.css/.test(f.href) && f.cssRules.length > 0; } catch (e) { return true; } });
+      var liensOk = !!document.querySelector('link[href*="liens.css"]') && Array.prototype.some.call(document.styleSheets, function (f) { try { return f.href && /liens\.css/.test(f.href) && f.cssRules.length > 0; } catch (e) { return true; } });
       if (cssOk && jsOk && liensOk) return;
       var b = document.createElement("div");
       b.setAttribute("role", "alert");
