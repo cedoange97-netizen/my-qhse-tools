@@ -80,6 +80,7 @@ body.tiroir-ouvert { overflow: hidden; }
 }
   </style>
   <link rel="stylesheet" href="liens.css?v=2">
+  <link rel="stylesheet" href="documents.css?v=2">
   <!-- Préférences (langue, thème, couleur, taille) : appliquées avant l'affichage -->
   <script src="parametres.js"></script>
 </head>
@@ -237,6 +238,56 @@ body.tiroir-ouvert { overflow: hidden; }
         <h2 id="t-epi">Registre des EPI et formations</h2>
         <p class="aide">Suivez les dates d'expiration : les fiches passent en orange 30 jours avant, puis en rouge.</p>
         <div id="epi-zone"></div>
+      </section>
+    </div>
+
+    <div class="ecran" id="ecran-documents" hidden>
+      <section id="documents" class="card" aria-labelledby="t-doc">
+        <h2 id="t-doc" data-i18n="titre.documents">Bibliothèque de documents</h2>
+        <div id="doc-zone-liste">
+          <p class="aide" data-i18n="doc.aide">Consultez les documents Word et Excel directement dans l’application, sans les télécharger.</p>
+          <div class="field">
+            <label for="doc-recherche">Rechercher un document</label>
+            <input id="doc-recherche" type="search" placeholder="Ex. : audit, procédure, registre" autocomplete="off">
+          </div>
+          <div id="doc-categories" class="doc-categories" role="group" aria-label="Catégories" hidden></div>
+          <p id="doc-compte" class="aide" aria-live="polite"></p>
+          <ul id="doc-liste" class="doc-liste"></ul>
+          <p id="doc-vide" class="aide" hidden></p>
+          <div class="doc-local">
+            <button type="button" class="btn btn-sec" id="doc-ouvrir-local">Ouvrir un fichier de mon appareil</button>
+            <input type="file" id="doc-fichier" hidden accept=".docx,.xlsx,.xlsm,application/vnd.openxmlformats-officedocument.wordprocessingml.document,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet">
+            <p class="aide">Word (.docx) et Excel (.xlsx). Le fichier est lu sur votre appareil, il n’est envoyé nulle part.</p>
+          </div>
+          <div id="doc-admin" class="doc-admin" hidden>
+            <div id="doc-admin-actif" class="doc-admin-actif" hidden>
+              <span>Mode administrateur activé</span>
+              <button type="button" class="btn btn-sec" id="doc-admin-verrou">Verrouiller</button>
+            </div>
+            <button type="button" class="doc-admin-lien" id="doc-admin-ouvrir" aria-expanded="false" aria-controls="doc-admin-form">Accès administrateur</button>
+            <div id="doc-admin-form" class="doc-admin-form" hidden>
+              <label for="doc-admin-code">Code administrateur</label>
+              <input id="doc-admin-code" type="password" autocomplete="off" autocapitalize="characters" spellcheck="false" placeholder="XXXX-XXXX-XXXX-XXXX">
+              <button type="button" class="btn" id="doc-admin-valider">Déverrouiller</button>
+              <p id="doc-admin-msg" class="doc-etat" role="status"></p>
+            </div>
+          </div>
+        </div>
+        <div id="doc-lecture" hidden>
+          <div class="doc-barre">
+            <button type="button" class="btn btn-sec" id="doc-retour">← Retour à la liste</button>
+            <div class="doc-zoom" role="group" aria-label="Taille du texte du document">
+              <button type="button" id="doc-moins" aria-label="Réduire le texte du document">A−</button>
+              <button type="button" id="doc-plus" aria-label="Agrandir le texte du document">A+</button>
+            </div>
+          </div>
+          <h3 id="doc-titre" tabindex="-1"></h3>
+          <p id="doc-meta" class="aide"></p>
+          <div id="doc-onglets" class="xl-onglets" role="tablist" aria-label="Feuilles du classeur" hidden></div>
+          <p id="doc-etat" class="doc-etat" role="status"></p>
+          <button type="button" class="btn btn-sec" id="doc-reessayer" hidden>Réessayer</button>
+          <div id="doc-page" class="doc-page"></div>
+        </div>
       </section>
     </div>
 
@@ -439,6 +490,7 @@ body.tiroir-ouvert { overflow: hidden; }
     <button type="button" class="onglet" data-ecran="quiz"><span class="ico"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3M12 17h.01"/></svg></span><span data-i18n="nav.quiz">Quiz</span></button>
     <button type="button" class="onglet" data-ecran="sujets"><span class="ico"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg></span><span data-i18n="nav.sujets">Sujets</span></button>
     <button type="button" class="onglet" data-ecran="outils"><span class="ico"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></svg></span><span data-i18n="nav.outils">Outils</span></button>
+    <button type="button" class="onglet" data-ecran="documents"><span class="ico"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6M8 13h8M8 17h8M8 9h2"/></svg></span><span data-i18n="nav.documents">Docs</span></button>
   </nav>
 
   <script src="app.js"></script>
@@ -461,17 +513,21 @@ body.tiroir-ouvert { overflow: hidden; }
   <script src="checklists.js"></script>
   <script src="quiz.js"></script>
   <script src="logo-myqhse.js?v=2"></script>
+  <script src="lecteur-office.js?v=2"></script>
+  <script src="documents-liste.js?v=2"></script>
+  <script src="documents-acces.js?v=1"></script>
+  <script src="documents.js?v=2"></script>
   <script src="liens.js?v=2"></script>
 
   <script>
     /* Navigation par onglets : un seul écran affiché à la fois.
        N'agit que sur l'affichage : calculateur, quiz et bibliothèque restent gérés par leurs propres fichiers. */
     (function () {
-      var NOMS = ["risques", "quiz", "sujets", "outils", "historique", "liens", "parametres", "apropos"];
-      var TITRES = { risques: "Risques", quiz: "Quiz QHSE", sujets: "Sujets QHSE", outils: "Outils QHSE", historique: "Historique", liens: "Liens", parametres: "Paramètres", apropos: "À propos" };
+      var NOMS = ["risques", "quiz", "sujets", "outils", "documents", "historique", "liens", "parametres", "apropos"];
+      var TITRES = { risques: "Risques", quiz: "Quiz QHSE", sujets: "Sujets QHSE", outils: "Outils QHSE", documents: "Documents", historique: "Historique", liens: "Liens", parametres: "Paramètres", apropos: "À propos" };
       var ecranCourant = "risques";
       function titre(nom) { return window.QHSEPrefs ? window.QHSEPrefs.t("titre." + nom) : TITRES[nom]; }
-      var ANCRES = { risques: "risques", calculateur: "risques", matrice: "risques", quiz: "quiz", sujets: "sujets", bibliotheque: "sujets", outils: "outils", causes: "outils", glossaire: "outils", incident: "outils", inspection: "outils", epi: "outils", checklists: "outils", historique: "historique", liens: "liens", parametres: "parametres", apropos: "apropos" };
+      var ANCRES = { risques: "risques", calculateur: "risques", matrice: "risques", quiz: "quiz", sujets: "sujets", bibliotheque: "sujets", outils: "outils", documents: "documents", causes: "outils", glossaire: "outils", incident: "outils", inspection: "outils", epi: "outils", checklists: "outils", historique: "historique", liens: "liens", parametres: "parametres", apropos: "apropos" };
       var boutons = document.querySelectorAll(".onglet, .btn-param, .tiroir-item, .lien-ecran, .lien-ecran-btn");
       function afficher(nom, majUrl) {
         if (NOMS.indexOf(nom) === -1) nom = "risques";

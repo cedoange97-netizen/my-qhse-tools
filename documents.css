@@ -1,0 +1,137 @@
+/* ==========================================================
+   My-QHSE Tools – documents.css (écran « Documents »)
+   Bibliothèque + lecteur Word / Excel. Utilise les variables de thème.
+   ========================================================== */
+#doc-recherche { width: 100%; }
+#doc-compte { margin: 8px 0; }
+.doc-liste { list-style: none; padding: 0; margin: 0 0 8px; display: grid; gap: 8px; }
+
+.doc-categories { display: flex; gap: 8px; overflow-x: auto; padding: 2px 2px 8px; margin: 0 -2px; scrollbar-width: thin; }
+.doc-puce-cat {
+  appearance: none; flex: none; font: inherit; font-size: .92rem; font-weight: 600; cursor: pointer; min-height: 40px;
+  padding: 6px 14px; border-radius: 999px; color: var(--titre); background: var(--surface); border: 2px solid var(--bordure);
+}
+.doc-puce-cat[aria-pressed="true"] { background: var(--vert); color: var(--sur-accent); border-color: var(--vert); }
+.doc-puce-cat:focus-visible, .doc-item:focus-visible, .xl-onglet:focus-visible, .doc-zoom button:focus-visible, .xl-plus:focus-visible { outline: 3px solid #f2a900; outline-offset: 2px; }
+
+.doc-item {
+  display: flex; align-items: center; gap: 14px; width: 100%; text-align: left; min-height: 68px;
+  padding: 12px 14px; font: inherit; color: var(--texte); background: var(--surface);
+  border: 2px solid var(--bordure); border-radius: 10px; cursor: pointer;
+}
+.doc-item:hover { border-color: var(--vert); background: var(--vert-clair); }
+.doc-badge {
+  flex: none; width: 44px; height: 44px; border-radius: 10px; display: grid; place-items: center;
+  font-weight: 800; font-size: 1.15rem; color: #fff; background: var(--gris);
+}
+.doc-badge-word { background: #2b579a; }
+.doc-badge-excel { background: #1d6f42; }
+.doc-item-t { flex: 1; min-width: 0; display: block; }
+.doc-item-t strong { display: block; line-height: 1.3; }
+.doc-item-d { display: block; margin-top: 2px; font-size: .9rem; color: var(--gris); line-height: 1.4; }
+.doc-item-m { display: block; margin-top: 4px; font-size: .8rem; color: var(--gris); }
+
+.doc-local { margin-top: 18px; padding-top: 16px; border-top: 1px solid var(--bordure); }
+.doc-local .aide { margin: 8px 0 0; }
+
+/* ----- Lecteur ----- */
+.doc-barre { display: flex; align-items: center; justify-content: space-between; gap: 10px; flex-wrap: wrap; margin-bottom: 12px; }
+.doc-zoom { display: flex; gap: 6px; }
+.doc-zoom button {
+  appearance: none; font: inherit; font-weight: 700; cursor: pointer; min-width: 48px; min-height: 44px;
+  color: var(--titre); background: var(--surface); border: 2px solid var(--vert); border-radius: 8px;
+}
+.doc-zoom button:disabled { opacity: .4; cursor: default; }
+#doc-titre { margin: 4px 0 4px; font-size: 1.25rem; line-height: 1.3; color: var(--titre); outline: none; overflow-wrap: anywhere; }
+.doc-etat { margin: 12px 0; font-weight: 600; color: var(--titre); }
+.doc-etat-err { color: #b3261e; }
+html[data-theme="sombre"] .doc-etat-err { color: #ff8a80; }
+
+/* La « feuille de papier » reste claire, même en mode sombre : les couleurs du document sont respectées */
+.doc-page {
+  --doc-zoom: 1; color-scheme: light; background: #fff; color: #1b1b1b;
+  border: 1px solid var(--bordure); border-radius: 10px; padding: 18px 16px;
+  font-size: calc(1rem * var(--doc-zoom)); overflow-x: auto;
+}
+.doc-page:empty { display: none; }
+.doc-word { line-height: 1.6; overflow-wrap: anywhere; }
+.doc-word p { margin: 0 0 .7em; white-space: pre-wrap; }
+.doc-word p:empty { min-height: 1em; }
+.doc-word h1, .doc-word h2, .doc-word h3, .doc-word h4, .doc-word h5, .doc-word h6 { color: #12332e; line-height: 1.3; margin: 1.1em 0 .45em; }
+.doc-word h1 { font-size: 1.6em; } .doc-word h2 { font-size: 1.35em; } .doc-word h3 { font-size: 1.18em; }
+.doc-word h4, .doc-word h5, .doc-word h6 { font-size: 1.05em; }
+.doc-soustitre { color: #4a5a55; font-style: italic; }
+.doc-word a { color: #0b57d0; text-decoration: underline; }
+.doc-puce { display: flex; gap: .5em; margin-bottom: .4em; }
+.doc-puce-m { flex: none; min-width: 1.2em; text-align: right; }
+.doc-puce-t { flex: 1; min-width: 0; white-space: pre-wrap; }
+.doc-img { max-width: 100%; height: auto; display: inline-block; vertical-align: middle; }
+.doc-saut { border: 0; border-top: 2px dashed #c4ccc9; margin: 1.4em 0; }
+.doc-tab-wrap { overflow-x: auto; margin: .6em 0 1em; }
+.doc-tab { border-collapse: collapse; min-width: 100%; }
+.doc-tab td { border: 1px solid #9aa5a1; padding: 6px 8px; vertical-align: top; min-width: 5em; }
+.doc-tab td p { margin: 0 0 .3em; }
+.doc-tab td p:last-child { margin-bottom: 0; }
+
+/* ----- Excel ----- */
+.doc-page-excel { padding: 0; overflow: hidden; }
+.xl-onglets { display: flex; gap: 6px; overflow-x: auto; margin: 0 0 10px; padding-bottom: 6px; scrollbar-width: thin; }
+.xl-onglet {
+  appearance: none; flex: none; font: inherit; font-weight: 600; cursor: pointer; min-height: 44px; max-width: 70vw;
+  padding: 6px 16px; border-radius: 8px 8px 0 0; color: var(--titre); background: var(--surface);
+  border: 2px solid var(--bordure); overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+}
+.xl-onglet[aria-selected="true"] { background: var(--vert); color: var(--sur-accent); border-color: var(--vert); }
+.xl-zone { min-width: 0; }
+.xl-zone .aide, .xl-vide { padding: 14px 16px; margin: 0; }
+.xl-defil { overflow: auto; max-height: 72vh; }
+.xl-table { border-collapse: separate; border-spacing: 0; font-size: calc(.9rem * var(--doc-zoom)); }
+.xl-table th, .xl-table td { border-right: 1px solid #d3d9d6; border-bottom: 1px solid #d3d9d6; padding: 5px 9px; white-space: nowrap; background: #fff; }
+.xl-table td { vertical-align: top; }
+.xl-table td.xl-long { white-space: normal; min-width: 14em; max-width: 24em; }
+.xl-table th { background: #eef2f0; color: #3b4a45; font-weight: 600; text-align: center; font-size: .85em; }
+.xl-table thead th { position: sticky; top: 0; z-index: 2; border-top: 1px solid #d3d9d6; }
+.xl-table .xl-num { position: sticky; left: 0; z-index: 1; min-width: 2.6em; }
+.xl-table .xl-coin { position: sticky; left: 0; top: 0; z-index: 3; }
+.xl-plus {
+  appearance: none; display: block; width: calc(100% - 24px); margin: 12px; font: inherit; font-weight: 700; cursor: pointer; min-height: 46px;
+  color: var(--titre); background: var(--surface); border: 2px solid var(--vert); border-radius: 8px;
+}
+.xl-plus:hover { background: var(--vert-clair); }
+
+/* L'attribut « hidden » doit toujours l'emporter sur les styles des boutons */
+#ecran-documents [hidden] { display: none !important; }
+.doc-etat:empty { display: none; }
+
+/* ----- Documents réservés / accès administrateur ----- */
+.doc-badge-pages { background: #b3261e; font-size: .8rem; letter-spacing: .02em; }
+.doc-pastille {
+  display: inline-block; margin-top: 8px; padding: 3px 10px; border-radius: 999px;
+  font-size: .8rem; font-weight: 700; line-height: 1.4;
+}
+.doc-pastille-bientot { background: #fff1c9; color: #6b4a00; border: 1px solid #e8c766; }
+.doc-pastille-admin { background: var(--vert-clair); color: var(--titre); border: 1px solid var(--vert); }
+html[data-theme="sombre"] .doc-pastille-bientot { background: #4a3a10; color: #ffe29a; border-color: #8a6d1f; }
+.doc-item-bientot { cursor: default; opacity: .92; border-style: dashed; }
+.doc-item-bientot:hover { border-color: var(--bordure); background: var(--surface); }
+.doc-item-bientot .doc-badge { filter: grayscale(.7); opacity: .75; }
+
+.doc-admin { margin-top: 18px; padding-top: 12px; border-top: 1px solid var(--bordure); }
+.doc-admin-lien {
+  appearance: none; background: none; border: 0; padding: 10px 0; min-height: 44px; font: inherit; font-size: .9rem;
+  color: var(--gris); text-decoration: underline; cursor: pointer;
+}
+.doc-admin-lien:focus-visible, .doc-admin-form input:focus-visible { outline: 3px solid #f2a900; outline-offset: 2px; }
+.doc-admin-form { margin-top: 6px; display: grid; gap: 8px; max-width: 420px; }
+.doc-admin-form input { width: 100%; letter-spacing: .08em; text-transform: uppercase; }
+.doc-admin-actif {
+  display: flex; align-items: center; justify-content: space-between; gap: 10px; flex-wrap: wrap;
+  padding: 10px 12px; border-radius: 10px; background: var(--vert-clair); border: 1px solid var(--vert); color: var(--titre); font-weight: 700;
+}
+.doc-admin-actif .btn { min-height: 40px; padding: 6px 14px; }
+
+/* ----- Pages d'un PDF converti ----- */
+.doc-page-pages { background: #e6ebe8; padding: 12px 10px; }
+.doc-feuillet { margin: 0 0 16px; text-align: center; }
+.doc-pageimg { display: block; width: calc(100% * var(--doc-zoom, 1)); max-width: none; height: auto; background: #fff; box-shadow: 0 1px 6px rgba(0,0,0,.25); }
+.doc-feuillet figcaption { margin-top: 6px; font-size: .8rem; color: #4a5a55; position: sticky; left: 0; }
