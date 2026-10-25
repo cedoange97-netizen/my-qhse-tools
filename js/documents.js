@@ -93,6 +93,7 @@
 
   async function ouvrir(src) {
     var mon = ++jeton; derniereSource = src;
+    try { if (window.QHSEActivite) window.QHSEActivite.noter("doc", src.fichier instanceof File ? "Fichier de l’appareil" : src.nom); } catch (e) {}
     nettoyer();
     zoneListe.hidden = true; lecture.hidden = false;
     titre.textContent = src.nom; meta.textContent = (LIBELLES[src.type] || LIBELLES.autre) + (src.categorie ? " · " + src.categorie : "");
