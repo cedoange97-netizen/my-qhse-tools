@@ -117,9 +117,12 @@ html[data-theme="sombre"] .onglet[aria-current="page"] svg { stroke: currentColo
 }
 
 /* ----- Formulaires : champs lisibles et faciles à toucher ----- */
-input, select, textarea { min-height: var(--cible); border: 1.5px solid var(--champ); border-radius: var(--rayon-s); padding: 11px 14px; }
+input:not([type="checkbox"]):not([type="radio"]):not([type="file"]):not([type="range"]), select, textarea {
+  min-height: var(--cible); border: 1.5px solid var(--champ); border-radius: var(--rayon-s); padding: 11px 14px;
+}
+input[type="checkbox"], input[type="radio"] { accent-color: var(--vert); }
 textarea { width: 100%; font: inherit; color: inherit; background: var(--surface); }
-input:focus, select:focus, textarea:focus { border-color: var(--accent); }
+input:not([type="checkbox"]):not([type="radio"]):focus, select:focus, textarea:focus { border-color: var(--accent); }
 label { font-weight: 600; }
 .erreur { border-radius: var(--rayon-s); border-left: 4px solid var(--alerte); }
 
@@ -188,3 +191,16 @@ html[data-theme="sombre"] .carte-ico { color: var(--accent-fonce); }
 .accueil-activite .aide { margin: 8px 0 0; }
 .accueil-activite .aide a { color: var(--accent-fonce); font-weight: 600; }
 @media (prefers-reduced-motion: no-preference) { .carte-outil { transition: border-color .15s ease, transform .1s ease; } }
+
+
+/* ==========================================================
+   Étape 3 – Un outil = une page : lien de retour et page « Outils »
+   ========================================================== */
+.retour-outils {
+  display: inline-flex; align-items: center; gap: 4px; min-height: var(--cible); margin: 6px 0 0; padding: 0 14px 0 8px;
+  border-radius: 999px; font-weight: 700; font-size: .95rem; color: var(--accent-fonce); text-decoration: none;
+  -webkit-tap-highlight-color: transparent;
+}
+.retour-outils svg { width: 20px; height: 20px; flex: none; fill: none; stroke: currentColor; stroke-width: 2.4; stroke-linecap: round; stroke-linejoin: round; }
+.retour-outils:hover, .retour-outils:active { background: var(--accent-clair); }
+#ecran-outils .accueil-grille { margin-top: 12px; }
