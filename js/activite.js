@@ -1,6 +1,6 @@
 // My-QHSE Tools — comptage d'usage anonyme (écrans, outils, sujets, documents, calculs).
 // Aucune donnée saisie par l'utilisateur n'est envoyée : seulement le nom de l'écran / de l'outil / du sujet / du document de la bibliothèque.
-// Pour se désactiver sur un appareil : localStorage.setItem("qhse_stats_off", "1")
+// Désactivation : interrupteur « Statistiques d'usage » dans Paramètres (ou localStorage.setItem("qhse_stats_off", "1")).
 (function () {
   "use strict";
   var API = "https://my-qhse-api-ci.myqhse2.workers.dev/api/events";
@@ -69,6 +69,14 @@
     if (f) f.addEventListener("submit", function () {
       setTimeout(function () { var r = document.getElementById("resultat"); if (r && !r.hidden) noter("calcul", "Calcul de risque"); }, 80);
     });
+    var cb = document.getElementById("pref-stats");   // interrupteur dans Paramètres
+    if (cb) {
+      cb.checked = actif();
+      cb.addEventListener("change", function () {
+        try { if (cb.checked) localStorage.removeItem(OFF); else localStorage.setItem(OFF, "1"); } catch (e) {}
+        if (!cb.checked) tampon = [];
+      });
+    }
     document.addEventListener("visibilitychange", function () { if (document.visibilityState === "hidden") envoyer(); });
     window.addEventListener("pagehide", envoyer);
   }
