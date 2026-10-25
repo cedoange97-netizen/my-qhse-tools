@@ -1,0 +1,190 @@
+/* ==========================================================
+   My-QHSE Tools – premium.css  (thème clair premium, étape 1)
+   Feuille ADDITIONNELLE, chargée en dernier : elle redéfinit des
+   variables et affine des composants, sans supprimer aucune règle
+   existante. Pour revenir à l'ancien aspect : retirer sa balise
+   <link> dans index.html.
+   Palette : vert forêt (principal), turquoise (accent / actions
+   secondaires), blanc et gris très clair (fonds), orange réservé
+   aux alertes et aux risques importants.
+   ========================================================== */
+
+:root {
+  --accent: #20b7a4;          /* turquoise : remplissages, bordures, icônes */
+  --accent-fonce: #0b7d6f;    /* turquoise lisible en texte sur fond clair */
+  --accent-clair: #e3f6f3;
+  --alerte: #e8791a;          /* orange : alertes uniquement */
+  --alerte-fonce: #a34400;
+  --alerte-clair: #fff3e6;
+  --rayon: 16px;
+  --rayon-s: 12px;
+  --ombre: 0 1px 2px rgba(16, 40, 32, .05), 0 8px 20px rgba(16, 40, 32, .06);
+  --cible: 48px;              /* taille minimale des zones à toucher */
+}
+html[data-theme="sombre"] {
+  --accent: #2fc4b0; --accent-fonce: #7fe0d2; --accent-clair: #16322e;
+  --alerte: #f0903f; --alerte-fonce: #ffb877; --alerte-clair: #3a2a14;
+}
+
+/* ----- Palette claire (thème clair + couleur « vert » par défaut) ----- */
+html[data-theme="clair"][data-couleur="vert"] {
+  --vert-fonce: #0e5440; --vert: #126a51; --vert-clair: #e6f3ef;
+  --titre: #0e5440; --survol: #0e5440; --bulle: #e3f6f3;
+}
+html[data-theme="clair"] {
+  --fond: #f3f7f6; --surface: #fff; --bordure: #e1eae6; --champ: #b4c5be;
+  --texte: #16231e; --gris: #566860;
+  --notice-bg: var(--alerte-clair);
+}
+
+/* ----- Typographie ----- */
+body {
+  font-family: Roboto, "Segoe UI", system-ui, -apple-system, "Helvetica Neue", Arial, sans-serif;
+  -webkit-font-smoothing: antialiased; text-rendering: optimizeLegibility;
+}
+h1, h2, h3 { letter-spacing: -.01em; }
+h2 { font-size: 1.28rem; font-weight: 700; }
+.aide { line-height: 1.5; }
+
+/* ----- Focus clavier : turquoise (l'orange est réservé aux alertes) ----- */
+a:focus-visible, button:focus-visible, input:focus-visible, select:focus-visible, textarea:focus-visible,
+.btn-menu:focus-visible, .tiroir-fermer:focus-visible, .tiroir-item:focus-visible {
+  outline: 3px solid var(--accent); outline-offset: 2px;
+}
+
+/* ----- En-tête clair ----- */
+html[data-theme="clair"] .barre-haut {
+  background: #fff; color: var(--titre);
+  box-shadow: 0 1px 0 var(--bordure), 0 4px 14px rgba(16, 40, 32, .05);
+}
+html[data-theme="clair"] .barre-haut .brand { color: var(--titre); font-weight: 800; }
+html[data-theme="clair"] .barre-haut .brand span { color: var(--accent-fonce); font-weight: 500; }
+html[data-theme="clair"] .sous-titre { color: var(--gris); }
+html[data-theme="clair"] .logo { background: var(--vert); color: #fff; }
+html[data-theme="clair"] .btn-menu { color: var(--titre); }
+html[data-theme="clair"] .btn-menu:hover { background: var(--vert-clair); }
+html[data-theme="clair"] .tiroir-tete { background: #fff; color: var(--titre); border-bottom: 1px solid var(--bordure); }
+html[data-theme="clair"] .tiroir-marque span { color: var(--accent-fonce); }
+html[data-theme="clair"] .tiroir-fermer { color: var(--titre); }
+html[data-theme="clair"] .tiroir-fermer:hover { background: var(--vert-clair); }
+html[data-theme="clair"] .tiroir-item[aria-current="page"] { background: var(--vert-clair); }
+
+/* ----- Barre d'onglets ----- */
+.onglets { box-shadow: 0 -4px 16px rgba(16, 40, 32, .06); }
+.onglet { font-size: .76rem; }
+.onglet[aria-current="page"] .ico { background: var(--vert); }
+.onglet[aria-current="page"] svg { stroke: #fff; }
+.onglet[aria-current="page"] { color: var(--titre); }
+html[data-theme="sombre"] .onglet[aria-current="page"] .ico { background: var(--bulle); }
+html[data-theme="sombre"] .onglet[aria-current="page"] svg { stroke: currentColor; }
+@media (min-width: 820px) {
+  html[data-theme="clair"] .onglet { color: var(--gris); }
+  html[data-theme="clair"] .onglet[aria-current="page"] { color: var(--titre); background: var(--vert-clair); }
+  .onglet[aria-current="page"] .ico { background: none; }
+  .onglet[aria-current="page"] svg { stroke: currentColor; }
+}
+
+/* ----- Cartes ----- */
+.app .card {
+  border-radius: var(--rayon); padding: 20px; margin: 14px 0;
+  box-shadow: var(--ombre); border-color: var(--bordure);
+}
+@media (max-width: 480px) { .app .card { padding: 18px; } }
+
+/* ----- Messages : information (turquoise) et alerte (orange) ----- */
+.bulle {
+  background: var(--accent-clair); border-radius: var(--rayon-s); border-left: 4px solid var(--accent);
+  padding: 14px 16px; box-shadow: none; line-height: 1.55;
+}
+.notice {
+  background: var(--alerte-clair); border-left: 4px solid var(--alerte);
+  border-radius: var(--rayon-s); padding: 12px 14px;
+}
+
+/* ----- Boutons : grands, faciles à toucher ----- */
+.btn {
+  display: inline-flex; align-items: center; justify-content: center; text-align: center;
+  min-height: var(--cible); padding: 12px 22px; border-radius: var(--rayon-s);
+  font-weight: 700; letter-spacing: .005em;
+  -webkit-tap-highlight-color: transparent;
+}
+.btn:active { transform: scale(.985); }
+.btn-sec { color: var(--accent-fonce); border-color: var(--accent); background: var(--surface); }
+.btn-sec:hover { background: var(--accent-clair); color: var(--accent-fonce); border-color: var(--accent-fonce); }
+.actions .btn { flex: 1 1 auto; }
+@media (prefers-reduced-motion: no-preference) {
+  .btn { transition: background-color .15s ease, border-color .15s ease, transform .1s ease; }
+}
+
+/* ----- Formulaires : champs lisibles et faciles à toucher ----- */
+input, select, textarea { min-height: var(--cible); border: 1.5px solid var(--champ); border-radius: var(--rayon-s); padding: 11px 14px; }
+textarea { width: 100%; font: inherit; color: inherit; background: var(--surface); }
+input:focus, select:focus, textarea:focus { border-color: var(--accent); }
+label { font-weight: 600; }
+.erreur { border-radius: var(--rayon-s); border-left: 4px solid var(--alerte); }
+
+/* ----- Tableaux : lisibles sur petit écran (défilement horizontal conservé) ----- */
+.liste th { background: var(--vert-clair); font-size: .86rem; text-transform: none; }
+.liste th, .liste td { padding: 12px 10px; }
+.liste tbody tr:nth-child(even) td { background: rgba(16, 40, 32, .025); }
+html[data-theme="sombre"] .liste tbody tr:nth-child(even) td { background: rgba(255, 255, 255, .03); }
+
+/* ----- Sujets, outils, documents : cartes uniformes ----- */
+.sujet-item, .doc-item { border-radius: var(--rayon-s); }
+.outils-choix .btn { min-height: 52px; }
+.doc-puce-cat { min-height: 40px; }
+.sujet-num { background: var(--vert); color: #fff; }
+
+/* ----- Résultats de risque : l'orange et le rouge signalent les niveaux élevés ----- */
+.resultat { border-radius: var(--rayon-s); }
+
+
+/* ==========================================================
+   Étape 2 – Page d'accueil : bannière, cartes d'outils, activité
+   ========================================================== */
+.accueil-hero {
+  position: relative; overflow: hidden; margin: 14px 0; padding: 22px 20px;
+  border-radius: var(--rayon); color: #fff; box-shadow: var(--ombre);
+  background: linear-gradient(135deg, #126a51 0%, #0e5440 75%);
+}
+.accueil-hero::after {
+  content: ""; position: absolute; right: -50px; top: -50px; width: 190px; height: 190px; border-radius: 50%;
+  background: radial-gradient(circle, rgba(32, 183, 164, .55), rgba(32, 183, 164, 0) 70%); pointer-events: none;
+}
+.accueil-badge {
+  display: inline-block; padding: 4px 11px; border-radius: 999px; font-size: .74rem; font-weight: 700;
+  letter-spacing: .04em; text-transform: uppercase; background: rgba(255, 255, 255, .16); color: #fff;
+}
+.accueil-hero .accueil-titre { color: #fff; margin: 12px 0 8px; font-size: clamp(1.4rem, 6vw, 1.85rem); line-height: 1.2; }
+.accueil-hero p { position: relative; margin: 0 0 18px; max-width: 46ch; color: rgba(255, 255, 255, .92); line-height: 1.5; }
+.accueil-hero > * { position: relative; z-index: 1; }
+.btn-clair { background: #fff; border-color: #fff; color: #0e5440; }
+.btn-clair:hover { background: #e6f3ef; border-color: #e6f3ef; color: #0e5440; }
+.btn-contour { background: transparent; border-color: rgba(255, 255, 255, .65); color: #fff; }
+.btn-contour:hover { background: rgba(255, 255, 255, .14); border-color: #fff; color: #fff; }
+
+.accueil-h { margin: 22px 2px 10px; font-size: 1.1rem; }
+.accueil-grille { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; list-style: none; margin: 0; padding: 0; }
+@media (min-width: 560px) { .accueil-grille { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
+@media (min-width: 820px) { .accueil-grille { grid-template-columns: repeat(4, minmax(0, 1fr)); } }
+.carte-outil {
+  display: flex; flex-direction: column; gap: 6px; height: 100%; min-height: 118px; padding: 14px;
+  background: var(--surface); border: 1px solid var(--bordure); border-radius: var(--rayon); box-shadow: var(--ombre);
+  color: var(--texte); text-decoration: none; -webkit-tap-highlight-color: transparent;
+}
+.carte-outil:active { transform: scale(.985); }
+.carte-outil:hover { border-color: var(--accent); }
+.carte-ico { width: 40px; height: 40px; border-radius: 12px; display: grid; place-items: center; background: var(--accent-clair); color: var(--vert); }
+html[data-theme="sombre"] .carte-ico { color: var(--accent-fonce); }
+.carte-ico svg { width: 22px; height: 22px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+.carte-risque .carte-ico { background: var(--alerte-clair); color: var(--alerte-fonce); }
+.carte-t { font-weight: 700; font-size: .98rem; line-height: 1.25; }
+.carte-d { font-size: .82rem; line-height: 1.35; color: var(--gris); }
+
+.accueil-stats { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 8px; }
+.stat { background: var(--vert-clair); border-radius: var(--rayon-s); padding: 14px; }
+.stat b { display: block; font-size: 1.9rem; line-height: 1.1; color: var(--titre); }
+.stat span { font-size: .84rem; color: var(--gris); }
+.accueil-activite .aide { margin: 8px 0 0; }
+.accueil-activite .aide a { color: var(--accent-fonce); font-weight: 600; }
+@media (prefers-reduced-motion: no-preference) { .carte-outil { transition: border-color .15s ease, transform .1s ease; } }
