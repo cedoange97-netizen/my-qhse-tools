@@ -53,7 +53,7 @@
   }
 
   function demarrer() {
-    ["risques", "quiz", "sujets", "outils", "documents", "historique", "liens", "parametres", "apropos"].forEach(function (nom) {
+    ["accueil", "risques", "quiz", "sujets", "outils", "documents", "historique", "liens", "parametres", "apropos"].forEach(function (nom) {
       surveillerAffichage("ecran-" + nom, function () { noter("ecran", nom); });
       var n = document.getElementById("ecran-" + nom);
       if (n && !n.hidden) noter("ecran", nom);   // écran affiché au chargement
