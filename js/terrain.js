@@ -7,7 +7,7 @@
 (function () {
   "use strict";
   if (typeof document === "undefined") return;
-  var API = "https://my-qhse-api-ci.cedoange97.workers.dev/api/photos";
+  var API = "https://my-qhse-api-ci.myqhse2.workers.dev/api/photos";
   var GR = ["Quasi-accident", "Accident sans arrêt", "Accident avec arrêt", "Dégât matériel", "Incident environnemental"];
   var CL = ["Issues de secours dégagées", "Extincteurs accessibles et vérifiés", "EPI portés par le personnel", "Sols propres, sans obstacle", "Installations électriques en bon état", "Produits chimiques étiquetés et rangés", "Signalisation de sécurité visible", "Trousse de premiers secours complète"];
   var EL = ["Casque", "Gants", "Chaussures de sécurité", "Lunettes de protection", "Protection auditive", "Harnais antichute", "Masque respiratoire", "Formation secourisme", "Habilitation électrique", "Autre"];

@@ -12,7 +12,7 @@ const CK_CONFIG = {
   pointsParCritere: 2,        // Oui = 2 points, Non = 0, N/A = exclu du total
   seuilPedagogique: null,     // ex. 70 : affiche un objectif PÉDAGOGIQUE (pas réglementaire). null = aucun seuil
   maxHistorique: 100,
-  api: "https://my-qhse-api-ci.cedoange97.workers.dev/api/checklist-results",
+  api: "https://my-qhse-api-ci.myqhse2.workers.dev/api/checklist-results",
   secteurs: ["BTP", "Mines", "Industrie", "Autre secteur"]
 };
 

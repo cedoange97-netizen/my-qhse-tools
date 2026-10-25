@@ -2,7 +2,7 @@
 // Usage : window.dispatchEvent(new CustomEvent("qhse:quiz-finished", { detail: { theme, score, total, correctCount, wrongCount, durationSeconds, answers } }))
 (function () {
   "use strict";
-  var API = "https://my-qhse-api-ci.cedoange97.workers.dev/api/quiz-results";
+  var API = "https://my-qhse-api-ci.myqhse2.workers.dev/api/quiz-results";
   var QUEUE = "qhse_pending_results";
   var PID = "qhse_participant_id";
   var flushing = false;

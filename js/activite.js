@@ -3,7 +3,7 @@
 // Pour se désactiver sur un appareil : localStorage.setItem("qhse_stats_off", "1")
 (function () {
   "use strict";
-  var API = "https://my-qhse-api-ci.cedoange97.workers.dev/api/events";
+  var API = "https://my-qhse-api-ci.myqhse2.workers.dev/api/events";
   var PID = "qhse_participant_id", OFF = "qhse_stats_off";
   var tampon = [], minuteur = null, dernier = {};
 
