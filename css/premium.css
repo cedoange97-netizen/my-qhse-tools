@@ -236,3 +236,26 @@ html[data-theme="sombre"] .carte-ico { color: var(--accent-fonce); }
 .ia-sous-titre { font-weight: 700; color: var(--titre); }
 .ia-erreur { border-left: 4px solid var(--alerte); background: var(--alerte-clair); }
 .ia-erreur p { margin: 0; }
+
+
+/* ==========================================================
+   Icônes d'activité : médaillons à anneau très fin (1 px), pictogrammes
+   des bannières (robot, casque, bloc-notes, loupe, arête, triangle…).
+   Les couleurs sont des variables : elles suivent le thème clair/sombre.
+   ========================================================== */
+:root {
+  --ic-fond: #f4f8f6; --ic-trait: #d6e4de; --ic-w: 1;
+  --ic-p: #0f7a6b; --ic-pf: #075e54; --ic-t: #36b8aa;
+  --ic-j: #ffc20e; --ic-jf: #e6a800; --ic-f: #5cb946;
+  --ic-r: #e5484d; --ic-o: #f28c28; --ic-g: #5cb946;
+  --ic-b: #ffffff; --ic-e: #0b2b27; --ic-l: #075e54;
+}
+html[data-theme="sombre"] {
+  --ic-fond: #1b2421; --ic-trait: #303b36;
+  --ic-p: #1fa08e; --ic-pf: #0a4a42; --ic-t: #4fd1c2;
+  --ic-j: #ffcf3a; --ic-jf: #f0b400; --ic-f: #6bd058;
+  --ic-b: #e8efec; --ic-e: #0b1512; --ic-l: #5fd6c8;
+}
+.ico-act { display: block; flex: none; width: 36px; height: 36px; }
+.carte-ico, .carte-risque .carte-ico, .carte-assistant .carte-ico { width: auto; height: auto; border-radius: 0; background: none; display: flex; justify-content: flex-start; place-items: initial; }
+.carte-ico .ico-act { width: 36px; height: 36px; fill: initial; stroke: none; stroke-width: 0; }
