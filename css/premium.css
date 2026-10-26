@@ -204,3 +204,35 @@ html[data-theme="sombre"] .carte-ico { color: var(--accent-fonce); }
 .retour-outils svg { width: 20px; height: 20px; flex: none; fill: none; stroke: currentColor; stroke-width: 2.4; stroke-linecap: round; stroke-linejoin: round; }
 .retour-outils:hover, .retour-outils:active { background: var(--accent-clair); }
 #ecran-outils .accueil-grille { margin-top: 12px; }
+
+
+/* ==========================================================
+   Assistant QHSE (IA)
+   ========================================================== */
+.accueil-grille .carte-large { grid-column: 1 / -1; }
+.carte-assistant { flex-direction: row; align-items: center; gap: 14px; min-height: 0; background: linear-gradient(135deg, var(--accent-clair), var(--surface) 70%); border-color: var(--accent); }
+.carte-assistant .carte-ico { flex: none; background: var(--accent); color: #fff; }
+.carte-assistant .carte-txt { display: flex; flex-direction: column; gap: 2px; }
+.ia-suggestions { display: flex; flex-wrap: wrap; gap: 8px; margin: 4px 0 14px; }
+.ia-chip {
+  min-height: 40px; padding: 8px 14px; border-radius: 999px; border: 1.5px solid var(--accent); background: var(--surface);
+  color: var(--accent-fonce); font: inherit; font-size: .88rem; font-weight: 600; text-align: left; cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+}
+.ia-chip:hover, .ia-chip:active { background: var(--accent-clair); }
+#ia-question { resize: vertical; min-height: 110px; line-height: 1.45; }
+.ia-compteur { margin: 4px 2px 12px; text-align: right; font-size: .8rem; color: var(--gris); }
+.ia-statut { min-height: 1.4em; margin: 10px 0 0; }
+#assistant .btn[disabled] { opacity: .6; cursor: progress; }
+.ia-echange { padding: 0; overflow: hidden; }
+.ia-q { padding: 14px 18px; background: var(--vert-clair); }
+.ia-q p { margin: 4px 0 0; font-weight: 600; }
+.ia-r { padding: 14px 18px 18px; }
+.ia-etiquette { display: block; font-size: .74rem; font-weight: 700; letter-spacing: .05em; text-transform: uppercase; color: var(--accent-fonce); }
+.ia-texte { line-height: 1.55; margin-top: 4px; }
+.ia-texte p { margin: 8px 0; }
+.ia-texte ul, .ia-texte ol { margin: 8px 0; padding-left: 22px; }
+.ia-texte li { margin: 4px 0; }
+.ia-sous-titre { font-weight: 700; color: var(--titre); }
+.ia-erreur { border-left: 4px solid var(--alerte); background: var(--alerte-clair); }
+.ia-erreur p { margin: 0; }
