@@ -58,7 +58,7 @@
       var n = document.getElementById("ecran-" + nom);
       if (n && !n.hidden) noter("ecran", nom);   // écran affiché au chargement
     });
-    ["causes", "glossaire", "incident", "inspection", "epi", "checklists"].forEach(function (nom) {
+    ["assistant", "causes", "glossaire", "incident", "inspection", "epi", "checklists"].forEach(function (nom) {
       surveillerAffichage("ecran-" + nom, function () { noter("outil", nom); });
       var n = document.getElementById("ecran-" + nom);
       if (n && !n.hidden) noter("outil", nom);   // page d'outil affichée au chargement
