@@ -10,5 +10,8 @@
       "database_name": "my-qhse-db",
       "database_id": "387b7e93-9bb9-4b38-aacd-4b6103bd0c2d"
     }
-  ]
+  ],
+  "ai": {
+    "binding": "AI"
+  }
 }

@@ -81,7 +81,7 @@ body.tiroir-ouvert { overflow: hidden; }
   </style>
   <link rel="stylesheet" href="css/liens.css?v=2">
   <link rel="stylesheet" href="css/documents.css?v=2">
-  <link rel="stylesheet" href="css/premium.css?v=4">
+  <link rel="stylesheet" href="css/premium.css?v=5">
   <!-- Préférences (langue, thème, couleur, taille) : appliquées avant l'affichage -->
   <script src="js/parametres.js"></script>
 </head>
@@ -130,6 +130,7 @@ body.tiroir-ouvert { overflow: hidden; }
 
       <h2 class="accueil-h" data-i18n="acc.outils">Vos outils</h2>
       <ul class="accueil-grille">
+        <li class="carte-large"><a class="carte-outil carte-assistant" href="#assistant"><span class="carte-ico"><svg width="22" height="22" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M21 15a2 2 0 0 1-2 2H8l-5 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/><path d="M12 7v4M10 9h4"/></svg></span><span class="carte-txt"><span class="carte-t" data-i18n="acc.assistant.t">Assistant QHSE</span><span class="carte-d" data-i18n="acc.assistant.d">Posez vos questions, réponse par IA</span></span></a></li>
         <li><a class="carte-outil carte-risque" href="#risques"><span class="carte-ico"><svg width="22" height="22" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M10.29 3.86 1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><path d="M12 9v4M12 17h.01"/></svg></span><span class="carte-t" data-i18n="acc.risques.t">Calculateur de risque</span><span class="carte-d" data-i18n="acc.risques.d">Score et matrice 5 × 5</span></a></li>
         <li><a class="carte-outil" href="#quiz"><span class="carte-ico"><svg width="22" height="22" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3M12 17h.01"/></svg></span><span class="carte-t" data-i18n="acc.quiz.t">Quiz QHSE</span><span class="carte-d" data-i18n="acc.quiz.d">Testez vos connaissances</span></a></li>
         <li><a class="carte-outil" href="#sujets"><span class="carte-ico"><svg width="22" height="22" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg></span><span class="carte-t" data-i18n="acc.sujets.t">Sujets</span><span class="carte-d" data-i18n="acc.sujets.d">Cours et fiches à lire</span></a></li>
@@ -228,6 +229,7 @@ body.tiroir-ouvert { overflow: hidden; }
     <div class="ecran" id="ecran-outils" hidden>
       <div class="intro bulle" data-i18n="outils.intro">Choisissez un outil : chacun s'ouvre dans sa propre page.</div>
       <ul class="accueil-grille">
+        <li class="carte-large"><a class="carte-outil carte-assistant" href="#assistant"><span class="carte-ico"><svg width="22" height="22" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M21 15a2 2 0 0 1-2 2H8l-5 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/><path d="M12 7v4M10 9h4"/></svg></span><span class="carte-txt"><span class="carte-t" data-i18n="acc.assistant.t">Assistant QHSE</span><span class="carte-d" data-i18n="acc.assistant.d">Posez vos questions, réponse par IA</span></span></a></li>
         <li><a class="carte-outil" href="#inspection"><span class="carte-ico"><svg width="22" height="22" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3M8.5 11l2 2 3.5-3.5"/></svg></span><span class="carte-t" data-i18n="acc.inspection.t">Inspection</span><span class="carte-d" data-i18n="acc.inspection.d">Contrôles sur le terrain</span></a></li>
         <li><a class="carte-outil" href="#checklists"><span class="carte-ico"><svg width="22" height="22" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><rect x="8" y="2" width="8" height="4" rx="1"/><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/><path d="m9 14 2 2 4-4"/></svg></span><span class="carte-t" data-i18n="acc.checklists.t">Checklists</span><span class="carte-d" data-i18n="acc.checklists.d">Listes de vérification</span></a></li>
         <li><a class="carte-outil" href="#incident"><span class="carte-ico"><svg width="22" height="22" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M7.86 2h8.28L22 7.86v8.28L16.14 22H7.86L2 16.14V7.86z"/><path d="M12 8v4M12 16h.01"/></svg></span><span class="carte-t" data-i18n="acc.incident.t">Incident</span><span class="carte-d" data-i18n="acc.incident.d">Déclarer et suivre</span></a></li>
@@ -294,6 +296,30 @@ body.tiroir-ouvert { overflow: hidden; }
         <div id="gl-liste"></div>
         <p id="gl-vide" class="aide" hidden>Aucun terme ne correspond à votre recherche.</p>
       </section>
+    </div>
+
+    <div class="ecran" id="ecran-assistant" hidden>
+      <a class="retour-outils" href="#outils"><svg width="20" height="20" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="m15 18-6-6 6-6"/></svg><span data-i18n="outils.retour">Retour aux outils</span></a>
+      <section id="assistant" class="card" aria-labelledby="t-assistant">
+        <h2 id="t-assistant" data-i18n="ia.titre">Assistant QHSE</h2>
+        <p class="aide" data-i18n="ia.intro">Posez une question sur la prévention des risques, les normes ISO, l'hygiène ou l'environnement. Chaque question est indépendante.</p>
+        <p class="notice" data-i18n="ia.avert">Réponse générée par une IA : à vérifier. Ne saisissez pas de données personnelles. Elle ne remplace pas l'évaluation d'un professionnel qualifié.</p>
+        <div class="ia-suggestions" role="group" aria-label="Exemples de questions">
+          <button type="button" class="ia-chip" data-i18n="ia.s1">Quelle différence entre danger et risque ?</button>
+          <button type="button" class="ia-chip" data-i18n="ia.s2">Comment rédiger une bonne action corrective ?</button>
+          <button type="button" class="ia-chip" data-i18n="ia.s3">Que contrôler lors d'une inspection incendie ?</button>
+          <button type="button" class="ia-chip" data-i18n="ia.s4">À quoi sert la norme ISO 45001 ?</button>
+        </div>
+        <label for="ia-question" data-i18n="ia.label">Votre question</label>
+        <textarea id="ia-question" rows="4" maxlength="600" autocomplete="off"></textarea>
+        <p class="ia-compteur"><span id="ia-n">0</span> / 600</p>
+        <div class="actions">
+          <button type="button" class="btn" id="ia-envoyer" data-i18n="ia.envoyer">Poser la question</button>
+          <button type="button" class="btn btn-sec" id="ia-effacer" data-i18n="ia.effacer">Effacer</button>
+        </div>
+        <p id="ia-statut" class="aide ia-statut" role="status" aria-live="polite"></p>
+      </section>
+      <div id="ia-reponses" aria-live="polite"></div>
     </div>
 
     <div class="ecran" id="ecran-documents" hidden>
@@ -586,12 +612,12 @@ body.tiroir-ouvert { overflow: hidden; }
     /* Navigation par onglets : un seul écran affiché à la fois.
        N'agit que sur l'affichage : calculateur, quiz et bibliothèque restent gérés par leurs propres fichiers. */
     (function () {
-      var NOMS = ["accueil", "risques", "quiz", "sujets", "outils", "causes", "glossaire", "incident", "inspection", "epi", "checklists", "documents", "historique", "liens", "parametres", "apropos"];
-      var TITRES = { causes: "Analyse des causes", glossaire: "Glossaire", incident: "Incident", inspection: "Inspection", epi: "Registre EPI", checklists: "Checklists", accueil: "Accueil", risques: "Risques", quiz: "Quiz QHSE", sujets: "Sujets QHSE", outils: "Outils QHSE", documents: "Documents", historique: "Historique", liens: "Liens", parametres: "Paramètres", apropos: "À propos" };
+      var NOMS = ["accueil", "risques", "quiz", "sujets", "outils", "causes", "glossaire", "incident", "inspection", "epi", "checklists", "assistant", "documents", "historique", "liens", "parametres", "apropos"];
+      var TITRES = { assistant: "Assistant QHSE", causes: "Analyse des causes", glossaire: "Glossaire", incident: "Incident", inspection: "Inspection", epi: "Registre EPI", checklists: "Checklists", accueil: "Accueil", risques: "Risques", quiz: "Quiz QHSE", sujets: "Sujets QHSE", outils: "Outils QHSE", documents: "Documents", historique: "Historique", liens: "Liens", parametres: "Paramètres", apropos: "À propos" };
       var ecranCourant = "accueil";
       function titre(nom) { return window.QHSEPrefs ? window.QHSEPrefs.t("titre." + nom) : TITRES[nom]; }
-      var ANCRES = { accueil: "accueil", risques: "risques", calculateur: "risques", matrice: "risques", quiz: "quiz", sujets: "sujets", bibliotheque: "sujets", outils: "outils", documents: "documents", causes: "causes", glossaire: "glossaire", incident: "incident", inspection: "inspection", epi: "epi", checklists: "checklists", historique: "historique", liens: "liens", parametres: "parametres", apropos: "apropos" };
-      var GROUPE = { risques: "accueil", causes: "outils", glossaire: "outils", incident: "outils", inspection: "outils", epi: "outils", checklists: "outils" };   /* onglet allumé pour les sous-pages */
+      var ANCRES = { accueil: "accueil", risques: "risques", calculateur: "risques", matrice: "risques", quiz: "quiz", sujets: "sujets", bibliotheque: "sujets", outils: "outils", documents: "documents", assistant: "assistant", causes: "causes", glossaire: "glossaire", incident: "incident", inspection: "inspection", epi: "epi", checklists: "checklists", historique: "historique", liens: "liens", parametres: "parametres", apropos: "apropos" };
+      var GROUPE = { risques: "accueil", assistant: "outils", causes: "outils", glossaire: "outils", incident: "outils", inspection: "outils", epi: "outils", checklists: "outils" };   /* onglet allumé pour les sous-pages */
       var boutons = document.querySelectorAll(".onglet, .btn-param, .tiroir-item, .lien-ecran, .lien-ecran-btn");
       function afficher(nom, majUrl) {
         if (NOMS.indexOf(nom) === -1) nom = "accueil";
@@ -635,6 +661,7 @@ body.tiroir-ouvert { overflow: hidden; }
     });
   </script>
   <script src="js/accueil.js?v=1"></script>
-  <script src="js/activite.js?v=3"></script>
+  <script src="js/assistant.js?v=1"></script>
+  <script src="js/activite.js?v=4"></script>
 </body>
 </html>
