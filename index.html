@@ -6,11 +6,11 @@
   <title>My-QHSE Tools – Calculateur de risques professionnels</title>
   <meta name="description" content="Outil gratuit d'évaluation des risques professionnels (matrice 5 × 5) pour les étudiants et professionnels QHSE.">
   <meta name="theme-color" content="#075e54">
-  <link rel="stylesheet" href="style.css">
-  <link rel="stylesheet" href="quiz.css">
-  <link rel="stylesheet" href="bibliotheque.css">
-  <link rel="stylesheet" href="outils.css">
-  <link rel="stylesheet" href="terrain.css">
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/quiz.css">
+  <link rel="stylesheet" href="css/bibliotheque.css">
+  <link rel="stylesheet" href="css/outils.css">
+  <link rel="stylesheet" href="css/terrain.css">
 </head>
 <body>
 
@@ -184,19 +184,19 @@
     <button type="button" class="onglet" data-ecran="historique"><span class="ico"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg></span>Historique</button>
   </nav>
 
-  <script src="app.js"></script>
-  <script src="sujets.js"></script>
-  <script src="bibliotheque.js"></script>
-  <script src="banque-management.js"></script>
-  <script src="banque-qualite.js"></script>
-  <script src="banque-sante-securite.js"></script>
-  <script src="banque-hygiene.js"></script>
-  <script src="banque-environnement.js"></script>
-  <script src="banque-transversal.js"></script>
-  <script src="causes.js"></script>
-  <script src="glossaire.js"></script>
-  <script src="terrain.js"></script>
-  <script src="quiz.js"></script>
+  <script src="js/app.js"></script>
+  <script src="js/data/sujets.js"></script>
+  <script src="js/bibliotheque.js"></script>
+  <script src="js/data/banque-management.js"></script>
+  <script src="js/data/banque-qualite.js"></script>
+  <script src="js/data/banque-sante-securite.js"></script>
+  <script src="js/data/banque-hygiene.js"></script>
+  <script src="js/data/banque-environnement.js"></script>
+  <script src="js/data/banque-transversal.js"></script>
+  <script src="js/data/causes.js"></script>
+  <script src="js/data/glossaire.js"></script>
+  <script src="js/terrain.js"></script>
+  <script src="js/quiz.js"></script>
   <!-- Cartes du quiz : charge quiz-cartes.js depuis le MÊME dossier que quiz.js (à la racine ou dans js/). -->
   <script>
     (function () {
@@ -267,7 +267,7 @@
       b.setAttribute("role", "alert");
       b.style.cssText = "background:#fff3cd;color:#222;border:2px solid #f2a900;padding:12px;margin:0;font:16px sans-serif";
       b.textContent = "Fichiers manquants : " + (cssOk ? "" : "style.css ") + (jsOk ? "" : "app.js ") +
-        "n'a pas été chargé. Placez index.html, style.css et app.js dans le même dossier et ouvrez index.html depuis Chrome, ou utilisez le fichier index-autonome.html.";
+        "n'a pas été chargé. Vérifiez que les dossiers css/ et js/ sont bien à côté de index.html, ou ouvrez le site depuis son adresse GitHub Pages.";
       document.body.insertBefore(b, document.body.firstChild);
     });
   </script>
