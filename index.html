@@ -6,11 +6,11 @@
   <title>My-QHSE Tools – Calculateur de risques professionnels</title>
   <meta name="description" content="Outil gratuit d'évaluation des risques professionnels (matrice 5 × 5) pour les étudiants et professionnels QHSE.">
   <meta name="theme-color" content="#075e54">
-  <link rel="stylesheet" href="style.css">
-  <link rel="stylesheet" href="quiz.css">
-  <link rel="stylesheet" href="bibliotheque.css">
-  <link rel="stylesheet" href="outils.css">
-  <link rel="stylesheet" href="terrain.css">
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/quiz.css">
+  <link rel="stylesheet" href="css/bibliotheque.css">
+  <link rel="stylesheet" href="css/outils.css">
+  <link rel="stylesheet" href="css/terrain.css">
 </head>
 <body>
 
@@ -149,11 +149,11 @@
 
     <div class="ecran" id="ecran-historique" hidden>
       <section id="historique" class="card" aria-labelledby="t-hist">
-        <h2 id="t-hist">Évaluations de la session</h2>
-        <p class="aide">Les données restent dans votre navigateur et disparaissent à la fermeture ou au rechargement de la page.</p>
+        <h2 id="t-hist">Évaluations de risques</h2>
+        <p class="aide">Vos évaluations sont enregistrées sur cet appareil et restent disponibles après l'actualisation de la page.</p>
         <div class="scroll">
           <table class="liste">
-            <caption class="sr">Liste des évaluations effectuées pendant la session</caption>
+            <caption class="sr">Liste des évaluations de risques enregistrées sur cet appareil</caption>
             <thead>
               <tr>
                 <th scope="col">N°</th><th scope="col">Activité</th><th scope="col">Danger</th>
@@ -164,8 +164,14 @@
             <tbody id="historique-corps"></tbody>
           </table>
         </div>
-        <p id="vide" class="aide">Aucune évaluation pour l'instant. Remplissez le calculateur ci-dessus.</p>
+        <p id="vide" class="aide">Aucune évaluation pour l'instant. Remplissez le calculateur de l'onglet Risques.</p>
         <button id="vider" type="button" class="btn btn-sec" hidden>Vider la liste</button>
+      </section>
+
+      <section id="historique-quiz" class="card" aria-labelledby="t-hist-quiz">
+        <h2 id="t-hist-quiz">Historique des quiz</h2>
+        <p class="aide">Vos quiz terminés, avec le score et la possibilité de relire vos réponses.</p>
+        <div id="hist-quiz-liste"><p class="aide">Chargement…</p></div>
       </section>
     </div>
 
@@ -184,28 +190,23 @@
     <button type="button" class="onglet" data-ecran="historique"><span class="ico"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg></span>Historique</button>
   </nav>
 
-  <script src="app.js"></script>
-  <script src="sujets.js"></script>
-  <script src="bibliotheque.js"></script>
-  <script src="banque-management.js"></script>
-  <script src="banque-qualite.js"></script>
-  <script src="banque-sante-securite.js"></script>
-  <script src="banque-hygiene.js"></script>
-  <script src="banque-environnement.js"></script>
-  <script src="banque-transversal.js"></script>
-  <script src="causes.js"></script>
-  <script src="glossaire.js"></script>
-  <script src="terrain.js"></script>
-  <script src="quiz.js"></script>
-  <!-- Cartes du quiz : charge quiz-cartes.js depuis le MÊME dossier que quiz.js (à la racine ou dans js/). -->
-  <script>
-    (function () {
-      var s = document.querySelector('script[src$="quiz.js"]');
-      var n = document.createElement("script");
-      n.src = (s ? s.getAttribute("src").replace(/quiz\.js$/, "") : "") + "quiz-cartes.js";
-      document.body.appendChild(n);
-    })();
-  </script>
+  <script src="js/app.js"></script>
+  <script src="js/data/sujets.js"></script>
+  <script src="js/bibliotheque.js"></script>
+  <script src="js/data/banque-management.js"></script>
+  <script src="js/data/banque-qualite.js"></script>
+  <script src="js/data/banque-sante-securite.js"></script>
+  <script src="js/data/banque-hygiene.js"></script>
+  <script src="js/data/banque-environnement.js"></script>
+  <script src="js/data/banque-transversal.js"></script>
+  <script src="js/data/images-livret.js"></script>
+  <script src="js/data/banque-livret.js"></script>
+  <script src="js/data/causes.js"></script>
+  <script src="js/data/glossaire.js"></script>
+  <script src="js/terrain.js"></script>
+  <script src="js/quiz.js"></script>
+  <!-- Cartes du quiz (thèmes en cartes, recherche, filtres) : doit venir APRÈS quiz.js -->
+  <script src="js/quiz-cartes.js"></script>
 
   <script>
     /* Navigation par onglets : un seul écran affiché à la fois.
@@ -266,8 +267,8 @@
       var b = document.createElement("div");
       b.setAttribute("role", "alert");
       b.style.cssText = "background:#fff3cd;color:#222;border:2px solid #f2a900;padding:12px;margin:0;font:16px sans-serif";
-      b.textContent = "Fichiers manquants : " + (cssOk ? "" : "style.css ") + (jsOk ? "" : "app.js ") +
-        "n'a pas été chargé. Placez index.html, style.css et app.js dans le même dossier et ouvrez index.html depuis Chrome, ou utilisez le fichier index-autonome.html.";
+      b.textContent = "Fichiers manquants : " + (cssOk ? "" : "css/style.css ") + (jsOk ? "" : "js/app.js ") +
+        "n'a pas été chargé. Vérifiez que les dossiers css/ et js/ sont bien à côté de index.html (même niveau) sur GitHub.";
       document.body.insertBefore(b, document.body.firstChild);
     });
   </script>
