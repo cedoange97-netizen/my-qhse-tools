@@ -4,31 +4,202 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <title>My-QHSE Tools – Calculateur de risques professionnels</title>
-  <meta name="description" content="Outil gratuit d'évaluation des risques professionnels (matrice 5 × 5) pour les étudiants et professionnels QHSE.">
+  <meta name="description" content="Outils QHSE gratuits : calculateur de risques (matrice 5 × 5), quiz, sujets, checklists, inspection, incident, registre EPI, documents et assistant IA, pour les étudiants et professionnels QHSE.">
   <meta name="theme-color" content="#075e54">
+
+  <!-- Feuilles de style : premium.css en dernier (il affine les autres) -->
   <link rel="stylesheet" href="css/style.css">
   <link rel="stylesheet" href="css/quiz.css">
   <link rel="stylesheet" href="css/bibliotheque.css">
   <link rel="stylesheet" href="css/outils.css">
   <link rel="stylesheet" href="css/terrain.css">
+  <link rel="stylesheet" href="css/checklists.css">
+  <link rel="stylesheet" href="css/parametres.css">
+  <link rel="stylesheet" href="css/liens.css">
+  <link rel="stylesheet" href="css/documents.css">
+  <link rel="stylesheet" href="css/premium.css">
+
+  <!-- Préférences (langue, thème, couleur, taille) : chargées ici pour s'appliquer avant l'affichage -->
+  <script src="js/parametres.js"></script>
+
+  <style>
+    /* Éléments propres à index.html : bouton menu, menu latéral, liens-boutons, icônes d'activité */
+    a.btn { display: inline-flex; align-items: center; justify-content: center; text-decoration: none; }
+    .barre-in .titres { min-width: 0; }
+    .btn-menu {
+      appearance: none; flex: none; width: 44px; height: 44px; margin-left: -8px; border-radius: 50%;
+      background: transparent; color: var(--sur-entete); border: 0; cursor: pointer;
+      display: grid; place-items: center; -webkit-tap-highlight-color: transparent;
+    }
+    .btn-menu:hover { background: rgba(255, 255, 255, .14); }
+    .btn-menu svg, .tiroir-fermer svg { width: 24px; height: 24px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+
+    .tiroir-voile { position: fixed; inset: 0; z-index: 60; background: rgba(0, 0, 0, .45); opacity: 0; visibility: hidden; transition: opacity .2s ease, visibility 0s .2s; }
+    .tiroir {
+      position: fixed; top: 0; bottom: 0; left: 0; z-index: 61; width: min(320px, 86vw);
+      display: flex; flex-direction: column; background: var(--surface); color: var(--texte);
+      box-shadow: 4px 0 24px rgba(0, 0, 0, .25); overflow-y: auto;
+      transform: translateX(-102%); visibility: hidden; transition: transform .22s ease, visibility 0s .22s;
+    }
+    body.tiroir-ouvert .tiroir-voile { opacity: 1; visibility: visible; transition: opacity .2s ease; }
+    body.tiroir-ouvert .tiroir { transform: none; visibility: visible; transition: transform .22s ease; }
+    body.tiroir-ouvert { overflow: hidden; }
+    .tiroir-tete {
+      display: flex; align-items: center; justify-content: space-between; gap: 8px;
+      padding: calc(8px + env(safe-area-inset-top, 0px)) 8px 8px 16px; min-height: var(--hauteur-entete);
+      background: var(--vert-fonce); color: var(--sur-entete);
+    }
+    .tiroir-marque { display: flex; align-items: center; gap: 10px; font-size: 1.15rem; font-weight: 700; }
+    .tiroir-marque span { font-weight: 400; }
+    .tiroir-fermer { appearance: none; width: 44px; height: 44px; border-radius: 50%; background: transparent; color: inherit; border: 0; cursor: pointer; display: grid; place-items: center; }
+    .tiroir-fermer:hover { background: rgba(255, 255, 255, .14); }
+    .tiroir-liste { display: flex; flex-direction: column; padding: 8px 8px calc(16px + env(safe-area-inset-bottom, 0px)); }
+    .tiroir-sep { height: 1px; margin: 8px 12px; background: var(--bordure); }
+    .tiroir-item {
+      appearance: none; display: flex; align-items: center; gap: 12px; width: 100%; min-height: 48px; padding: 6px 12px;
+      font: inherit; font-weight: 600; text-align: left; color: var(--texte); background: none; border: 0; border-radius: 10px; cursor: pointer;
+      -webkit-tap-highlight-color: transparent;
+    }
+    .tiroir-item:hover { background: var(--vert-clair); }
+    .tiroir-item[aria-current="page"] { background: var(--vert-clair); color: var(--titre); }
+    .tiroir-item .ico-act { width: 30px; height: 30px; }
+
+    #ecran-liens .liens-hero .liens-logo { object-fit: contain; }
+    .lien-ecran { margin-top: 4px; }
+    .apropos-nav { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 18px; }
+    .pref-interrupteur { display: flex; align-items: flex-start; gap: 12px; margin: 0; }
+    .pref-interrupteur input { margin-top: 4px; }
+    .pref-interrupteur small { display: block; color: var(--gris); font-size: .85rem; line-height: 1.35; font-weight: 400; }
+    .doc-local .btn { margin-top: 0; }
+    #doc-fichier { position: absolute; width: 1px; height: 1px; opacity: 0; pointer-events: none; }
+
+    /* Couleurs des pictogrammes d'activité (les variables --ic-* sont dans premium.css) */
+    .ic-f  { fill: var(--ic-fond); stroke: var(--ic-trait); stroke-width: var(--ic-w); }
+    .ic-p  { fill: var(--ic-p); }   .ic-pf { fill: var(--ic-pf); } .ic-t { fill: var(--ic-t); }
+    .ic-j  { fill: var(--ic-j); }   .ic-jf { fill: var(--ic-jf); } .ic-g { fill: var(--ic-g); }
+    .ic-r  { fill: var(--ic-r); }   .ic-o  { fill: var(--ic-o); }  .ic-b { fill: var(--ic-b); }
+    .ic-e  { fill: var(--ic-e); }
+    .ic-bs { fill: none; stroke: var(--ic-b); stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+    .ic-gs { fill: none; stroke: var(--ic-g); stroke-width: 2.4; stroke-linecap: round; stroke-linejoin: round; }
+    .ic-ps { fill: none; stroke: var(--ic-p); stroke-width: 2.4; stroke-linecap: round; stroke-linejoin: round; }
+    .ic-es { fill: none; stroke: var(--ic-e); stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+  </style>
 </head>
 <body>
 
-  <a class="skip" href="#calculateur">Aller au calculateur</a>
+  <!-- ===== PICTOGRAMMES (médaillons d'activité, réutilisés par les cartes et le menu) ===== -->
+  <svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false">
+    <defs>
+      <symbol id="i-accueil" viewBox="0 0 36 36"><circle class="ic-f" cx="18" cy="18" r="17"/><path class="ic-p" d="M9.5 18.5 18 10.5l8.5 8h-2.3V27h-12.4v-8.5z"/><rect class="ic-b" x="16" y="21" width="4" height="6" rx="1"/></symbol>
+      <symbol id="i-risque" viewBox="0 0 36 36"><circle class="ic-f" cx="18" cy="18" r="17"/><rect class="ic-j" x="9.5" y="9.5" width="5.5" height="5.5" rx="1"/><rect class="ic-o" x="15.25" y="9.5" width="5.5" height="5.5" rx="1"/><rect class="ic-r" x="21" y="9.5" width="5.5" height="5.5" rx="1"/><rect class="ic-g" x="9.5" y="15.25" width="5.5" height="5.5" rx="1"/><rect class="ic-j" x="15.25" y="15.25" width="5.5" height="5.5" rx="1"/><rect class="ic-o" x="21" y="15.25" width="5.5" height="5.5" rx="1"/><rect class="ic-g" x="9.5" y="21" width="5.5" height="5.5" rx="1"/><rect class="ic-g" x="15.25" y="21" width="5.5" height="5.5" rx="1"/><rect class="ic-j" x="21" y="21" width="5.5" height="5.5" rx="1"/></symbol>
+      <symbol id="i-quiz" viewBox="0 0 36 36"><circle class="ic-f" cx="18" cy="18" r="17"/><circle class="ic-t" cx="18" cy="17" r="9.5"/><path class="ic-bs" d="M15.2 14.6a2.9 2.9 0 1 1 4.2 2.6c-1 .6-1.4 1.1-1.4 2.2"/><circle class="ic-b" cx="18" cy="22.4" r="1.2"/></symbol>
+      <symbol id="i-sujets" viewBox="0 0 36 36"><circle class="ic-f" cx="18" cy="18" r="17"/><path class="ic-p" d="M9 11h7a2 2 0 0 1 2 2v12a2 2 0 0 0-2-2H9z"/><path class="ic-t" d="M27 11h-7a2 2 0 0 0-2 2v12a2 2 0 0 1 2-2h7z"/></symbol>
+      <symbol id="i-inspection" viewBox="0 0 36 36"><circle class="ic-f" cx="18" cy="18" r="17"/><rect class="ic-jf" x="11" y="9.5" width="14" height="18" rx="2"/><rect class="ic-b" x="13" y="12.5" width="10" height="13" rx="1"/><rect class="ic-e" x="15" y="8" width="6" height="3.4" rx="1.2"/><path class="ic-gs" d="m15 19.5 2.2 2.2 4.3-4.8"/></symbol>
+      <symbol id="i-checklists" viewBox="0 0 36 36"><circle class="ic-f" cx="18" cy="18" r="17"/><rect class="ic-p" x="10" y="9" width="16" height="18" rx="2.4"/><path class="ic-bs" d="m13 14 1.4 1.4 2.6-2.8M13 20.2l1.4 1.4 2.6-2.8M20 14.2h3.4M20 20.4h3.4"/></symbol>
+      <symbol id="i-incident" viewBox="0 0 36 36"><circle class="ic-f" cx="18" cy="18" r="17"/><path class="ic-o" stroke="var(--ic-o)" stroke-width="2" stroke-linejoin="round" d="M18 9 27.5 25.5h-19z"/><rect class="ic-b" x="17" y="14.5" width="2" height="6" rx="1"/><circle class="ic-b" cx="18" cy="23" r="1.2"/></symbol>
+      <symbol id="i-epi" viewBox="0 0 36 36"><circle class="ic-f" cx="18" cy="18" r="17"/><path class="ic-j" d="M9.5 23.5a8.5 8.5 0 0 1 17 0z"/><rect class="ic-jf" x="8.5" y="23" width="19" height="3.2" rx="1.6"/><rect class="ic-jf" x="16" y="11.5" width="4" height="8" rx="1.4"/></symbol>
+      <symbol id="i-causes" viewBox="0 0 36 36"><circle class="ic-f" cx="18" cy="18" r="17"/><path class="ic-ps" d="M8 18h15M12 11.5l4 6.5M12 24.5l4-6.5M18.5 11.5l3.5 6.5M18.5 24.5l3.5-6.5"/><path class="ic-p" d="m28 18-5.5-4v8z"/></symbol>
+      <symbol id="i-glossaire" viewBox="0 0 36 36"><circle class="ic-f" cx="18" cy="18" r="17"/><circle cx="16" cy="16" r="6.3" fill="none" style="stroke:var(--ic-p);stroke-width:2.6"/><path class="ic-ps" d="m21 21 5.5 5.5" style="stroke:var(--ic-pf);stroke-width:3"/><path class="ic-ps" d="M13.6 17.6 16 12l2.4 5.6M14.4 16h3.2" style="stroke-width:1.6"/></symbol>
+      <symbol id="i-documents" viewBox="0 0 36 36"><circle class="ic-f" cx="18" cy="18" r="17"/><path class="ic-p" d="M12 8.5h9l5 5V27.5H12z"/><path class="ic-t" d="M21 8.5l5 5h-5z"/><path class="ic-bs" d="M15.5 19h7M15.5 23h7"/></symbol>
+      <symbol id="i-assistant" viewBox="0 0 36 36"><circle class="ic-f" cx="18" cy="18" r="17"/><rect class="ic-p" x="9" y="13" width="18" height="14" rx="4.5"/><path class="ic-ps" d="M18 13V9"/><circle class="ic-j" cx="18" cy="8" r="2"/><circle class="ic-b" cx="14.2" cy="19.5" r="2.1"/><circle class="ic-b" cx="21.8" cy="19.5" r="2.1"/><path class="ic-bs" d="M15 23.6h6"/></symbol>
+      <symbol id="i-historique" viewBox="0 0 36 36"><circle class="ic-f" cx="18" cy="18" r="17"/><circle class="ic-t" cx="18" cy="18" r="9"/><path class="ic-bs" d="M18 13v5.2l3.4 2"/></symbol>
+      <symbol id="i-liens" viewBox="0 0 36 36"><circle class="ic-f" cx="18" cy="18" r="17"/><path class="ic-ps" d="M15.5 20.5l5-5M14 17l-2 2a3.6 3.6 0 0 0 5.1 5.1l2-2M22 19l2-2a3.6 3.6 0 0 0-5.1-5.1l-2 2"/></symbol>
+      <symbol id="i-parametres" viewBox="0 0 36 36"><circle class="ic-f" cx="18" cy="18" r="17"/><circle cx="18" cy="18" r="4.6" fill="none" style="stroke:var(--ic-p);stroke-width:2.6"/><path class="ic-ps" d="M18 8.5v3.4M18 24.1v3.4M8.5 18h3.4M24.1 18h3.4M11.3 11.3l2.4 2.4M22.3 22.3l2.4 2.4M24.7 11.3l-2.4 2.4M13.7 22.3l-2.4 2.4"/></symbol>
+      <symbol id="i-apropos" viewBox="0 0 36 36"><circle class="ic-f" cx="18" cy="18" r="17"/><circle class="ic-p" cx="18" cy="18" r="9.5"/><rect class="ic-b" x="17" y="16.5" width="2" height="7" rx="1"/><circle class="ic-b" cx="18" cy="13.2" r="1.3"/></symbol>
+    </defs>
+  </svg>
+
+  <a class="skip" href="#calculateur" data-i18n="skip">Aller au calculateur</a>
 
   <!-- ===== EN-TÊTE ===== -->
   <header class="barre-haut">
     <div class="wrap barre-in">
+      <button type="button" class="btn-menu" id="btn-menu" aria-controls="tiroir" aria-expanded="false" aria-label="Ouvrir le menu" data-i18n-aria="menu.ouvrir">
+        <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M4 7h16M4 12h16M4 17h16"/></svg>
+      </button>
       <span class="logo"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M12 2 4 5v6c0 5 3.4 9.4 8 11 4.6-1.6 8-6 8-11V5l-8-3z"/><path d="m9 12 2 2 4-4"/></svg></span>
       <div class="titres">
         <h1 class="brand">My-QHSE <span>Tools</span></h1>
-        <p id="titre-ecran" class="sous-titre">Risques</p>
+        <p id="titre-ecran" class="sous-titre">Accueil</p>
       </div>
+      <button type="button" class="btn-param" id="btn-param" data-ecran="parametres" aria-label="Paramètres" data-i18n-aria="param.bouton">
+        <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+      </button>
     </div>
   </header>
 
+  <!-- ===== MENU LATÉRAL (3 traits) : géré par js/liens.js ===== -->
+  <div class="tiroir-voile" id="tiroir-voile"></div>
+  <aside class="tiroir" id="tiroir" aria-label="Menu" data-i18n-aria="menu.titre">
+    <div class="tiroir-tete">
+      <div class="tiroir-marque">
+        <span class="logo" style="font-weight:400"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M12 2 4 5v6c0 5 3.4 9.4 8 11 4.6-1.6 8-6 8-11V5l-8-3z"/><path d="m9 12 2 2 4-4"/></svg></span>
+        <div>My-QHSE <span>Tools</span></div>
+      </div>
+      <button type="button" class="tiroir-fermer" id="tiroir-fermer" aria-label="Fermer le menu" data-i18n-aria="menu.fermer">
+        <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M6 6l12 12M18 6 6 18"/></svg>
+      </button>
+    </div>
+    <nav class="tiroir-liste" aria-label="Menu" data-i18n-aria="menu.titre">
+      <button type="button" class="tiroir-item" data-ecran="accueil"><svg class="ico-act" aria-hidden="true"><use href="#i-accueil"/></svg><span data-i18n="nav.accueil">Accueil</span></button>
+      <button type="button" class="tiroir-item" data-ecran="risques"><svg class="ico-act" aria-hidden="true"><use href="#i-risque"/></svg><span data-i18n="nav.risques">Risques</span></button>
+      <button type="button" class="tiroir-item" data-ecran="quiz"><svg class="ico-act" aria-hidden="true"><use href="#i-quiz"/></svg><span data-i18n="nav.quiz">Quiz</span></button>
+      <button type="button" class="tiroir-item" data-ecran="sujets"><svg class="ico-act" aria-hidden="true"><use href="#i-sujets"/></svg><span data-i18n="nav.sujets">Sujets</span></button>
+      <button type="button" class="tiroir-item" data-ecran="outils"><svg class="ico-act" aria-hidden="true"><use href="#i-inspection"/></svg><span data-i18n="nav.outils">Outils</span></button>
+      <button type="button" class="tiroir-item" data-ecran="assistant"><svg class="ico-act" aria-hidden="true"><use href="#i-assistant"/></svg><span data-i18n="titre.assistant">Assistant QHSE</span></button>
+      <button type="button" class="tiroir-item" data-ecran="documents"><svg class="ico-act" aria-hidden="true"><use href="#i-documents"/></svg><span data-i18n="titre.documents">Bibliothèque de documents</span></button>
+      <button type="button" class="tiroir-item" data-ecran="historique"><svg class="ico-act" aria-hidden="true"><use href="#i-historique"/></svg><span data-i18n="nav.historique">Historique</span></button>
+      <div class="tiroir-sep" role="separator"></div>
+      <button type="button" class="tiroir-item" data-ecran="liens"><svg class="ico-act" aria-hidden="true"><use href="#i-liens"/></svg><span data-i18n="nav.liens">Liens</span></button>
+      <button type="button" class="tiroir-item" data-ecran="parametres"><svg class="ico-act" aria-hidden="true"><use href="#i-parametres"/></svg><span data-i18n="param.bouton">Paramètres</span></button>
+      <button type="button" class="tiroir-item" data-ecran="apropos"><svg class="ico-act" aria-hidden="true"><use href="#i-apropos"/></svg><span data-i18n="titre.apropos">À propos</span></button>
+    </nav>
+  </aside>
+
   <main class="wrap app">
-    <div class="ecran" id="ecran-risques">
+
+    <!-- ================= ACCUEIL ================= -->
+    <div class="ecran" id="ecran-accueil">
+      <section class="accueil-hero" aria-labelledby="t-accueil">
+        <span class="accueil-badge" data-i18n="acc.badge">QHSE · Afrique francophone</span>
+        <h2 id="t-accueil" class="accueil-titre" data-i18n="acc.titre">Bienvenue sur My-QHSE Tools</h2>
+        <p data-i18n="acc.texte">Évaluez un risque, révisez avec les quiz et gardez vos outils QHSE à portée de main, même sur un téléphone peu puissant.</p>
+        <div class="actions">
+          <a class="btn btn-clair" href="#risques" data-i18n="acc.btn.risque">Évaluer un risque</a>
+          <a class="btn btn-contour" href="#quiz" data-i18n="acc.btn.quiz">Faire un quiz</a>
+        </div>
+      </section>
+
+      <h2 class="accueil-h" data-i18n="acc.outils">Vos outils</h2>
+      <div class="accueil-grille">
+        <a class="carte-outil carte-large carte-assistant" href="#assistant">
+          <span class="carte-ico"><svg class="ico-act" aria-hidden="true"><use href="#i-assistant"/></svg></span>
+          <span class="carte-txt"><span class="carte-t" data-i18n="acc.assistant.t">Assistant QHSE</span><span class="carte-d" data-i18n="acc.assistant.d">Posez vos questions, réponse par IA</span></span>
+        </a>
+        <a class="carte-outil carte-risque" href="#risques"><span class="carte-ico"><svg class="ico-act" aria-hidden="true"><use href="#i-risque"/></svg></span><span class="carte-t" data-i18n="acc.risques.t">Calculateur de risque</span><span class="carte-d" data-i18n="acc.risques.d">Score et matrice 5 × 5</span></a>
+        <a class="carte-outil" href="#quiz"><span class="carte-ico"><svg class="ico-act" aria-hidden="true"><use href="#i-quiz"/></svg></span><span class="carte-t" data-i18n="acc.quiz.t">Quiz QHSE</span><span class="carte-d" data-i18n="acc.quiz.d">Testez vos connaissances</span></a>
+        <a class="carte-outil" href="#sujets"><span class="carte-ico"><svg class="ico-act" aria-hidden="true"><use href="#i-sujets"/></svg></span><span class="carte-t" data-i18n="acc.sujets.t">Sujets</span><span class="carte-d" data-i18n="acc.sujets.d">Cours et fiches à lire</span></a>
+        <a class="carte-outil" href="#inspection"><span class="carte-ico"><svg class="ico-act" aria-hidden="true"><use href="#i-inspection"/></svg></span><span class="carte-t" data-i18n="acc.inspection.t">Inspection</span><span class="carte-d" data-i18n="acc.inspection.d">Contrôles sur le terrain</span></a>
+        <a class="carte-outil" href="#checklists"><span class="carte-ico"><svg class="ico-act" aria-hidden="true"><use href="#i-checklists"/></svg></span><span class="carte-t" data-i18n="acc.checklists.t">Checklists</span><span class="carte-d" data-i18n="acc.checklists.d">Listes de vérification</span></a>
+        <a class="carte-outil" href="#incident"><span class="carte-ico"><svg class="ico-act" aria-hidden="true"><use href="#i-incident"/></svg></span><span class="carte-t" data-i18n="acc.incident.t">Incident</span><span class="carte-d" data-i18n="acc.incident.d">Déclarer et suivre</span></a>
+        <a class="carte-outil" href="#epi"><span class="carte-ico"><svg class="ico-act" aria-hidden="true"><use href="#i-epi"/></svg></span><span class="carte-t" data-i18n="acc.epi.t">Registre EPI</span><span class="carte-d" data-i18n="acc.epi.d">Équipements de protection</span></a>
+        <a class="carte-outil" href="#causes"><span class="carte-ico"><svg class="ico-act" aria-hidden="true"><use href="#i-causes"/></svg></span><span class="carte-t" data-i18n="acc.causes.t">Analyse des causes</span><span class="carte-d" data-i18n="acc.causes.d">5 pourquoi et Ishikawa</span></a>
+        <a class="carte-outil" href="#glossaire"><span class="carte-ico"><svg class="ico-act" aria-hidden="true"><use href="#i-glossaire"/></svg></span><span class="carte-t" data-i18n="acc.glossaire.t">Glossaire</span><span class="carte-d" data-i18n="acc.glossaire.d">Termes QHSE</span></a>
+        <a class="carte-outil" href="#documents"><span class="carte-ico"><svg class="ico-act" aria-hidden="true"><use href="#i-documents"/></svg></span><span class="carte-t" data-i18n="acc.documents.t">Documents</span><span class="carte-d" data-i18n="acc.documents.d">Modèles et guides</span></a>
+      </div>
+
+      <section class="card accueil-activite" aria-labelledby="t-activite">
+        <h2 id="t-activite" data-i18n="acc.activite">Votre activité sur cet appareil</h2>
+        <div class="accueil-stats">
+          <div class="stat"><b id="accueil-n-risques">0</b><span data-i18n="acc.n.risques">Évaluations de risque</span></div>
+          <div class="stat"><b id="accueil-n-quiz">0</b><span data-i18n="acc.n.quiz">Quiz enregistrés</span></div>
+        </div>
+        <p class="aide"><a href="#historique" data-i18n="acc.historique">Voir l'historique</a></p>
+      </section>
+    </div>
+
+    <!-- ================= RISQUES ================= -->
+    <div class="ecran" id="ecran-risques" hidden>
       <div class="intro bulle"><strong>Évaluez un risque professionnel en moins d'une minute.</strong> Un outil gratuit pour les étudiants et professionnels de la Qualité, Hygiène, Sécurité et Environnement en Afrique francophone. Choisissez une probabilité et une gravité : My-QHSE Tools calcule le score et le place sur la matrice 5 × 5.</div>
       <p class="notice" role="note">
         <strong>Seuils provisoires.</strong> Les niveaux de risque ci-dessous sont indicatifs. Ils seront ajustés après validation d'une méthode QHSE documentée.
@@ -74,16 +245,18 @@
       </section>
     </div>
 
+    <!-- ================= QUIZ ================= -->
     <div class="ecran" id="ecran-quiz" hidden>
       <section id="quiz" class="card" aria-labelledby="t-quiz">
         <h2 id="t-quiz">Quiz QHSE</h2>
         <p class="aide">Testez vos connaissances : questions Vrai ou Faux et QCM, avec correction et explication après chaque réponse, puis votre score final.</p>
         <div id="quiz-zone">
-          <p class="aide">Chargement du quiz… Si ce message reste affiché, vérifiez que le fichier quiz.js est bien dans le même dossier que index.html.</p>
+          <p class="aide">Chargement du quiz… Si ce message reste affiché, vérifiez que le fichier js/quiz.js est bien présent sur le site.</p>
         </div>
       </section>
     </div>
 
+    <!-- ================= SUJETS ================= -->
     <div class="ecran" id="ecran-sujets" hidden>
       <section id="bibliotheque" class="card" aria-labelledby="t-bib">
         <h2 id="t-bib">Bibliothèque de sujets</h2>
@@ -101,22 +274,97 @@
       </section>
     </div>
 
+    <!-- ================= OUTILS (page de choix : chaque outil a sa propre page) ================= -->
     <div class="ecran" id="ecran-outils" hidden>
-      <div class="outils-choix" role="group" aria-label="Choisir un outil">
-        <button type="button" class="btn" data-outil="causes" aria-pressed="true">Analyse des causes</button>
-        <button type="button" class="btn btn-sec" data-outil="glossaire" aria-pressed="false">Glossaire</button>
-        <button type="button" class="btn btn-sec" data-outil="incident" aria-pressed="false">Incident</button>
-        <button type="button" class="btn btn-sec" data-outil="inspection" aria-pressed="false">Inspection</button>
-        <button type="button" class="btn btn-sec" data-outil="epi" aria-pressed="false">Registre EPI</button>
+      <p class="aide" data-i18n="outils.intro">Choisissez un outil : chacun s'ouvre dans sa propre page.</p>
+      <div class="accueil-grille">
+        <a class="carte-outil carte-large carte-assistant" href="#assistant">
+          <span class="carte-ico"><svg class="ico-act" aria-hidden="true"><use href="#i-assistant"/></svg></span>
+          <span class="carte-txt"><span class="carte-t" data-i18n="acc.assistant.t">Assistant QHSE</span><span class="carte-d" data-i18n="acc.assistant.d">Posez vos questions, réponse par IA</span></span>
+        </a>
+        <a class="carte-outil" href="#checklists"><span class="carte-ico"><svg class="ico-act" aria-hidden="true"><use href="#i-checklists"/></svg></span><span class="carte-t" data-i18n="acc.checklists.t">Checklists</span><span class="carte-d" data-i18n="acc.checklists.d">Listes de vérification</span></a>
+        <a class="carte-outil" href="#inspection"><span class="carte-ico"><svg class="ico-act" aria-hidden="true"><use href="#i-inspection"/></svg></span><span class="carte-t" data-i18n="acc.inspection.t">Inspection</span><span class="carte-d" data-i18n="acc.inspection.d">Contrôles sur le terrain</span></a>
+        <a class="carte-outil" href="#incident"><span class="carte-ico"><svg class="ico-act" aria-hidden="true"><use href="#i-incident"/></svg></span><span class="carte-t" data-i18n="acc.incident.t">Incident</span><span class="carte-d" data-i18n="acc.incident.d">Déclarer et suivre</span></a>
+        <a class="carte-outil" href="#epi"><span class="carte-ico"><svg class="ico-act" aria-hidden="true"><use href="#i-epi"/></svg></span><span class="carte-t" data-i18n="acc.epi.t">Registre EPI</span><span class="carte-d" data-i18n="acc.epi.d">Équipements de protection</span></a>
+        <a class="carte-outil" href="#causes"><span class="carte-ico"><svg class="ico-act" aria-hidden="true"><use href="#i-causes"/></svg></span><span class="carte-t" data-i18n="acc.causes.t">Analyse des causes</span><span class="carte-d" data-i18n="acc.causes.d">5 pourquoi et Ishikawa</span></a>
+        <a class="carte-outil" href="#glossaire"><span class="carte-ico"><svg class="ico-act" aria-hidden="true"><use href="#i-glossaire"/></svg></span><span class="carte-t" data-i18n="acc.glossaire.t">Glossaire</span><span class="carte-d" data-i18n="acc.glossaire.d">Termes QHSE</span></a>
       </div>
+    </div>
 
+    <!-- ===== Pages d'outils (ouvertes depuis la page Outils ou l'Accueil) ===== -->
+    <div class="ecran" id="ecran-assistant" hidden>
+      <a class="retour-outils" href="#outils"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="m15 18-6-6 6-6"/></svg><span data-i18n="outils.retour">Retour aux outils</span></a>
+      <section id="assistant" class="card" aria-labelledby="t-ia">
+        <h2 id="t-ia" data-i18n="ia.titre">Assistant QHSE</h2>
+        <p class="aide" data-i18n="ia.intro">Posez une question sur la prévention des risques, les normes ISO, l'hygiène ou l'environnement. Chaque question est indépendante.</p>
+        <p class="notice" role="note" data-i18n="ia.avert">Réponse générée par une IA : à vérifier. Ne saisissez pas de données personnelles. Elle ne remplace pas l'évaluation d'un professionnel qualifié.</p>
+        <div class="ia-suggestions">
+          <button type="button" class="ia-chip" data-i18n="ia.s1">Quelle différence entre danger et risque ?</button>
+          <button type="button" class="ia-chip" data-i18n="ia.s2">Comment rédiger une bonne action corrective ?</button>
+          <button type="button" class="ia-chip" data-i18n="ia.s3">Que contrôler lors d'une inspection incendie ?</button>
+          <button type="button" class="ia-chip" data-i18n="ia.s4">À quoi sert la norme ISO 45001 ?</button>
+        </div>
+        <div class="field">
+          <label for="ia-question" data-i18n="ia.label">Votre question</label>
+          <textarea id="ia-question" rows="4" maxlength="600"></textarea>
+        </div>
+        <p class="ia-compteur"><span id="ia-n">0</span> / 600</p>
+        <div class="actions">
+          <button type="button" class="btn" id="ia-envoyer" data-i18n="ia.envoyer">Poser la question</button>
+          <button type="button" class="btn btn-sec" id="ia-effacer" data-i18n="ia.effacer">Effacer</button>
+        </div>
+        <p id="ia-statut" class="aide ia-statut" aria-live="polite"></p>
+      </section>
+      <div id="ia-reponses"></div>
+    </div>
+
+    <div class="ecran" id="ecran-checklists" hidden>
+      <a class="retour-outils" href="#outils"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="m15 18-6-6 6-6"/></svg><span data-i18n="outils.retour">Retour aux outils</span></a>
+      <section id="checklists" class="card" aria-labelledby="t-ck">
+        <h2 id="t-ck">Checklists et exercices QHSE</h2>
+        <div id="checklists-zone"><p class="aide">Chargement… Si ce message reste affiché, vérifiez que js/checklists.js et les fichiers js/data/checklists-data-1, 2 et 3 sont bien présents.</p></div>
+      </section>
+    </div>
+
+    <div class="ecran" id="ecran-inspection" hidden>
+      <a class="retour-outils" href="#outils"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="m15 18-6-6 6-6"/></svg><span data-i18n="outils.retour">Retour aux outils</span></a>
+      <section id="inspection" class="card" aria-labelledby="t-ins">
+        <h2 id="t-ins">Inspection sécurité</h2>
+        <p class="aide">Parcourez la checklist, notez les points non conformes et joignez des photos.</p>
+        <div id="inspection-zone"></div>
+      </section>
+    </div>
+
+    <div class="ecran" id="ecran-incident" hidden>
+      <a class="retour-outils" href="#outils"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="m15 18-6-6 6-6"/></svg><span data-i18n="outils.retour">Retour aux outils</span></a>
+      <section id="incident" class="card" aria-labelledby="t-inc">
+        <h2 id="t-inc">Rapport d'incident</h2>
+        <p class="aide">Déclarez un incident ou un quasi-accident, avec photos. Tout est enregistré sur votre appareil ; l'envoi des photos dans le cloud est facultatif.</p>
+        <div id="incident-zone"><p class="aide">Chargement… Vérifiez que js/terrain.js est bien présent sur le site.</p></div>
+      </section>
+    </div>
+
+    <div class="ecran" id="ecran-epi" hidden>
+      <a class="retour-outils" href="#outils"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="m15 18-6-6 6-6"/></svg><span data-i18n="outils.retour">Retour aux outils</span></a>
+      <section id="epi" class="card" aria-labelledby="t-epi">
+        <h2 id="t-epi">Registre des EPI et formations</h2>
+        <p class="aide">Suivez les dates d'expiration : les fiches passent en orange 30 jours avant, puis en rouge.</p>
+        <div id="epi-zone"></div>
+      </section>
+    </div>
+
+    <div class="ecran" id="ecran-causes" hidden>
+      <a class="retour-outils" href="#outils"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="m15 18-6-6 6-6"/></svg><span data-i18n="outils.retour">Retour aux outils</span></a>
       <section id="causes" class="card" aria-labelledby="t-causes">
         <h2 id="t-causes">Analyse des causes : 5 pourquoi et Ishikawa</h2>
         <p class="aide">Les données restent dans votre navigateur et disparaissent au rechargement de la page.</p>
-        <div id="causes-zone"><p class="aide">Chargement… Si ce message reste affiché, vérifiez que causes.js est dans le même dossier que index.html.</p></div>
+        <div id="causes-zone"><p class="aide">Chargement… Si ce message reste affiché, vérifiez que js/data/causes.js est bien présent.</p></div>
       </section>
+    </div>
 
-      <section id="glossaire" class="card" aria-labelledby="t-gloss" hidden>
+    <div class="ecran" id="ecran-glossaire" hidden>
+      <a class="retour-outils" href="#outils"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="m15 18-6-6 6-6"/></svg><span data-i18n="outils.retour">Retour aux outils</span></a>
+      <section id="glossaire" class="card" aria-labelledby="t-gloss">
         <h2 id="t-gloss">Glossaire QHSE</h2>
         <p class="aide">Sigles et termes essentiels. Touchez un terme pour lire sa définition.</p>
         <div class="field">
@@ -127,26 +375,65 @@
         <div id="gl-liste"></div>
         <p id="gl-vide" class="aide" hidden>Aucun terme ne correspond à votre recherche.</p>
       </section>
+    </div>
 
-      <section id="incident" class="card" aria-labelledby="t-inc" hidden>
-        <h2 id="t-inc">Rapport d'incident</h2>
-        <p class="aide">Déclarez un incident ou un quasi-accident, avec photos. Tout est enregistré sur votre appareil.</p>
-        <div id="incident-zone"><p class="aide">Chargement… Vérifiez que terrain.js est dans le même dossier que index.html.</p></div>
-      </section>
+    <!-- ================= DOCUMENTS ================= -->
+    <div class="ecran" id="ecran-documents" hidden>
+      <section id="documents" class="card" aria-labelledby="t-doc">
+        <div id="doc-zone-liste">
+          <h2 id="t-doc" data-i18n="titre.documents">Bibliothèque de documents</h2>
+          <p class="aide" data-i18n="doc.aide">Consultez les documents Word et Excel directement dans l’application, sans les télécharger.</p>
+          <div class="field">
+            <label for="doc-recherche">Rechercher un document</label>
+            <input id="doc-recherche" type="search" placeholder="Ex. : HACCP, tableau de bord" autocomplete="off">
+          </div>
+          <div id="doc-categories" class="doc-categories" role="group" aria-label="Catégories" hidden></div>
+          <p id="doc-compte" class="aide" aria-live="polite"></p>
+          <ul id="doc-liste" class="doc-liste"></ul>
+          <p id="doc-vide" class="aide" hidden></p>
 
-      <section id="inspection" class="card" aria-labelledby="t-ins" hidden>
-        <h2 id="t-ins">Inspection sécurité</h2>
-        <p class="aide">Parcourez la checklist, notez les points non conformes et joignez des photos.</p>
-        <div id="inspection-zone"></div>
-      </section>
+          <div class="doc-local">
+            <button type="button" class="btn btn-sec" id="doc-ouvrir-local">Ouvrir un fichier de mon appareil</button>
+            <input type="file" id="doc-fichier" accept=".docx,.xlsx,.xlsm,.pdf" tabindex="-1" aria-hidden="true">
+            <p class="aide">Word (.docx), Excel (.xlsx) ou PDF. Le fichier est lu sur votre appareil et n'est envoyé nulle part.</p>
+          </div>
 
-      <section id="epi" class="card" aria-labelledby="t-epi" hidden>
-        <h2 id="t-epi">Registre des EPI et formations</h2>
-        <p class="aide">Suivez les dates d'expiration : les fiches passent en orange 30 jours avant, puis en rouge.</p>
-        <div id="epi-zone"></div>
+          <!-- Accès administrateur : géré par documents-acces.js et documents.js -->
+          <div class="doc-admin" id="doc-admin" hidden>
+            <button type="button" class="doc-admin-lien" id="doc-admin-ouvrir" aria-expanded="false" aria-controls="doc-admin-form">Accès administrateur</button>
+            <div class="doc-admin-form" id="doc-admin-form" hidden>
+              <label for="doc-admin-code">Code administrateur</label>
+              <input id="doc-admin-code" type="password" autocomplete="off" autocapitalize="characters" spellcheck="false">
+              <button type="button" class="btn" id="doc-admin-valider">Déverrouiller</button>
+              <p id="doc-admin-msg" class="doc-etat" role="status"></p>
+            </div>
+            <div class="doc-admin-actif" id="doc-admin-actif" hidden>
+              <span>Accès administrateur actif</span>
+              <button type="button" class="btn btn-sec" id="doc-admin-verrou">Verrouiller</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Lecteur de document -->
+        <div id="doc-lecture" hidden>
+          <div class="doc-barre">
+            <button type="button" class="btn btn-sec" id="doc-retour">← Retour à la liste</button>
+            <div class="doc-zoom" role="group" aria-label="Taille d'affichage">
+              <button type="button" id="doc-moins" aria-label="Réduire">A−</button>
+              <button type="button" id="doc-plus" aria-label="Agrandir">A+</button>
+            </div>
+          </div>
+          <h2 id="doc-titre" tabindex="-1"></h2>
+          <p id="doc-meta" class="aide"></p>
+          <div id="doc-onglets" class="xl-onglets" role="tablist" hidden></div>
+          <p id="doc-etat" class="doc-etat" role="status"></p>
+          <button type="button" class="btn btn-sec" id="doc-reessayer" hidden>Réessayer</button>
+          <div id="doc-page" class="doc-page"></div>
+        </div>
       </section>
     </div>
 
+    <!-- ================= HISTORIQUE ================= -->
     <div class="ecran" id="ecran-historique" hidden>
       <section id="historique" class="card" aria-labelledby="t-hist">
         <h2 id="t-hist">Évaluations de risques</h2>
@@ -164,7 +451,7 @@
             <tbody id="historique-corps"></tbody>
           </table>
         </div>
-        <p id="vide" class="aide">Aucune évaluation pour l'instant. Remplissez le calculateur de l'onglet Risques.</p>
+        <p id="vide" class="aide">Aucune évaluation pour l'instant. Remplissez le calculateur de l'écran Risques.</p>
         <button id="vider" type="button" class="btn btn-sec" hidden>Vider la liste</button>
       </section>
 
@@ -175,24 +462,183 @@
       </section>
     </div>
 
+    <!-- ================= LIENS ================= -->
+    <div class="ecran" id="ecran-liens" hidden>
+      <section class="liens-hero" aria-labelledby="t-liens">
+        <div class="liens-id">
+          <img class="liens-logo" id="liens-logo" alt="Logo My-QHSE Afrique" width="76" height="76">
+          <div>
+            <h2 id="t-liens">My-QHSE Afrique</h2>
+            <p class="liens-meta" data-i18n="liens.meta">Chaîne WhatsApp · plus de 1 200 abonnés</p>
+          </div>
+        </div>
+        <p class="liens-texte" data-i18n="liens.texte">Actualités, bonnes pratiques et conseils en qualité, hygiène, sécurité et environnement, pour les professionnels et les passionnés du BTP, des mines et de l’industrie chimique.</p>
+        <div class="liens-hero-actions">
+          <!-- À RENSEIGNER : adresse de votre chaîne WhatsApp à la place de « # » -->
+          <a class="btn-clair" id="lien-chaine" href="#liens" target="_blank" rel="noopener noreferrer">
+            <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M21 11.5a8.4 8.4 0 0 1-12.4 7.4L3 20.5l1.7-5.4A8.4 8.4 0 1 1 21 11.5z"/></svg>
+            <span data-i18n="liens.suivre">Suivre la chaîne WhatsApp</span>
+          </a>
+          <button type="button" class="btn-contour" id="liens-partager">
+            <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><path d="m8.6 13.5 6.8 4M15.4 6.5l-6.8 4"/></svg>
+            <span data-i18n="liens.partager">Partager cette page</span>
+          </button>
+        </div>
+      </section>
+
+      <section class="liens-groupe" aria-labelledby="t-lg1">
+        <h3 id="t-lg1" data-i18n="liens.g1">Rejoindre la communauté</h3>
+        <ul class="liens-liste">
+          <!-- À RENSEIGNER : remplacez chaque href="#liens" par l'adresse réelle -->
+          <li><a class="lien-ligne" id="lien-wa" href="#liens" target="_blank" rel="noopener noreferrer"><span class="lien-pastille" data-reseau="whatsapp"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/></svg></span><span class="lien-corps"><strong data-i18n="liens.wa">Groupes WhatsApp</strong><span data-i18n="liens.wa.d">Échangez avec d’autres professionnels et étudiants QHSE.</span></span><span class="lien-fleche" aria-hidden="true">›</span></a></li>
+          <li><a class="lien-ligne" id="lien-fb" href="#liens" target="_blank" rel="noopener noreferrer"><span class="lien-pastille" data-reseau="facebook"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"/></svg></span><span class="lien-corps"><strong data-i18n="liens.fb">Page Facebook</strong><span data-i18n="liens.fb.d">Retrouvez nos publications et nos actualités · 7 540 abonnés.</span></span><span class="lien-fleche" aria-hidden="true">›</span></a></li>
+          <li><a class="lien-ligne" id="lien-yt" href="#liens" target="_blank" rel="noopener noreferrer"><span class="lien-pastille" data-reseau="youtube"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M22.5 6.4a2.8 2.8 0 0 0-2-2C18.8 4 12 4 12 4s-6.8 0-8.5.4a2.8 2.8 0 0 0-2 2C1 8.1 1 12 1 12s0 3.9.5 5.6a2.8 2.8 0 0 0 2 2C5.2 20 12 20 12 20s6.8 0 8.5-.4a2.8 2.8 0 0 0 2-2c.5-1.7.5-5.6.5-5.6s0-3.9-.5-5.6z"/><path d="m10 15 5-3-5-3z"/></svg></span><span class="lien-corps"><strong data-i18n="liens.yt">Chaîne YouTube</strong><span data-i18n="liens.yt.d">Regardez nos vidéos QHSE.</span></span><span class="lien-fleche" aria-hidden="true">›</span></a></li>
+        </ul>
+      </section>
+
+      <section class="liens-groupe" aria-labelledby="t-lg2">
+        <h3 id="t-lg2" data-i18n="liens.g2">Boutique</h3>
+        <ul class="liens-liste">
+          <li><a class="lien-ligne" id="lien-shop" href="#liens" target="_blank" rel="noopener noreferrer"><span class="lien-pastille" data-reseau="mail"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><path d="M3 6h18M16 10a4 4 0 0 1-8 0"/></svg></span><span class="lien-corps"><strong data-i18n="liens.shop">Notre boutique en ligne</strong><span data-i18n="liens.shop.d">Découvrez nos produits et passez commande.</span></span><span class="lien-fleche" aria-hidden="true">›</span></a></li>
+        </ul>
+      </section>
+
+      <section class="liens-groupe" aria-labelledby="t-lg3">
+        <h3 id="t-lg3" data-i18n="liens.g3">Nous contacter</h3>
+        <ul class="liens-liste">
+          <li><a class="lien-ligne" id="lien-contact" href="#liens" target="_blank" rel="noopener noreferrer"><span class="lien-pastille" data-reseau="whatsapp"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M21 11.5a8.4 8.4 0 0 1-12.4 7.4L3 20.5l1.7-5.4A8.4 8.4 0 1 1 21 11.5z"/></svg></span><span class="lien-corps"><strong data-i18n="liens.contact">Écrire sur WhatsApp</strong><span data-i18n="liens.contact.d">Posez-nous vos questions directement.</span></span><span class="lien-fleche" aria-hidden="true">›</span></a></li>
+          <li>
+            <div class="lien-ligne">
+              <span class="lien-pastille" data-reseau="mail"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M4 4h16a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2z"/><path d="m22 6-10 7L2 6"/></svg></span>
+              <span class="lien-corps"><strong data-i18n="liens.mail">Adresse e-mail</strong><span class="lien-adresse">myqhse2@gmail.com</span></span>
+              <button type="button" class="lien-copier" id="liens-copier-mail" data-i18n="liens.copier">Copier</button>
+            </div>
+          </li>
+        </ul>
+      </section>
+      <p id="liens-etat" class="liens-etat" role="status" aria-live="polite"></p>
+    </div>
+
+    <!-- ================= PARAMÈTRES ================= -->
+    <div class="ecran" id="ecran-parametres" hidden>
+      <section class="card" aria-labelledby="t-param">
+        <h2 id="t-param" data-i18n="param.titre">Paramètres</h2>
+        <p class="aide" data-i18n="param.intro">Vos préférences sont enregistrées sur cet appareil, dans ce navigateur. Elles sont conservées après la fermeture de l'application.</p>
+        <p id="param-etat" class="pref-etat" role="status" aria-live="polite"></p>
+      </section>
+
+      <section class="card">
+        <fieldset class="pref">
+          <legend data-i18n="param.langue">Langue</legend>
+          <p class="aide" data-i18n="param.langue.aide">Choisissez la langue de l'interface.</p>
+          <div class="pref-liste">
+            <label class="pref-opt"><input type="radio" name="pref-langue" data-pref="langue" value="fr"><span class="pref-box">Français</span></label>
+            <label class="pref-opt"><input type="radio" name="pref-langue" data-pref="langue" value="en"><span class="pref-box">English</span></label>
+          </div>
+          <p class="aide" data-i18n="param.langue.note">Traduction en cours : pour l'instant, la navigation, l'en-tête, le pied de page, cette page Paramètres et la page À propos sont traduits. Le calculateur, le quiz, les sujets et les outils restent en français.</p>
+        </fieldset>
+      </section>
+
+      <section class="card">
+        <fieldset class="pref">
+          <legend data-i18n="param.theme">Apparence</legend>
+          <div class="pref-liste">
+            <label class="pref-opt"><input type="radio" name="pref-theme" data-pref="theme" value="clair"><span class="pref-box"><span data-i18n="param.theme.clair">Mode clair</span></span></label>
+            <label class="pref-opt"><input type="radio" name="pref-theme" data-pref="theme" value="sombre"><span class="pref-box"><span data-i18n="param.theme.sombre">Mode sombre</span></span></label>
+            <label class="pref-opt"><input type="radio" name="pref-theme" data-pref="theme" value="systeme"><span class="pref-box"><span><span data-i18n="param.theme.systeme">Mode système</span><small data-i18n="param.theme.systeme.aide">Suit le réglage de votre téléphone</small></span></span></label>
+          </div>
+        </fieldset>
+      </section>
+
+      <section class="card">
+        <fieldset class="pref">
+          <legend data-i18n="param.couleur">Couleur principale</legend>
+          <p class="aide" data-i18n="param.couleur.aide">Couleur de l'en-tête, des boutons et des éléments actifs.</p>
+          <div class="pref-liste pref-couleurs">
+            <label class="pref-opt"><input type="radio" name="pref-couleur" data-pref="couleur" value="vert"><span class="pref-box"><span class="pref-pastille" data-c="vert" aria-hidden="true"></span><span data-i18n="param.couleur.vert">Vert</span></span></label>
+            <label class="pref-opt"><input type="radio" name="pref-couleur" data-pref="couleur" value="bleu"><span class="pref-box"><span class="pref-pastille" data-c="bleu" aria-hidden="true"></span><span data-i18n="param.couleur.bleu">Bleu</span></span></label>
+            <label class="pref-opt"><input type="radio" name="pref-couleur" data-pref="couleur" value="violet"><span class="pref-box"><span class="pref-pastille" data-c="violet" aria-hidden="true"></span><span data-i18n="param.couleur.violet">Violet</span></span></label>
+            <label class="pref-opt"><input type="radio" name="pref-couleur" data-pref="couleur" value="orange"><span class="pref-box"><span class="pref-pastille" data-c="orange" aria-hidden="true"></span><span data-i18n="param.couleur.orange">Orange</span></span></label>
+            <label class="pref-opt"><input type="radio" name="pref-couleur" data-pref="couleur" value="noir"><span class="pref-box"><span class="pref-pastille" data-c="noir" aria-hidden="true"></span><span data-i18n="param.couleur.noir">Noir</span></span></label>
+          </div>
+        </fieldset>
+      </section>
+
+      <section class="card">
+        <fieldset class="pref">
+          <legend data-i18n="param.taille">Taille du texte</legend>
+          <p class="aide" data-i18n="param.taille.aide">Agrandit ou réduit le texte de toute l'application.</p>
+          <div class="pref-liste pref-taille">
+            <label class="pref-opt"><input type="radio" name="pref-taille" data-pref="taille" value="petit"><span class="pref-box"><span data-i18n="param.taille.petit">Petit</span></span></label>
+            <label class="pref-opt"><input type="radio" name="pref-taille" data-pref="taille" value="normal"><span class="pref-box"><span data-i18n="param.taille.normal">Normal</span></span></label>
+            <label class="pref-opt"><input type="radio" name="pref-taille" data-pref="taille" value="grand"><span class="pref-box"><span data-i18n="param.taille.grand">Grand</span></span></label>
+            <label class="pref-opt"><input type="radio" name="pref-taille" data-pref="taille" value="tres-grand"><span class="pref-box"><span data-i18n="param.taille.tres-grand">Très grand</span></span></label>
+          </div>
+          <p class="pref-apercu" data-i18n="param.apercu">Aperçu : voici la taille du texte de l'application.</p>
+        </fieldset>
+      </section>
+
+      <section class="card">
+        <label class="pref-interrupteur" for="pref-stats">
+          <input type="checkbox" id="pref-stats" checked>
+          <span><strong data-i18n="param.stats">Statistiques d'usage</strong>
+            <small data-i18n="param.stats.d">Comptage anonyme des écrans et outils utilisés. Aucune donnée saisie n'est envoyée.</small></span>
+        </label>
+      </section>
+
+      <section class="card">
+        <button type="button" class="lien-ecran" data-ecran="apropos">
+          <span class="lien-txt"><strong data-i18n="param.apropos">À propos de My-QHSE Afrique</strong><small data-i18n="param.apropos.aide">Notre mission et notre application.</small></span>
+          <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="m9 18 6-6-6-6"/></svg>
+        </button>
+        <div class="actions" style="margin-top:14px">
+          <button type="button" class="btn btn-sec" id="param-reset" data-i18n="param.reset">Rétablir les valeurs par défaut</button>
+        </div>
+      </section>
+    </div>
+
+    <!-- ================= À PROPOS ================= -->
+    <div class="ecran" id="ecran-apropos" hidden>
+      <section class="card apropos" aria-labelledby="t-apropos">
+        <div class="apropos-tete">
+          <span class="logo apropos-logo"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M12 2 4 5v6c0 5 3.4 9.4 8 11 4.6-1.6 8-6 8-11V5l-8-3z"/><path d="m9 12 2 2 4-4"/></svg></span>
+          <h2 id="t-apropos" data-i18n="apropos.titre">À propos de My-QHSE Afrique</h2>
+        </div>
+        <p data-i18n="apropos.p1">My-QHSE Afrique est une initiative consacrée à la diffusion d'informations, de bonnes pratiques et d'outils dans les domaines de la qualité, de l'hygiène, de la santé, de la sécurité et de l'environnement (QHSE).</p>
+        <p data-i18n="apropos.p2">Notre objectif est de contribuer à la prévention des risques, à la protection des personnes et de l'environnement, ainsi qu'à l'amélioration continue des pratiques professionnelles.</p>
+        <p data-i18n="apropos.p3">Nous partageons des ressources destinées aux professionnels, aux étudiants et aux passionnés du QHSE, notamment dans les secteurs du BTP, des mines et des industries.</p>
+        <p data-i18n="apropos.p4">À travers My-QHSE Tools, nous développons des outils numériques pratiques pour faciliter l'apprentissage, l'analyse des risques et l'application des méthodes QHSE au quotidien.</p>
+        <p data-i18n="apropos.p5">Notre ambition est de rendre les connaissances et les outils QHSE plus accessibles et de promouvoir une culture de prévention, de sécurité et d'amélioration continue.</p>
+        <p class="apropos-devise"><small data-i18n="apropos.devise.label">Notre devise</small><strong data-i18n="apropos.devise">Prévenir, protéger et progresser ensemble.</strong></p>
+        <div class="apropos-nav">
+          <button type="button" class="btn btn-sec" data-ecran="parametres" data-i18n="apropos.retour.param">Retour aux Paramètres</button>
+          <button type="button" class="btn" data-ecran="accueil" data-i18n="apropos.retour.app">Retour à l'application</button>
+        </div>
+      </section>
+    </div>
+
   </main>
 
   <footer class="site-footer">
-    <div class="wrap">My-QHSE Afrique · Outil pédagogique, ne remplace pas l'évaluation d'un professionnel qualifié.</div>
+    <div class="wrap" data-i18n="pied">My-QHSE Afrique · Outil pédagogique, ne remplace pas l'évaluation d'un professionnel qualifié.</div>
   </footer>
 
   <!-- ===== BARRE DE NAVIGATION FIXE ===== -->
-  <nav class="onglets" aria-label="Navigation principale">
-    <button type="button" class="onglet" data-ecran="risques"><span class="ico"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M10.29 3.86 1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><path d="M12 9v4M12 17h.01"/></svg></span>Risques</button>
-    <button type="button" class="onglet" data-ecran="quiz"><span class="ico"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3M12 17h.01"/></svg></span>Quiz</button>
-    <button type="button" class="onglet" data-ecran="sujets"><span class="ico"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg></span>Sujets</button>
-    <button type="button" class="onglet" data-ecran="outils"><span class="ico"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></svg></span>Outils</button>
-    <button type="button" class="onglet" data-ecran="historique"><span class="ico"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg></span>Historique</button>
+  <nav class="onglets" aria-label="Navigation principale" data-i18n-aria="nav.principale">
+    <button type="button" class="onglet" data-ecran="accueil"><span class="ico"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="m3 10 9-7 9 7v10a1 1 0 0 1-1 1h-5v-7H9v7H4a1 1 0 0 1-1-1z"/></svg></span><span data-i18n="nav.accueil">Accueil</span></button>
+    <button type="button" class="onglet" data-ecran="risques"><span class="ico"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M10.29 3.86 1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><path d="M12 9v4M12 17h.01"/></svg></span><span data-i18n="nav.risques">Risques</span></button>
+    <button type="button" class="onglet" data-ecran="quiz"><span class="ico"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3M12 17h.01"/></svg></span><span data-i18n="nav.quiz">Quiz</span></button>
+    <button type="button" class="onglet" data-ecran="outils"><span class="ico"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></svg></span><span data-i18n="nav.outils">Outils</span></button>
+    <button type="button" class="onglet" data-ecran="documents"><span class="ico"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6M8 13h8M8 17h8"/></svg></span><span data-i18n="nav.documents">Docs</span></button>
   </nav>
 
+  <!-- ===== SCRIPTS (l'ordre compte) ===== -->
+  <!-- Calculateur et historique des risques -->
   <script src="js/app.js"></script>
+  <!-- Sujets -->
   <script src="js/data/sujets.js"></script>
   <script src="js/bibliotheque.js"></script>
+  <!-- Banques de questions du quiz et images du livret : AVANT quiz.js -->
   <script src="js/data/banque-management.js"></script>
   <script src="js/data/banque-qualite.js"></script>
   <script src="js/data/banque-sante-securite.js"></script>
@@ -201,74 +647,127 @@
   <script src="js/data/banque-transversal.js"></script>
   <script src="js/data/images-livret.js"></script>
   <script src="js/data/banque-livret.js"></script>
+  <!-- Outils : causes, glossaire, terrain (incident, inspection, EPI) -->
   <script src="js/data/causes.js"></script>
   <script src="js/data/glossaire.js"></script>
   <script src="js/terrain.js"></script>
+  <!-- Checklists : les 3 fichiers de données AVANT checklists.js -->
+  <script src="js/data/checklists-data-1.js"></script>
+  <script src="js/data/checklists-data-2.js"></script>
+  <script src="js/data/checklists-data-3.js"></script>
+  <script src="js/checklists.js"></script>
+  <!-- Quiz (js/cloud-sync.js est chargé par quiz.js lui-même) ; les cartes viennent APRÈS quiz.js -->
   <script src="js/quiz.js"></script>
-  <!-- Cartes du quiz (thèmes en cartes, recherche, filtres) : doit venir APRÈS quiz.js -->
   <script src="js/quiz-cartes.js"></script>
+  <!-- Logo, documents (liste, accès administrateur, lecteur Word/Excel, écran) -->
+  <script src="js/data/logo-myqhse.js"></script>
+  <script src="js/data/documents-liste.js"></script>
+  <script src="js/documents-acces.js"></script>
+  <script src="js/lecteur-office.js"></script>
+  <script src="js/documents.js"></script>
+  <!-- Menu latéral et page Liens, accueil, assistant IA, statistiques d'usage -->
+  <script src="js/liens.js"></script>
+  <script src="js/accueil.js"></script>
+  <script src="js/assistant.js"></script>
+  <script src="js/activite.js"></script>
 
   <script>
-    /* Navigation par onglets : un seul écran affiché à la fois.
-       N'agit que sur l'affichage : calculateur, quiz et bibliothèque restent gérés par leurs propres fichiers. */
+    /* Navigation : un seul écran affiché à la fois (barre d'onglets, menu latéral, cartes, liens #...).
+       N'agit que sur l'affichage : chaque module reste géré par son propre fichier. */
     (function () {
-      var NOMS = ["risques", "quiz", "sujets", "outils", "historique"];
-      var TITRES = { risques: "Risques", quiz: "Quiz QHSE", sujets: "Sujets QHSE", outils: "Outils QHSE", historique: "Historique" };
-      var ANCRES = { risques: "risques", calculateur: "risques", matrice: "risques", quiz: "quiz", sujets: "sujets", bibliotheque: "sujets", outils: "outils", causes: "outils", glossaire: "outils", incident: "outils", inspection: "outils", epi: "outils", historique: "historique" };
-      var boutons = document.querySelectorAll(".onglet");
-      function afficher(nom, majUrl) {
-        if (NOMS.indexOf(nom) === -1) nom = "risques";
-        NOMS.forEach(function (n) { document.getElementById("ecran-" + n).hidden = (n !== nom); });
-        Array.prototype.forEach.call(boutons, function (b) {
+      var ECRANS = ["accueil", "risques", "quiz", "sujets", "outils", "documents", "historique", "liens", "parametres", "apropos",
+                    "assistant", "checklists", "inspection", "incident", "epi", "causes", "glossaire"];
+      var OUTILS = ["assistant", "checklists", "inspection", "incident", "epi", "causes", "glossaire"];
+      var ANCRES = { calculateur: "risques", matrice: "risques", bibliotheque: "sujets", docs: "documents" };
+      var courant = "accueil";
+
+      function t(cle, defaut) {
+        try { var v = window.QHSEPrefs ? window.QHSEPrefs.t(cle) : cle; return v && v !== cle ? v : defaut; } catch (e) { return defaut; }
+      }
+      function nomValide(n) { n = ANCRES[n] || n; return ECRANS.indexOf(n) > -1 ? n : null; }
+      function titre() {
+        var el = document.getElementById("titre-ecran");
+        if (el) el.textContent = t("titre." + courant, courant.charAt(0).toUpperCase() + courant.slice(1));
+      }
+      function marquer(liste, nom) {
+        Array.prototype.forEach.call(liste, function (b) {
           if (b.getAttribute("data-ecran") === nom) b.setAttribute("aria-current", "page"); else b.removeAttribute("aria-current");
         });
-        document.getElementById("titre-ecran").textContent = TITRES[nom];
+      }
+      function afficher(nom, majUrl) {
+        nom = nomValide(nom) || "accueil";
+        courant = nom;
+        ECRANS.forEach(function (n) { var e = document.getElementById("ecran-" + n); if (e) e.hidden = (n !== nom); });
+        var onglet = OUTILS.indexOf(nom) > -1 ? "outils" : nom;   // une page d'outil allume l'onglet « Outils »
+        marquer(document.querySelectorAll(".onglet"), onglet);
+        marquer(document.querySelectorAll(".tiroir-item"), nom);
+        var param = document.getElementById("btn-param");
+        if (param) { if (nom === "parametres") param.setAttribute("aria-current", "page"); else param.removeAttribute("aria-current"); }
+        titre();
         if (majUrl) { try { history.replaceState(null, "", "#" + nom); } catch (e) {} }
         window.scrollTo(0, 0);
       }
-      Array.prototype.forEach.call(boutons, function (b) {
-        b.addEventListener("click", function () { afficher(b.getAttribute("data-ecran"), true); });
+
+      /* Tout élément portant data-ecran ouvre l'écran correspondant (onglets, menu, roue dentée, boutons) */
+      document.addEventListener("click", function (e) {
+        var b = e.target.closest ? e.target.closest("[data-ecran]") : null;
+        if (b) { e.preventDefault(); afficher(b.getAttribute("data-ecran"), true); }
       });
-      function depuisUrl() { afficher(ANCRES[(location.hash || "").replace("#", "")] || "risques", false); }
+      function depuisUrl() { afficher((location.hash || "").replace("#", ""), false); }
       window.addEventListener("hashchange", depuisUrl);
+      window.addEventListener("qhse:prefs", titre);   // changement de langue : on retraduit le titre
       depuisUrl();
-      /* Pendant la saisie au clavier, la barre est masquée pour ne pas gêner. */
-      document.addEventListener("focusin", function (e) { if (e.target && e.target.tagName === "INPUT") document.body.classList.add("clavier"); });
+
+      /* Pendant la saisie au clavier, la barre d'onglets est masquée pour ne pas gêner. */
+      document.addEventListener("focusin", function (e) { if (e.target && (e.target.tagName === "INPUT" || e.target.tagName === "TEXTAREA")) document.body.classList.add("clavier"); });
       document.addEventListener("focusout", function () { document.body.classList.remove("clavier"); });
     })();
   </script>
 
-    <script>
-    /* Écran Outils : bascule entre « Analyse des causes » et « Glossaire ». */
+  <script>
+    /* Page Liens : logo intégré au code (js/data/logo-myqhse.js) + textes des Paramètres absents du dictionnaire. */
     (function () {
-      var boutons = document.querySelectorAll("[data-outil]");
-      function montrer(nom) {
-        ["causes", "glossaire", "incident", "inspection", "epi"].forEach(function (n) { document.getElementById(n).hidden = (n !== nom); });
-        Array.prototype.forEach.call(boutons, function (b) {
-          var actif = b.getAttribute("data-outil") === nom;
-          b.className = "btn" + (actif ? "" : " btn-sec");
-          b.setAttribute("aria-pressed", actif ? "true" : "false");
+      var img = document.getElementById("liens-logo");
+      if (img && window.QHSE_IMAGES && window.QHSE_IMAGES["logo-myqhse.png"]) img.src = window.QHSE_IMAGES["logo-myqhse.png"];
+      if (window.QHSEPrefs && window.QHSEPrefs.ajouterTraductions) {
+        window.QHSEPrefs.ajouterTraductions("fr", {
+          "param.stats": "Statistiques d'usage",
+          "param.stats.d": "Comptage anonyme des écrans et outils utilisés. Aucune donnée saisie n'est envoyée."
+        });
+        window.QHSEPrefs.ajouterTraductions("en", {
+          "param.stats": "Usage statistics",
+          "param.stats.d": "Anonymous count of the screens and tools used. No data you type is ever sent."
         });
       }
-      Array.prototype.forEach.call(boutons, function (b) { b.addEventListener("click", function () { montrer(b.getAttribute("data-outil")); }); });
-      function depuisUrl() { var m = location.hash.replace("#", ""); montrer(["glossaire", "incident", "inspection", "epi"].indexOf(m) > -1 ? m : "causes"); }
-      window.addEventListener("hashchange", depuisUrl);
-      depuisUrl();
     })();
   </script>
 
-  <!-- Contrôle de chargement : s'affiche seulement si style.css ou app.js manquent
-       (cas fréquent sur Android quand index.html est ouvert depuis un aperçu de fichier). -->
+  <!-- Contrôle de chargement : n'apparaît que si une feuille de style ou un script indispensable n'a pas été chargé
+       (cas fréquent quand un dossier css/ ou js/ n'est pas au même niveau que index.html sur GitHub). -->
   <script>
     window.addEventListener("load", function () {
-      var cssOk = getComputedStyle(document.body).backgroundColor === "rgb(246, 250, 248)";
-      var jsOk = typeof calculerScore === "function";
-      if (cssOk && jsOk) return;
+      var manque = [];
+      Array.prototype.forEach.call(document.querySelectorAll('link[rel="stylesheet"]'), function (l) {
+        if (!l.sheet) manque.push(l.getAttribute("href"));
+      });
+      var SCRIPTS = [
+        ["js/app.js", typeof calculerScore === "function"],
+        ["js/parametres.js", !!window.QHSEPrefs],
+        ["js/data/sujets.js", typeof SUJETS !== "undefined"],
+        ["js/data/checklists-data-1.js", !!window.QHSE_CHECKLISTS],
+        ["js/data/documents-liste.js", !!window.QHSE_DOCUMENTS],
+        ["js/documents-acces.js", !!window.QHSEAcces],
+        ["js/lecteur-office.js", !!window.QHSEOffice],
+        ["js/activite.js", !!window.QHSEActivite],
+        ["js/data/logo-myqhse.js", !!(window.QHSE_IMAGES && window.QHSE_IMAGES["logo-myqhse.png"])]
+      ];
+      SCRIPTS.forEach(function (s) { if (!s[1]) manque.push(s[0]); });
+      if (!manque.length) return;
       var b = document.createElement("div");
       b.setAttribute("role", "alert");
       b.style.cssText = "background:#fff3cd;color:#222;border:2px solid #f2a900;padding:12px;margin:0;font:16px sans-serif";
-      b.textContent = "Fichiers manquants : " + (cssOk ? "" : "css/style.css ") + (jsOk ? "" : "js/app.js ") +
-        "n'a pas été chargé. Vérifiez que les dossiers css/ et js/ sont bien à côté de index.html (même niveau) sur GitHub.";
+      b.textContent = "Fichiers manquants ou non chargés : " + manque.join(", ") +
+        ". Vérifiez que les dossiers css/ et js/ sont bien à côté de index.html (même niveau) sur GitHub.";
       document.body.insertBefore(b, document.body.firstChild);
     });
   </script>
