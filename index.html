@@ -5,173 +5,30 @@
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <title>My-QHSE Tools – Calculateur de risques professionnels</title>
   <meta name="description" content="Outil gratuit d'évaluation des risques professionnels (matrice 5 × 5) pour les étudiants et professionnels QHSE.">
-  <meta name="theme-color" content="#ffffff">
-  <link rel="stylesheet" href="css/style.css">
-  <link rel="stylesheet" href="css/quiz.css">
-  <link rel="stylesheet" href="css/bibliotheque.css">
-  <link rel="stylesheet" href="css/outils.css">
-  <link rel="stylesheet" href="css/terrain.css">
-  <link rel="stylesheet" href="css/checklists.css">
-  <link rel="stylesheet" href="css/parametres.css">
-  <style id="style-menu">
-/* ==========================================================
-   Menu latéral (bouton 3 traits) : Liens, Historique, Paramètres
-   ========================================================== */
-.btn-menu {
-  appearance: none; flex: none; width: 44px; height: 44px; margin-left: -8px; border-radius: 50%;
-  background: transparent; color: var(--sur-entete); border: 0; cursor: pointer;
-  display: grid; place-items: center; -webkit-tap-highlight-color: transparent;
-}
-.btn-menu:hover { background: rgba(255,255,255,.14); }
-.btn-menu svg, .tiroir-fermer svg { width: 26px; height: 26px; fill: none; stroke: currentColor; stroke-width: 2.2; stroke-linecap: round; stroke-linejoin: round; }
-.btn-menu:focus-visible, .tiroir-fermer:focus-visible, .tiroir-item:focus-visible { outline: 3px solid #f2a900; outline-offset: 2px; }
-
-.tiroir-voile {
-  position: fixed; inset: 0; z-index: 90; background: rgba(0,0,0,.5);
-  opacity: 0; visibility: hidden;
-}
-.tiroir {
-  position: fixed; top: 0; bottom: 0; left: 0; z-index: 100;
-  width: min(84vw, 320px); display: flex; flex-direction: column;
-  background: var(--surface); color: var(--texte);
-  box-shadow: 4px 0 24px rgba(0,0,0,.3);
-  padding-bottom: env(safe-area-inset-bottom, 0px);
-  transform: translateX(-100%); visibility: hidden;
-}
-body.tiroir-ouvert .tiroir { transform: none; visibility: visible; }
-body.tiroir-ouvert .tiroir-voile { opacity: 1; visibility: visible; }
-body.tiroir-ouvert { overflow: hidden; }
-
-.tiroir-tete {
-  display: flex; align-items: center; gap: 12px;
-  padding: calc(14px + env(safe-area-inset-top, 0px)) 12px 14px 16px;
-  background: var(--vert-fonce); color: var(--sur-entete);
-}
-.tiroir-marque { flex: 1; font-size: 1.15rem; line-height: 1.2; }
-.tiroir-marque span { font-weight: 400; color: var(--sous-entete); }
-.tiroir-fermer {
-  appearance: none; flex: none; width: 44px; height: 44px; border-radius: 50%;
-  background: transparent; color: var(--sur-entete); border: 0; cursor: pointer; display: grid; place-items: center;
-}
-.tiroir-fermer:hover { background: rgba(255,255,255,.14); }
-
-.tiroir-liste { display: flex; flex-direction: column; padding: 10px 10px; gap: 2px; overflow-y: auto; }
-.tiroir-item {
-  appearance: none; font: inherit; font-size: 1.02rem; font-weight: 600; text-align: left; cursor: pointer;
-  display: flex; align-items: center; gap: 14px; width: 100%; min-height: 52px; padding: 0 12px;
-  background: transparent; color: var(--texte); border: 0; border-radius: 12px;
-  -webkit-tap-highlight-color: transparent;
-}
-.tiroir-item svg { width: 24px; height: 24px; flex: none; fill: none; stroke: var(--titre); stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
-.tiroir-item span { flex: 1; }
-.tiroir-item .tiroir-fleche { width: 18px; height: 18px; stroke: var(--gris); stroke-width: 2.5; }
-.tiroir-item:hover { background: var(--vert-clair); }
-.tiroir-item[aria-current="page"] { background: var(--bulle); color: var(--titre); }
-
-/* Ordinateur : plus de roue dentée à droite, les onglets reprennent la place */
-@media (min-width: 820px) {
-  .onglets { right: max(16px, calc((100vw - 920px) / 2 + 16px)); }
-}
-@media (prefers-reduced-motion: no-preference) {
-  .tiroir { transition: transform .25s ease, visibility 0s linear .25s; }
-  body.tiroir-ouvert .tiroir { transition: transform .25s ease, visibility 0s; }
-  .tiroir-voile { transition: opacity .25s ease, visibility 0s linear .25s; }
-  body.tiroir-ouvert .tiroir-voile { transition: opacity .25s ease, visibility 0s; }
-}
-  </style>
-  <link rel="stylesheet" href="css/liens.css?v=2">
-  <link rel="stylesheet" href="css/documents.css?v=2">
-  <link rel="stylesheet" href="css/premium.css?v=6">
-  <!-- Préférences (langue, thème, couleur, taille) : appliquées avant l'affichage -->
-  <script src="js/parametres.js"></script>
+  <meta name="theme-color" content="#075e54">
+  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="quiz.css">
+  <link rel="stylesheet" href="bibliotheque.css">
+  <link rel="stylesheet" href="outils.css">
+  <link rel="stylesheet" href="terrain.css">
 </head>
 <body>
-<svg xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false" style="position:absolute;width:0;height:0;overflow:hidden">
-<symbol id="i-robot" viewBox="0 0 48 48"><circle cx="24" cy="24" r="23.25" style="fill:var(--ic-fond);stroke:var(--ic-trait);stroke-width:var(--ic-w,1);vector-effect:non-scaling-stroke"/><path d="M24 12.6v4" style="fill:none;stroke:var(--ic-l);stroke-width:2;stroke-linecap:round;stroke-linejoin:round"/><circle cx="24" cy="11" r="2.2" style="fill:var(--ic-j)"/><rect x="9.4" y="21.4" width="3.4" height="8.2" rx="1.7" style="fill:var(--ic-l)"/><rect x="35.2" y="21.4" width="3.4" height="8.2" rx="1.7" style="fill:var(--ic-l)"/><rect x="12" y="16.6" width="24" height="18.4" rx="5.2" style="fill:var(--ic-p)"/><rect x="15.4" y="20.2" width="17.2" height="11.2" rx="3.2" style="fill:var(--ic-e)"/><circle cx="20.4" cy="25" r="1.9" style="fill:var(--ic-t)"/><circle cx="27.6" cy="25" r="1.9" style="fill:var(--ic-t)"/><path d="M21.6 28.5h4.8" style="fill:none;stroke:var(--ic-t);stroke-width:1.4;stroke-linecap:round;stroke-linejoin:round"/><rect x="19" y="35" width="10" height="2.8" rx="1.4" style="fill:var(--ic-l)"/></symbol>
-<symbol id="i-matrice" viewBox="0 0 48 48"><circle cx="24" cy="24" r="23.25" style="fill:var(--ic-fond);stroke:var(--ic-trait);stroke-width:var(--ic-w,1);vector-effect:non-scaling-stroke"/><rect x="11.8" y="11.8" width="7.2" height="7.2" rx="1.8" style="fill:var(--ic-o)"/><rect x="20.4" y="11.8" width="7.2" height="7.2" rx="1.8" style="fill:var(--ic-r)"/><rect x="29.0" y="11.8" width="7.2" height="7.2" rx="1.8" style="fill:var(--ic-r)"/><rect x="11.8" y="20.4" width="7.2" height="7.2" rx="1.8" style="fill:var(--ic-j)"/><rect x="20.4" y="20.4" width="7.2" height="7.2" rx="1.8" style="fill:var(--ic-o)"/><rect x="29.0" y="20.4" width="7.2" height="7.2" rx="1.8" style="fill:var(--ic-r)"/><rect x="11.8" y="29.0" width="7.2" height="7.2" rx="1.8" style="fill:var(--ic-g)"/><rect x="20.4" y="29.0" width="7.2" height="7.2" rx="1.8" style="fill:var(--ic-j)"/><rect x="29.0" y="29.0" width="7.2" height="7.2" rx="1.8" style="fill:var(--ic-o)"/></symbol>
-<symbol id="i-quiz" viewBox="0 0 48 48"><circle cx="24" cy="24" r="23.25" style="fill:var(--ic-fond);stroke:var(--ic-trait);stroke-width:var(--ic-w,1);vector-effect:non-scaling-stroke"/><circle cx="24" cy="24" r="11.6" style="fill:var(--ic-p)"/><path d="M20.2 21a3.9 3.9 0 1 1 5.7 3.5c-1.3.7-1.9 1.5-1.9 2.8" style="fill:none;stroke:#fff;stroke-width:2.4;stroke-linecap:round;stroke-linejoin:round"/><circle cx="24" cy="31.4" r="1.5" style="fill:#fff"/><circle cx="33.4" cy="14.6" r="3.2" style="fill:var(--ic-j)"/></symbol>
-<symbol id="i-livre" viewBox="0 0 48 48"><circle cx="24" cy="24" r="23.25" style="fill:var(--ic-fond);stroke:var(--ic-trait);stroke-width:var(--ic-w,1);vector-effect:non-scaling-stroke"/><path d="M24 17.6c-2.3-1.8-5.7-2.5-9.9-2.3v16.4c4.2-.1 7.6.6 9.9 2.4z" style="fill:var(--ic-p)"/><path d="M24 17.6c2.3-1.8 5.7-2.5 9.9-2.3v16.4c-4.2-.1-7.6.6-9.9 2.4z" style="fill:var(--ic-t)"/><path d="M17 20.2h4.2M17 23.6h4.2M17 27h4.2M27 20.2h4.2M27 23.6h4.2M27 27h4.2" style="fill:none;stroke:#fff;stroke-width:1.3;stroke-linecap:round;stroke-linejoin:round"/><path d="M12.4 34.6h23.2" style="fill:none;stroke:var(--ic-l);stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round"/></symbol>
-<symbol id="i-inspection" viewBox="0 0 48 48"><circle cx="24" cy="24" r="23.25" style="fill:var(--ic-fond);stroke:var(--ic-trait);stroke-width:var(--ic-w,1);vector-effect:non-scaling-stroke"/><circle cx="21.6" cy="21.6" r="9" style="fill:var(--ic-b);stroke:var(--ic-l);stroke-width:2.8"/><path d="M28.4 28.4l7 7" style="fill:none;stroke:var(--ic-l);stroke-width:3.6;stroke-linecap:round;stroke-linejoin:round"/><path d="M17.6 21.8l2.9 2.9 5.3-5.6" style="fill:none;stroke:var(--ic-p);stroke-width:2.4;stroke-linecap:round;stroke-linejoin:round"/></symbol>
-<symbol id="i-checklists" viewBox="0 0 48 48"><circle cx="24" cy="24" r="23.25" style="fill:var(--ic-fond);stroke:var(--ic-trait);stroke-width:var(--ic-w,1);vector-effect:non-scaling-stroke"/><rect x="13.2" y="12.4" width="21.6" height="25.6" rx="3.6" style="fill:var(--ic-p)"/><rect x="16.4" y="18.2" width="15.2" height="16.6" rx="1.8" style="fill:var(--ic-b)"/><rect x="18.8" y="9.8" width="10.4" height="6.4" rx="2.2" style="fill:var(--ic-pf)"/><circle cx="24" cy="12.9" r="1.1" style="fill:#fff"/><path d="M18.4 23.2l1.2 1.2 2.2-2.4" style="fill:none;stroke:var(--ic-t);stroke-width:1.5;stroke-linecap:round;stroke-linejoin:round"/><path d="M24.4 23.2h5.2" style="fill:none;stroke:#9DB8B0;stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round"/><path d="M18.4 27.4l1.2 1.2 2.2-2.4" style="fill:none;stroke:var(--ic-t);stroke-width:1.5;stroke-linecap:round;stroke-linejoin:round"/><path d="M24.4 27.4h5.2" style="fill:none;stroke:#9DB8B0;stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round"/><path d="M18.4 31.6l1.2 1.2 2.2-2.4" style="fill:none;stroke:var(--ic-t);stroke-width:1.5;stroke-linecap:round;stroke-linejoin:round"/><path d="M24.4 31.6h5.2" style="fill:none;stroke:#9DB8B0;stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round"/></symbol>
-<symbol id="i-incident" viewBox="0 0 48 48"><circle cx="24" cy="24" r="23.25" style="fill:var(--ic-fond);stroke:var(--ic-trait);stroke-width:var(--ic-w,1);vector-effect:non-scaling-stroke"/><path d="M24 12.4l12.4 21.4c.5.9-.1 2-1.1 2H12.7c-1 0-1.6-1.1-1.1-2z" style="fill:var(--ic-j);stroke:var(--ic-pf);stroke-width:1.5;stroke-linejoin:round"/><path d="M24 19.6v7.2" style="fill:none;stroke:var(--ic-pf);stroke-width:2.6;stroke-linecap:round;stroke-linejoin:round"/><circle cx="24" cy="30.8" r="1.5" style="fill:var(--ic-pf)"/></symbol>
-<symbol id="i-casque" viewBox="0 0 48 48"><circle cx="24" cy="24" r="23.25" style="fill:var(--ic-fond);stroke:var(--ic-trait);stroke-width:var(--ic-w,1);vector-effect:non-scaling-stroke"/><path d="M12.4 30v-1.4c0-6.8 5-12 11.6-12s11.6 5.2 11.6 12V30z" style="fill:var(--ic-j);stroke:var(--ic-pf);stroke-width:1.3;stroke-linejoin:round"/><rect x="21.4" y="14.4" width="5.2" height="15.6" rx="2" style="fill:var(--ic-jf)"/><rect x="9.8" y="29.4" width="28.4" height="4.4" rx="2.2" style="fill:var(--ic-jf);stroke:var(--ic-pf);stroke-width:1.3"/><path d="M15.6 25.6c.5-3.1 2.2-5.4 4.6-6.6" style="fill:none;stroke:#fff;stroke-width:1.5;stroke-linecap:round;stroke-linejoin:round;opacity:.75"/></symbol>
-<symbol id="i-arete" viewBox="0 0 48 48"><circle cx="24" cy="24" r="23.25" style="fill:var(--ic-fond);stroke:var(--ic-trait);stroke-width:var(--ic-w,1);vector-effect:non-scaling-stroke"/><path d="M13.6 24h16" style="fill:none;stroke:var(--ic-l);stroke-width:2.4;stroke-linecap:round;stroke-linejoin:round"/><path d="M13.6 24l-4.4-4.8v9.6z" style="fill:var(--ic-l)"/><path d="M17.5 24l-3-6M17.5 24l-3 6" style="fill:none;stroke:var(--ic-t);stroke-width:2;stroke-linecap:round;stroke-linejoin:round"/><path d="M22.5 24l-3-6M22.5 24l-3 6" style="fill:none;stroke:var(--ic-t);stroke-width:2;stroke-linecap:round;stroke-linejoin:round"/><path d="M27.5 24l-3-6M27.5 24l-3 6" style="fill:none;stroke:var(--ic-t);stroke-width:2;stroke-linecap:round;stroke-linejoin:round"/><ellipse cx="34.6" cy="24" rx="5.4" ry="4.4" style="fill:var(--ic-p)"/><circle cx="36.6" cy="22.9" r="1.1" style="fill:#fff"/></symbol>
-<symbol id="i-glossaire" viewBox="0 0 48 48"><circle cx="24" cy="24" r="23.25" style="fill:var(--ic-fond);stroke:var(--ic-trait);stroke-width:var(--ic-w,1);vector-effect:non-scaling-stroke"/><rect x="15" y="12.4" width="18" height="23.2" rx="2.6" style="fill:var(--ic-p)"/><rect x="15" y="12.4" width="3.8" height="23.2" rx="1.9" style="fill:var(--ic-pf)"/><path d="M21.6 29.6l3.2-9.6 3.2 9.6M22.9 26.6h3.8" style="fill:none;stroke:#fff;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round"/><path d="M27.6 35.6v4.2l2.2-1.5 2.2 1.5v-4.2z" style="fill:var(--ic-j)"/></symbol>
-<symbol id="i-document" viewBox="0 0 48 48"><circle cx="24" cy="24" r="23.25" style="fill:var(--ic-fond);stroke:var(--ic-trait);stroke-width:var(--ic-w,1);vector-effect:non-scaling-stroke"/><path d="M17.4 12.4h9.4l6.6 6.6v15.6a2.6 2.6 0 0 1-2.6 2.6H17.4a2.6 2.6 0 0 1-2.6-2.6V15a2.6 2.6 0 0 1 2.6-2.6z" style="fill:var(--ic-p)"/><path d="M26.8 12.4v4.2a2.4 2.4 0 0 0 2.4 2.4h4.2z" style="fill:var(--ic-t)"/><path d="M18.6 24.4h10.8M18.6 28.4h10.8M18.6 32.2h6.4" style="fill:none;stroke:#fff;stroke-width:1.5;stroke-linecap:round;stroke-linejoin:round"/></symbol>
-<symbol id="i-bouclier" viewBox="0 0 48 48"><circle cx="24" cy="24" r="23.25" style="fill:var(--ic-fond);stroke:var(--ic-trait);stroke-width:var(--ic-w,1);vector-effect:non-scaling-stroke"/><path d="M24 11.6l10.6 3.8v7.6c0 6.5-4.3 11.7-10.6 14-6.3-2.3-10.6-7.5-10.6-14v-7.6z" style="fill:var(--ic-p)"/><path d="M19 24.2l3.7 3.7 6.6-7.2" style="fill:none;stroke:#fff;stroke-width:2.4;stroke-linecap:round;stroke-linejoin:round"/></symbol>
-<symbol id="i-feuille" viewBox="0 0 48 48"><circle cx="24" cy="24" r="23.25" style="fill:var(--ic-fond);stroke:var(--ic-trait);stroke-width:var(--ic-w,1);vector-effect:non-scaling-stroke"/><path d="M14.4 33.8C13.6 22.2 20 14.4 34.6 13.4c.6 14.6-6.6 22-16.4 21.2" style="fill:var(--ic-f)"/><path d="M14.6 35.4c3.2-7.4 8-12.4 15-15.8" style="fill:none;stroke:#fff;stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round"/></symbol>
-<symbol id="i-sante" viewBox="0 0 48 48"><circle cx="24" cy="24" r="23.25" style="fill:var(--ic-fond);stroke:var(--ic-trait);stroke-width:var(--ic-w,1);vector-effect:non-scaling-stroke"/><path d="M24 35.4c-8.2-5.6-11.8-9.6-11.8-14.2 0-3.6 2.8-6.2 6-6.2 2.4 0 4.6 1.4 5.8 3.5 1.2-2.1 3.4-3.5 5.8-3.5 3.2 0 6 2.6 6 6.2 0 4.6-3.6 8.6-11.8 14.2z" style="fill:var(--ic-t)"/><path d="M24 19.4v8.4M19.8 23.6h8.4" style="fill:none;stroke:#fff;stroke-width:2.6;stroke-linecap:round;stroke-linejoin:round"/></symbol>
-<symbol id="i-cinq" viewBox="0 0 48 48"><circle cx="24" cy="24" r="23.25" style="fill:var(--ic-fond);stroke:var(--ic-trait);stroke-width:var(--ic-w,1);vector-effect:non-scaling-stroke"/><circle cx="24" cy="24" r="12.2" style="fill:var(--ic-j)"/><path d="M28.6 17.6h-7.2l-.8 6.2c1-.8 2.2-1.2 3.6-1.2 2.6 0 4.5 1.7 4.5 4.2s-2 4.2-4.8 4.2c-1.9 0-3.4-.7-4.5-2" style="fill:none;stroke:var(--ic-pf);stroke-width:2.6;stroke-linecap:round;stroke-linejoin:round"/></symbol>
-<symbol id="i-rapport" viewBox="0 0 48 48"><circle cx="24" cy="24" r="23.25" style="fill:var(--ic-fond);stroke:var(--ic-trait);stroke-width:var(--ic-w,1);vector-effect:non-scaling-stroke"/><path d="M17.4 12.4h9.4l6.6 6.6v15.6a2.6 2.6 0 0 1-2.6 2.6H17.4a2.6 2.6 0 0 1-2.6-2.6V15a2.6 2.6 0 0 1 2.6-2.6z" style="fill:var(--ic-b);stroke:var(--ic-pf);stroke-width:1.4;stroke-linejoin:round" /><path d="M26.8 12.4v4.2a2.4 2.4 0 0 0 2.4 2.4h4.2" style="fill:none;stroke:var(--ic-pf);stroke-width:1.4;stroke-linecap:round;stroke-linejoin:round"/><path d="M18.8 24h6M18.8 28h6" style="fill:none;stroke:var(--ic-p);stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round"/><path d="M29.6 25.4v4.2" style="fill:none;stroke:var(--ic-r);stroke-width:2.2;stroke-linecap:round;stroke-linejoin:round"/><circle cx="29.6" cy="32.2" r="1.2" style="fill:var(--ic-r)"/></symbol>
-</svg>
 
-  <a class="skip" href="#calculateur" data-i18n="skip">Aller au calculateur</a>
+  <a class="skip" href="#calculateur">Aller au calculateur</a>
 
   <!-- ===== EN-TÊTE ===== -->
   <header class="barre-haut">
     <div class="wrap barre-in">
-      <button type="button" id="btn-menu" class="btn-menu" aria-label="Ouvrir le menu" data-i18n-aria="menu.ouvrir" aria-controls="tiroir" aria-expanded="false"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M4 7h16M4 12h16M4 17h16"/></svg></button>
       <span class="logo"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M12 2 4 5v6c0 5 3.4 9.4 8 11 4.6-1.6 8-6 8-11V5l-8-3z"/><path d="m9 12 2 2 4-4"/></svg></span>
       <div class="titres">
         <h1 class="brand">My-QHSE <span>Tools</span></h1>
-        <p id="titre-ecran" class="sous-titre">Accueil</p>
+        <p id="titre-ecran" class="sous-titre">Risques</p>
       </div>
     </div>
   </header>
 
-  <!-- ===== MENU LATÉRAL (3 traits) ===== -->
-  <div class="tiroir-voile" id="tiroir-voile"></div>
-  <aside class="tiroir" id="tiroir" aria-label="Menu" data-i18n-aria="menu.titre">
-    <div class="tiroir-tete">
-      <span class="logo"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M12 2 4 5v6c0 5 3.4 9.4 8 11 4.6-1.6 8-6 8-11V5l-8-3z"/><path d="m9 12 2 2 4-4"/></svg></span>
-      <strong class="tiroir-marque">My-QHSE <span>Tools</span></strong>
-      <button type="button" class="tiroir-fermer" id="tiroir-fermer" aria-label="Fermer le menu" data-i18n-aria="menu.fermer"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M6 6l12 12M18 6 6 18"/></svg></button>
-    </div>
-    <nav class="tiroir-liste" aria-label="Menu">
-      <button type="button" class="tiroir-item" data-ecran="liens"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg><span data-i18n="nav.liens">Liens</span><svg class="tiroir-fleche" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="m9 6 6 6-6 6"/></svg></button>
-      <button type="button" class="tiroir-item" data-ecran="historique"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg><span data-i18n="nav.historique">Historique</span><svg class="tiroir-fleche" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="m9 6 6 6-6 6"/></svg></button>
-      <button type="button" class="tiroir-item" data-ecran="parametres"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 1 1-4 0v-.09a1.65 1.65 0 0 0-1-1.51 1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 1 1 0-4h.09a1.65 1.65 0 0 0 1.51-1 1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33h0a1.65 1.65 0 0 0 1-1.51V3a2 2 0 1 1 4 0v.09a1.65 1.65 0 0 0 1 1.51h0a1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82v0a1.65 1.65 0 0 0 1.51 1H21a2 2 0 1 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg><span data-i18n="titre.parametres">Paramètres</span><svg class="tiroir-fleche" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="m9 6 6 6-6 6"/></svg></button>
-    </nav>
-  </aside>
-
   <main class="wrap app">
-    <div class="ecran" id="ecran-accueil">
-      <section class="accueil-hero" aria-labelledby="t-accueil">
-        <span class="accueil-badge" data-i18n="acc.badge">QHSE · Afrique francophone</span>
-        <h2 id="t-accueil" class="accueil-titre" data-i18n="acc.titre">Bienvenue sur My-QHSE Tools</h2>
-        <p data-i18n="acc.texte">Évaluez un risque, révisez avec les quiz et gardez vos outils QHSE à portée de main, même sur un téléphone peu puissant.</p>
-        <div class="actions">
-          <a class="btn btn-clair" href="#risques" data-i18n="acc.btn.risque">Évaluer un risque</a>
-          <a class="btn btn-contour" href="#quiz" data-i18n="acc.btn.quiz">Faire un quiz</a>
-        </div>
-      </section>
-
-      <h2 class="accueil-h" data-i18n="acc.outils">Vos outils</h2>
-      <ul class="accueil-grille">
-        <li class="carte-large"><a class="carte-outil carte-assistant" href="#assistant"><span class="carte-ico"><svg class="ico-act" width="36" height="36" viewBox="0 0 48 48" aria-hidden="true" focusable="false"><use href="#i-robot"/></svg></span><span class="carte-txt"><span class="carte-t" data-i18n="acc.assistant.t">Assistant QHSE</span><span class="carte-d" data-i18n="acc.assistant.d">Posez vos questions, réponse par IA</span></span></a></li>
-        <li><a class="carte-outil carte-risque" href="#risques"><span class="carte-ico"><svg class="ico-act" width="36" height="36" viewBox="0 0 48 48" aria-hidden="true" focusable="false"><use href="#i-matrice"/></svg></span><span class="carte-t" data-i18n="acc.risques.t">Calculateur de risque</span><span class="carte-d" data-i18n="acc.risques.d">Score et matrice 5 × 5</span></a></li>
-        <li><a class="carte-outil" href="#quiz"><span class="carte-ico"><svg class="ico-act" width="36" height="36" viewBox="0 0 48 48" aria-hidden="true" focusable="false"><use href="#i-quiz"/></svg></span><span class="carte-t" data-i18n="acc.quiz.t">Quiz QHSE</span><span class="carte-d" data-i18n="acc.quiz.d">Testez vos connaissances</span></a></li>
-        <li><a class="carte-outil" href="#sujets"><span class="carte-ico"><svg class="ico-act" width="36" height="36" viewBox="0 0 48 48" aria-hidden="true" focusable="false"><use href="#i-livre"/></svg></span><span class="carte-t" data-i18n="acc.sujets.t">Sujets</span><span class="carte-d" data-i18n="acc.sujets.d">Cours et fiches à lire</span></a></li>
-        <li><a class="carte-outil" href="#inspection"><span class="carte-ico"><svg class="ico-act" width="36" height="36" viewBox="0 0 48 48" aria-hidden="true" focusable="false"><use href="#i-inspection"/></svg></span><span class="carte-t" data-i18n="acc.inspection.t">Inspection</span><span class="carte-d" data-i18n="acc.inspection.d">Contrôles sur le terrain</span></a></li>
-        <li><a class="carte-outil" href="#checklists"><span class="carte-ico"><svg class="ico-act" width="36" height="36" viewBox="0 0 48 48" aria-hidden="true" focusable="false"><use href="#i-checklists"/></svg></span><span class="carte-t" data-i18n="acc.checklists.t">Checklists</span><span class="carte-d" data-i18n="acc.checklists.d">Listes de vérification</span></a></li>
-        <li><a class="carte-outil" href="#incident"><span class="carte-ico"><svg class="ico-act" width="36" height="36" viewBox="0 0 48 48" aria-hidden="true" focusable="false"><use href="#i-incident"/></svg></span><span class="carte-t" data-i18n="acc.incident.t">Incident</span><span class="carte-d" data-i18n="acc.incident.d">Déclarer et suivre</span></a></li>
-        <li><a class="carte-outil" href="#epi"><span class="carte-ico"><svg class="ico-act" width="36" height="36" viewBox="0 0 48 48" aria-hidden="true" focusable="false"><use href="#i-casque"/></svg></span><span class="carte-t" data-i18n="acc.epi.t">Registre EPI</span><span class="carte-d" data-i18n="acc.epi.d">Équipements de protection</span></a></li>
-        <li><a class="carte-outil" href="#causes"><span class="carte-ico"><svg class="ico-act" width="36" height="36" viewBox="0 0 48 48" aria-hidden="true" focusable="false"><use href="#i-arete"/></svg></span><span class="carte-t" data-i18n="acc.causes.t">Analyse des causes</span><span class="carte-d" data-i18n="acc.causes.d">5 pourquoi et Ishikawa</span></a></li>
-        <li><a class="carte-outil" href="#glossaire"><span class="carte-ico"><svg class="ico-act" width="36" height="36" viewBox="0 0 48 48" aria-hidden="true" focusable="false"><use href="#i-glossaire"/></svg></span><span class="carte-t" data-i18n="acc.glossaire.t">Glossaire</span><span class="carte-d" data-i18n="acc.glossaire.d">Termes QHSE</span></a></li>
-        <li><a class="carte-outil" href="#documents"><span class="carte-ico"><svg class="ico-act" width="36" height="36" viewBox="0 0 48 48" aria-hidden="true" focusable="false"><use href="#i-document"/></svg></span><span class="carte-t" data-i18n="acc.documents.t">Documents</span><span class="carte-d" data-i18n="acc.documents.d">Modèles et guides</span></a></li>
-      </ul>
-
-      <section class="card accueil-activite" aria-labelledby="t-activite">
-        <h2 id="t-activite" data-i18n="acc.activite">Votre activité sur cet appareil</h2>
-        <div class="accueil-stats">
-          <div class="stat"><b id="accueil-n-risques">0</b><span data-i18n="acc.n.risques">Évaluations de risque</span></div>
-          <div class="stat"><b id="accueil-n-quiz">0</b><span data-i18n="acc.n.quiz">Quiz enregistrés</span></div>
-        </div>
-        <p class="aide"><a href="#historique" data-i18n="acc.historique">Voir l'historique</a></p>
-      </section>
-    </div>
-
-    <div class="ecran" id="ecran-risques" hidden>
+    <div class="ecran" id="ecran-risques">
       <div class="intro bulle"><strong>Évaluez un risque professionnel en moins d'une minute.</strong> Un outil gratuit pour les étudiants et professionnels de la Qualité, Hygiène, Sécurité et Environnement en Afrique francophone. Choisissez une probabilité et une gravité : My-QHSE Tools calcule le score et le place sur la matrice 5 × 5.</div>
       <p class="notice" role="note">
         <strong>Seuils provisoires.</strong> Les niveaux de risque ci-dessous sont indicatifs. Ils seront ajustés après validation d'une méthode QHSE documentée.
@@ -245,65 +102,21 @@ body.tiroir-ouvert { overflow: hidden; }
     </div>
 
     <div class="ecran" id="ecran-outils" hidden>
-      <div class="intro bulle" data-i18n="outils.intro">Choisissez un outil : chacun s'ouvre dans sa propre page.</div>
-      <ul class="accueil-grille">
-        <li class="carte-large"><a class="carte-outil carte-assistant" href="#assistant"><span class="carte-ico"><svg class="ico-act" width="36" height="36" viewBox="0 0 48 48" aria-hidden="true" focusable="false"><use href="#i-robot"/></svg></span><span class="carte-txt"><span class="carte-t" data-i18n="acc.assistant.t">Assistant QHSE</span><span class="carte-d" data-i18n="acc.assistant.d">Posez vos questions, réponse par IA</span></span></a></li>
-        <li><a class="carte-outil" href="#inspection"><span class="carte-ico"><svg class="ico-act" width="36" height="36" viewBox="0 0 48 48" aria-hidden="true" focusable="false"><use href="#i-inspection"/></svg></span><span class="carte-t" data-i18n="acc.inspection.t">Inspection</span><span class="carte-d" data-i18n="acc.inspection.d">Contrôles sur le terrain</span></a></li>
-        <li><a class="carte-outil" href="#checklists"><span class="carte-ico"><svg class="ico-act" width="36" height="36" viewBox="0 0 48 48" aria-hidden="true" focusable="false"><use href="#i-checklists"/></svg></span><span class="carte-t" data-i18n="acc.checklists.t">Checklists</span><span class="carte-d" data-i18n="acc.checklists.d">Listes de vérification</span></a></li>
-        <li><a class="carte-outil" href="#incident"><span class="carte-ico"><svg class="ico-act" width="36" height="36" viewBox="0 0 48 48" aria-hidden="true" focusable="false"><use href="#i-incident"/></svg></span><span class="carte-t" data-i18n="acc.incident.t">Incident</span><span class="carte-d" data-i18n="acc.incident.d">Déclarer et suivre</span></a></li>
-        <li><a class="carte-outil" href="#epi"><span class="carte-ico"><svg class="ico-act" width="36" height="36" viewBox="0 0 48 48" aria-hidden="true" focusable="false"><use href="#i-casque"/></svg></span><span class="carte-t" data-i18n="acc.epi.t">Registre EPI</span><span class="carte-d" data-i18n="acc.epi.d">Équipements de protection</span></a></li>
-        <li><a class="carte-outil" href="#causes"><span class="carte-ico"><svg class="ico-act" width="36" height="36" viewBox="0 0 48 48" aria-hidden="true" focusable="false"><use href="#i-arete"/></svg></span><span class="carte-t" data-i18n="acc.causes.t">Analyse des causes</span><span class="carte-d" data-i18n="acc.causes.d">5 pourquoi et Ishikawa</span></a></li>
-        <li><a class="carte-outil" href="#glossaire"><span class="carte-ico"><svg class="ico-act" width="36" height="36" viewBox="0 0 48 48" aria-hidden="true" focusable="false"><use href="#i-glossaire"/></svg></span><span class="carte-t" data-i18n="acc.glossaire.t">Glossaire</span><span class="carte-d" data-i18n="acc.glossaire.d">Termes QHSE</span></a></li>
-      </ul>
-    </div>
+      <div class="outils-choix" role="group" aria-label="Choisir un outil">
+        <button type="button" class="btn" data-outil="causes" aria-pressed="true">Analyse des causes</button>
+        <button type="button" class="btn btn-sec" data-outil="glossaire" aria-pressed="false">Glossaire</button>
+        <button type="button" class="btn btn-sec" data-outil="incident" aria-pressed="false">Incident</button>
+        <button type="button" class="btn btn-sec" data-outil="inspection" aria-pressed="false">Inspection</button>
+        <button type="button" class="btn btn-sec" data-outil="epi" aria-pressed="false">Registre EPI</button>
+      </div>
 
-    <div class="ecran" id="ecran-inspection" hidden>
-      <a class="retour-outils" href="#outils"><svg width="20" height="20" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="m15 18-6-6 6-6"/></svg><span data-i18n="outils.retour">Retour aux outils</span></a>
-      <section id="inspection" class="card" aria-labelledby="t-ins">
-        <h2 id="t-ins">Inspection sécurité</h2>
-        <p class="aide">Parcourez la checklist, notez les points non conformes et joignez des photos.</p>
-        <div id="inspection-zone"></div>
-      </section>
-    </div>
-
-    <div class="ecran" id="ecran-checklists" hidden>
-      <a class="retour-outils" href="#outils"><svg width="20" height="20" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="m15 18-6-6 6-6"/></svg><span data-i18n="outils.retour">Retour aux outils</span></a>
-      <section id="checklists" class="card" aria-labelledby="t-ck">
-        <h2 id="t-ck">Checklists et exercices QHSE</h2>
-        <div id="checklists-zone"><p class="aide">Chargement… Vérifiez que checklists.js et les fichiers checklists-data-1/2/3.js sont dans le même dossier que index.html.</p></div>
-      </section>
-    </div>
-
-    <div class="ecran" id="ecran-incident" hidden>
-      <a class="retour-outils" href="#outils"><svg width="20" height="20" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="m15 18-6-6 6-6"/></svg><span data-i18n="outils.retour">Retour aux outils</span></a>
-      <section id="incident" class="card" aria-labelledby="t-inc">
-        <h2 id="t-inc">Rapport d'incident</h2>
-        <p class="aide">Déclarez un incident ou un quasi-accident, avec photos. Tout est enregistré sur votre appareil.</p>
-        <div id="incident-zone"><p class="aide">Chargement… Vérifiez que terrain.js est dans le même dossier que index.html.</p></div>
-      </section>
-    </div>
-
-    <div class="ecran" id="ecran-epi" hidden>
-      <a class="retour-outils" href="#outils"><svg width="20" height="20" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="m15 18-6-6 6-6"/></svg><span data-i18n="outils.retour">Retour aux outils</span></a>
-      <section id="epi" class="card" aria-labelledby="t-epi">
-        <h2 id="t-epi">Registre des EPI et formations</h2>
-        <p class="aide">Suivez les dates d'expiration : les fiches passent en orange 30 jours avant, puis en rouge.</p>
-        <div id="epi-zone"></div>
-      </section>
-    </div>
-
-    <div class="ecran" id="ecran-causes" hidden>
-      <a class="retour-outils" href="#outils"><svg width="20" height="20" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="m15 18-6-6 6-6"/></svg><span data-i18n="outils.retour">Retour aux outils</span></a>
       <section id="causes" class="card" aria-labelledby="t-causes">
         <h2 id="t-causes">Analyse des causes : 5 pourquoi et Ishikawa</h2>
         <p class="aide">Les données restent dans votre navigateur et disparaissent au rechargement de la page.</p>
         <div id="causes-zone"><p class="aide">Chargement… Si ce message reste affiché, vérifiez que causes.js est dans le même dossier que index.html.</p></div>
       </section>
-    </div>
 
-    <div class="ecran" id="ecran-glossaire" hidden>
-      <a class="retour-outils" href="#outils"><svg width="20" height="20" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="m15 18-6-6 6-6"/></svg><span data-i18n="outils.retour">Retour aux outils</span></a>
-      <section id="glossaire" class="card" aria-labelledby="t-gloss">
+      <section id="glossaire" class="card" aria-labelledby="t-gloss" hidden>
         <h2 id="t-gloss">Glossaire QHSE</h2>
         <p class="aide">Sigles et termes essentiels. Touchez un terme pour lire sa définition.</p>
         <div class="field">
@@ -314,79 +127,23 @@ body.tiroir-ouvert { overflow: hidden; }
         <div id="gl-liste"></div>
         <p id="gl-vide" class="aide" hidden>Aucun terme ne correspond à votre recherche.</p>
       </section>
-    </div>
 
-    <div class="ecran" id="ecran-assistant" hidden>
-      <a class="retour-outils" href="#outils"><svg width="20" height="20" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="m15 18-6-6 6-6"/></svg><span data-i18n="outils.retour">Retour aux outils</span></a>
-      <section id="assistant" class="card" aria-labelledby="t-assistant">
-        <h2 id="t-assistant" data-i18n="ia.titre">Assistant QHSE</h2>
-        <p class="aide" data-i18n="ia.intro">Posez une question sur la prévention des risques, les normes ISO, l'hygiène ou l'environnement. Chaque question est indépendante.</p>
-        <p class="notice" data-i18n="ia.avert">Réponse générée par une IA : à vérifier. Ne saisissez pas de données personnelles. Elle ne remplace pas l'évaluation d'un professionnel qualifié.</p>
-        <div class="ia-suggestions" role="group" aria-label="Exemples de questions">
-          <button type="button" class="ia-chip" data-i18n="ia.s1">Quelle différence entre danger et risque ?</button>
-          <button type="button" class="ia-chip" data-i18n="ia.s2">Comment rédiger une bonne action corrective ?</button>
-          <button type="button" class="ia-chip" data-i18n="ia.s3">Que contrôler lors d'une inspection incendie ?</button>
-          <button type="button" class="ia-chip" data-i18n="ia.s4">À quoi sert la norme ISO 45001 ?</button>
-        </div>
-        <label for="ia-question" data-i18n="ia.label">Votre question</label>
-        <textarea id="ia-question" rows="4" maxlength="600" autocomplete="off"></textarea>
-        <p class="ia-compteur"><span id="ia-n">0</span> / 600</p>
-        <div class="actions">
-          <button type="button" class="btn" id="ia-envoyer" data-i18n="ia.envoyer">Poser la question</button>
-          <button type="button" class="btn btn-sec" id="ia-effacer" data-i18n="ia.effacer">Effacer</button>
-        </div>
-        <p id="ia-statut" class="aide ia-statut" role="status" aria-live="polite"></p>
+      <section id="incident" class="card" aria-labelledby="t-inc" hidden>
+        <h2 id="t-inc">Rapport d'incident</h2>
+        <p class="aide">Déclarez un incident ou un quasi-accident, avec photos. Tout est enregistré sur votre appareil.</p>
+        <div id="incident-zone"><p class="aide">Chargement… Vérifiez que terrain.js est dans le même dossier que index.html.</p></div>
       </section>
-      <div id="ia-reponses" aria-live="polite"></div>
-    </div>
 
-    <div class="ecran" id="ecran-documents" hidden>
-      <section id="documents" class="card" aria-labelledby="t-doc">
-        <h2 id="t-doc" data-i18n="titre.documents">Bibliothèque de documents</h2>
-        <div id="doc-zone-liste">
-          <p class="aide" data-i18n="doc.aide">Consultez les documents Word et Excel directement dans l’application, sans les télécharger.</p>
-          <div class="field">
-            <label for="doc-recherche">Rechercher un document</label>
-            <input id="doc-recherche" type="search" placeholder="Ex. : audit, procédure, registre" autocomplete="off">
-          </div>
-          <div id="doc-categories" class="doc-categories" role="group" aria-label="Catégories" hidden></div>
-          <p id="doc-compte" class="aide" aria-live="polite"></p>
-          <ul id="doc-liste" class="doc-liste"></ul>
-          <p id="doc-vide" class="aide" hidden></p>
-          <div class="doc-local">
-            <button type="button" class="btn btn-sec" id="doc-ouvrir-local">Ouvrir un fichier de mon appareil</button>
-            <input type="file" id="doc-fichier" hidden>
-            <p class="aide">Word (.docx), Excel (.xlsx) et PDF. Le fichier est lu sur votre appareil, il n’est envoyé nulle part.</p>
-          </div>
-          <div id="doc-admin" class="doc-admin" hidden>
-            <div id="doc-admin-actif" class="doc-admin-actif" hidden>
-              <span>Mode administrateur activé</span>
-              <button type="button" class="btn btn-sec" id="doc-admin-verrou">Verrouiller</button>
-            </div>
-            <button type="button" class="doc-admin-lien" id="doc-admin-ouvrir" aria-expanded="false" aria-controls="doc-admin-form">Accès administrateur</button>
-            <div id="doc-admin-form" class="doc-admin-form" hidden>
-              <label for="doc-admin-code">Code administrateur</label>
-              <input id="doc-admin-code" type="password" autocomplete="off" autocapitalize="characters" spellcheck="false" placeholder="XXXX-XXXX-XXXX-XXXX">
-              <button type="button" class="btn" id="doc-admin-valider">Déverrouiller</button>
-              <p id="doc-admin-msg" class="doc-etat" role="status"></p>
-            </div>
-          </div>
-        </div>
-        <div id="doc-lecture" hidden>
-          <div class="doc-barre">
-            <button type="button" class="btn btn-sec" id="doc-retour">← Retour à la liste</button>
-            <div class="doc-zoom" role="group" aria-label="Taille du texte du document">
-              <button type="button" id="doc-moins" aria-label="Réduire le texte du document">A−</button>
-              <button type="button" id="doc-plus" aria-label="Agrandir le texte du document">A+</button>
-            </div>
-          </div>
-          <h3 id="doc-titre" tabindex="-1"></h3>
-          <p id="doc-meta" class="aide"></p>
-          <div id="doc-onglets" class="xl-onglets" role="tablist" aria-label="Feuilles du classeur" hidden></div>
-          <p id="doc-etat" class="doc-etat" role="status"></p>
-          <button type="button" class="btn btn-sec" id="doc-reessayer" hidden>Réessayer</button>
-          <div id="doc-page" class="doc-page"></div>
-        </div>
+      <section id="inspection" class="card" aria-labelledby="t-ins" hidden>
+        <h2 id="t-ins">Inspection sécurité</h2>
+        <p class="aide">Parcourez la checklist, notez les points non conformes et joignez des photos.</p>
+        <div id="inspection-zone"></div>
+      </section>
+
+      <section id="epi" class="card" aria-labelledby="t-epi" hidden>
+        <h2 id="t-epi">Registre des EPI et formations</h2>
+        <p class="aide">Suivez les dates d'expiration : les fiches passent en orange 30 jours avant, puis en rouge.</p>
+        <div id="epi-zone"></div>
       </section>
     </div>
 
@@ -410,255 +167,92 @@ body.tiroir-ouvert { overflow: hidden; }
         <p id="vide" class="aide">Aucune évaluation pour l'instant. Remplissez le calculateur ci-dessus.</p>
         <button id="vider" type="button" class="btn btn-sec" hidden>Vider la liste</button>
       </section>
-
-      <section class="card" aria-labelledby="t-hist-quiz">
-        <h2 id="t-hist-quiz">Historique des quiz</h2>
-        <p class="aide">Vos quiz sont enregistrés sur cet appareil, même arrêtés en cours de route. Touchez « Relire » pour revoir les corrections.</p>
-        <div id="hist-quiz-liste"></div>
-      </section>
-    </div>
-
-    <div class="ecran" id="ecran-liens" hidden>
-      <section id="liens" class="liens-hero" aria-labelledby="t-liens">
-        <div class="liens-id">
-          <img class="liens-logo" width="104" height="104" alt="Logo My-QHSE Afrique : mascotte casquée devant la carte de l’Afrique">
-          <div>
-            <h2 id="t-liens">MY(QHSE)-AFRIQUE</h2>
-            <p class="liens-meta" data-i18n="liens.meta">Chaîne WhatsApp · plus de 1 200 abonnés</p>
-          </div>
-        </div>
-        <p class="liens-texte" data-i18n="liens.texte">Actualités, bonnes pratiques et conseils en qualité, hygiène, sécurité et environnement, pour les professionnels et les passionnés du BTP, des mines et de l’industrie chimique.</p>
-        <div class="liens-hero-actions">
-          <a class="btn-clair" href="https://whatsapp.com/channel/0029Vb7h34L3QxS3fL5i1c3Q" target="_blank" rel="noopener noreferrer"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/></svg><span data-i18n="liens.suivre">Suivre la chaîne WhatsApp</span></a>
-          <a class="btn-contour" href="https://chat.whatsapp.com/EFci0vu3qlZ71zicjbSooZ" target="_blank" rel="noopener noreferrer"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/></svg><span data-i18n="liens.rejoindre">Rejoindre les groupes WhatsApp</span></a>
-          <button type="button" class="btn-contour" id="liens-partager"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><path d="m8.59 13.51 6.83 3.98M15.41 6.51l-6.82 3.98"/></svg><span data-i18n="liens.partager">Partager cette page</span></button>
-        </div>
-      </section>
-
-      <section class="liens-groupe" aria-labelledby="t-lg1">
-        <h3 id="t-lg1" data-i18n="liens.g1">Rejoindre la communauté</h3>
-        <ul class="liens-liste">
-          <li><a class="lien-ligne" href="https://whatsapp.com/channel/0029Vb7h34L3QxS3fL5i1c3Q" target="_blank" rel="noopener noreferrer">
-            <span class="lien-pastille" data-reseau="whatsapp"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/></svg></span>
-            <span class="lien-corps"><strong data-i18n="liens.canal">Chaîne WhatsApp</strong><span data-i18n="liens.canal.d">Actualités et conseils QHSE, directement sur votre téléphone.</span><span class="lien-adresse">whatsapp.com/channel</span></span>
-            <svg class="lien-fleche" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="m9 6 6 6-6 6"/></svg>
-          </a></li>
-          <li><a class="lien-ligne" href="https://chat.whatsapp.com/EFci0vu3qlZ71zicjbSooZ" target="_blank" rel="noopener noreferrer">
-            <span class="lien-pastille" data-reseau="whatsapp"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/></svg></span>
-            <span class="lien-corps"><strong data-i18n="liens.wa">Groupes WhatsApp</strong><span data-i18n="liens.wa.d">Échangez avec d’autres professionnels et étudiants QHSE.</span><span class="lien-adresse">chat.whatsapp.com</span></span>
-            <svg class="lien-fleche" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="m9 6 6 6-6 6"/></svg>
-          </a></li>
-          <li><a class="lien-ligne" href="https://www.facebook.com/profile.php?id=61579781634820" target="_blank" rel="noopener noreferrer">
-            <span class="lien-pastille" data-reseau="facebook"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"/></svg></span>
-            <span class="lien-corps"><strong data-i18n="liens.fb">Page Facebook</strong><span data-i18n="liens.fb.d">Retrouvez nos publications et nos actualités · 7 540 abonnés.</span><span class="lien-adresse">facebook.com</span></span>
-            <svg class="lien-fleche" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="m9 6 6 6-6 6"/></svg>
-          </a></li>
-          <li><a class="lien-ligne" href="https://youtube.com/@my-qhse" target="_blank" rel="noopener noreferrer">
-            <span class="lien-pastille" data-reseau="youtube"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M22.54 6.42a2.78 2.78 0 0 0-1.94-2C18.88 4 12 4 12 4s-6.88 0-8.6.46a2.78 2.78 0 0 0-1.94 2A29 29 0 0 0 1 11.75a29 29 0 0 0 .46 5.33A2.78 2.78 0 0 0 3.4 19c1.72.46 8.6.46 8.6.46s6.88 0 8.6-.46a2.78 2.78 0 0 0 1.94-2 29 29 0 0 0 .46-5.25 29 29 0 0 0-.46-5.33z"/><path d="m9.75 15.02 5.75-3.27-5.75-3.27z"/></svg></span>
-            <span class="lien-corps"><strong data-i18n="liens.yt">Chaîne YouTube</strong><span data-i18n="liens.yt.d">Regardez nos vidéos QHSE.</span><span class="lien-adresse">youtube.com/@my-qhse</span></span>
-            <svg class="lien-fleche" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="m9 6 6 6-6 6"/></svg>
-          </a></li>
-        </ul>
-      </section>
-
-      <section class="liens-groupe" aria-labelledby="t-lg2">
-        <h3 id="t-lg2" data-i18n="liens.g2">Boutique</h3>
-        <ul class="liens-liste">
-          <li><a class="lien-ligne" href="https://xynljdne.mychariow.shop" target="_blank" rel="noopener noreferrer">
-            <span class="lien-pastille" data-reseau="shop"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><path d="M3 6h18M16 10a4 4 0 0 1-8 0"/></svg></span>
-            <span class="lien-corps"><strong data-i18n="liens.shop">Notre boutique en ligne</strong><span data-i18n="liens.shop.d">Découvrez nos produits et passez commande.</span><span class="lien-adresse">xynljdne.mychariow.shop</span></span>
-            <svg class="lien-fleche" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="m9 6 6 6-6 6"/></svg>
-          </a></li>
-        </ul>
-      </section>
-
-      <section class="liens-groupe" aria-labelledby="t-lg3">
-        <h3 id="t-lg3" data-i18n="liens.g3">Nous contacter</h3>
-        <ul class="liens-liste">
-          <li><a class="lien-ligne" href="https://wa.me/qr/4YBMRFYHVE6BH1?s=v" target="_blank" rel="noopener noreferrer">
-            <span class="lien-pastille" data-reseau="whatsapp"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/></svg></span>
-            <span class="lien-corps"><strong data-i18n="liens.contact">Écrire sur WhatsApp</strong><span data-i18n="liens.contact.d">Posez-nous vos questions directement.</span><span class="lien-adresse">wa.me</span></span>
-            <svg class="lien-fleche" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="m9 6 6 6-6 6"/></svg>
-          </a></li>
-          <li class="lien-ligne">
-            <span class="lien-pastille" data-reseau="mail"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><path d="m22 6-10 7L2 6"/></svg></span>
-            <span class="lien-corps"><strong data-i18n="liens.mail">Adresse e-mail</strong><a href="mailto:myqhse2@gmail.com" class="lien-adresse" style="color:var(--titre);font-weight:600">myqhse2@gmail.com</a></span>
-            <button type="button" class="lien-copier" id="liens-copier-mail" data-i18n="liens.copier">Copier</button>
-          </li>
-        </ul>
-        <p id="liens-etat" class="liens-etat" role="status" aria-live="polite"></p>
-      </section>
-
-      <div class="liens-pied">
-        <div class="apropos-devise bulle">
-          <small data-i18n="apropos.devise.label">Notre devise</small>
-          <strong data-i18n="apropos.devise">Prévenir, protéger et progresser ensemble.</strong>
-        </div>
-        <section class="card">
-          <button type="button" class="lien-ecran" data-ecran="apropos">
-            <span class="lien-txt"><strong data-i18n="param.apropos">À propos de My-QHSE Afrique</strong><small data-i18n="param.apropos.aide">Notre mission et notre application.</small></span>
-            <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="m9 6 6 6-6 6"/></svg>
-          </button>
-        </section>
-      </div>
-    </div>
-
-    <div class="ecran" id="ecran-parametres" hidden>
-      <section id="parametres" class="card" aria-labelledby="t-param">
-        <h2 id="t-param" data-i18n="param.titre">Paramètres</h2>
-        <p class="aide" data-i18n="param.intro">Vos préférences sont enregistrées sur cet appareil, dans ce navigateur. Elles sont conservées après la fermeture de l'application.</p>
-        <p id="param-etat" class="pref-etat" role="status" aria-live="polite"></p>
-      </section>
-
-      <section class="card">
-        <fieldset class="pref">
-          <legend data-i18n="param.langue">Langue</legend>
-          <p class="aide" data-i18n="param.langue.aide">Choisissez la langue de l'interface.</p>
-          <div class="pref-liste"><label class="pref-opt"><input type="radio" name="pref-langue" data-pref="langue" value="fr"><span class="pref-box"><span>Français</span></span></label><label class="pref-opt"><input type="radio" name="pref-langue" data-pref="langue" value="en"><span class="pref-box"><span>English</span></span></label></div>
-          <p class="notice" role="note" data-i18n="param.langue.note">Traduction en cours : pour l'instant, la navigation, l'en-tête, le pied de page, cette page Paramètres et la page À propos sont traduits. Le calculateur, le quiz, les sujets et les outils restent en français.</p>
-        </fieldset>
-      </section>
-
-      <section class="card">
-        <fieldset class="pref">
-          <legend data-i18n="param.theme">Apparence</legend>
-          <div class="pref-liste"><label class="pref-opt"><input type="radio" name="pref-theme" data-pref="theme" value="clair"><span class="pref-box"><span><span data-i18n="param.theme.clair">Mode clair</span></span></span></label><label class="pref-opt"><input type="radio" name="pref-theme" data-pref="theme" value="sombre"><span class="pref-box"><span><span data-i18n="param.theme.sombre">Mode sombre</span></span></span></label><label class="pref-opt"><input type="radio" name="pref-theme" data-pref="theme" value="systeme"><span class="pref-box"><span><span data-i18n="param.theme.systeme">Mode système</span><small data-i18n="param.theme.systeme.aide">Suit le réglage de votre téléphone</small></span></span></label></div>
-        </fieldset>
-      </section>
-
-      <section class="card">
-        <fieldset class="pref">
-          <legend data-i18n="param.couleur">Couleur principale</legend>
-          <p class="aide" data-i18n="param.couleur.aide">Couleur de l'en-tête, des boutons et des éléments actifs.</p>
-          <div class="pref-liste pref-couleurs"><label class="pref-opt"><input type="radio" name="pref-couleur" data-pref="couleur" value="vert"><span class="pref-box"><span class="pref-pastille" data-c="vert" aria-hidden="true"></span><span><span data-i18n="param.couleur.vert">Vert</span></span></span></label><label class="pref-opt"><input type="radio" name="pref-couleur" data-pref="couleur" value="bleu"><span class="pref-box"><span class="pref-pastille" data-c="bleu" aria-hidden="true"></span><span><span data-i18n="param.couleur.bleu">Bleu</span></span></span></label><label class="pref-opt"><input type="radio" name="pref-couleur" data-pref="couleur" value="violet"><span class="pref-box"><span class="pref-pastille" data-c="violet" aria-hidden="true"></span><span><span data-i18n="param.couleur.violet">Violet</span></span></span></label><label class="pref-opt"><input type="radio" name="pref-couleur" data-pref="couleur" value="orange"><span class="pref-box"><span class="pref-pastille" data-c="orange" aria-hidden="true"></span><span><span data-i18n="param.couleur.orange">Orange</span></span></span></label><label class="pref-opt"><input type="radio" name="pref-couleur" data-pref="couleur" value="noir"><span class="pref-box"><span class="pref-pastille" data-c="noir" aria-hidden="true"></span><span><span data-i18n="param.couleur.noir">Noir</span></span></span></label></div>
-        </fieldset>
-      </section>
-
-      <section class="card">
-        <fieldset class="pref">
-          <legend data-i18n="param.taille">Taille du texte</legend>
-          <p class="aide" data-i18n="param.taille.aide">Agrandit ou réduit le texte de toute l'application.</p>
-          <div class="pref-liste pref-taille"><label class="pref-opt"><input type="radio" name="pref-taille" data-pref="taille" value="petit"><span class="pref-box"><span><span data-i18n="param.taille.petit">Petit</span></span></span></label><label class="pref-opt"><input type="radio" name="pref-taille" data-pref="taille" value="normal"><span class="pref-box"><span><span data-i18n="param.taille.normal">Normal</span></span></span></label><label class="pref-opt"><input type="radio" name="pref-taille" data-pref="taille" value="grand"><span class="pref-box"><span><span data-i18n="param.taille.grand">Grand</span></span></span></label><label class="pref-opt"><input type="radio" name="pref-taille" data-pref="taille" value="tres-grand"><span class="pref-box"><span><span data-i18n="param.taille.tres-grand">Très grand</span></span></span></label></div>
-          <p class="pref-apercu" data-i18n="param.apercu">Aperçu : voici la taille du texte de l'application.</p>
-        </fieldset>
-      </section>
-
-      <section class="card" id="param-stats">
-        <fieldset class="pref">
-          <legend>Statistiques d'usage</legend>
-          <p class="aide">Aide My-QHSE Afrique à améliorer l'application : seuls les écrans, outils, sujets et documents de la bibliothèque consultés sont comptés, de façon anonyme. Aucun texte saisi et aucun fichier personnel n'est envoyé.</p>
-          <div class="pref-liste"><label class="pref-opt"><input type="checkbox" id="pref-stats"><span class="pref-box"><span>Compter mon usage de façon anonyme</span></span></label></div>
-        </fieldset>
-      </section>
-
-      <section class="card">
-        <button type="button" class="lien-ecran" data-ecran="apropos">
-          <span class="lien-txt"><strong data-i18n="param.apropos">À propos de My-QHSE Afrique</strong><small data-i18n="param.apropos.aide">Notre mission et notre application.</small></span>
-          <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="m9 6 6 6-6 6"/></svg>
-        </button>
-      </section>
-
-      <div class="actions">
-        <button type="button" id="param-reset" class="btn btn-sec" data-i18n="param.reset">Rétablir les valeurs par défaut</button>
-      </div>
-    </div>
-
-    <div class="ecran" id="ecran-apropos" hidden>
-      <article id="apropos" class="card apropos" aria-labelledby="t-apropos">
-        <div class="apropos-tete">
-          <span class="logo apropos-logo"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M12 2 4 5v6c0 5 3.4 9.4 8 11 4.6-1.6 8-6 8-11V5l-8-3z"/><path d="m9 12 2 2 4-4"/></svg></span>
-          <h2 id="t-apropos" data-i18n="apropos.titre">À propos de My-QHSE Afrique</h2>
-        </div>
-        <p data-i18n="apropos.p1">My-QHSE Afrique est une initiative consacrée à la diffusion d'informations, de bonnes pratiques et d'outils dans les domaines de la qualité, de l'hygiène, de la santé, de la sécurité et de l'environnement (QHSE).</p>
-        <p data-i18n="apropos.p2">Notre objectif est de contribuer à la prévention des risques, à la protection des personnes et de l'environnement, ainsi qu'à l'amélioration continue des pratiques professionnelles.</p>
-        <p data-i18n="apropos.p3">Nous partageons des ressources destinées aux professionnels, aux étudiants et aux passionnés du QHSE, notamment dans les secteurs du BTP, des mines et des industries.</p>
-        <p data-i18n="apropos.p4">À travers My-QHSE Tools, nous développons des outils numériques pratiques pour faciliter l'apprentissage, l'analyse des risques et l'application des méthodes QHSE au quotidien.</p>
-        <p data-i18n="apropos.p5">Notre ambition est de rendre les connaissances et les outils QHSE plus accessibles et de promouvoir une culture de prévention, de sécurité et d'amélioration continue.</p>
-        <div class="apropos-devise bulle">
-          <small data-i18n="apropos.devise.label">Notre devise</small>
-          <strong data-i18n="apropos.devise">Prévenir, protéger et progresser ensemble.</strong>
-        </div>
-      </article>
-      <div class="actions apropos-nav">
-        <button type="button" class="btn btn-sec lien-ecran-btn" data-ecran="parametres" data-i18n="apropos.retour.param">Retour aux Paramètres</button>
-        <button type="button" class="btn lien-ecran-btn" data-ecran="accueil" data-i18n="apropos.retour.app">Retour à l'application</button>
-      </div>
     </div>
 
   </main>
 
   <footer class="site-footer">
-    <div class="wrap" data-i18n="pied">My-QHSE Afrique · Outil pédagogique, ne remplace pas l'évaluation d'un professionnel qualifié.</div>
+    <div class="wrap">My-QHSE Afrique · Outil pédagogique, ne remplace pas l'évaluation d'un professionnel qualifié.</div>
   </footer>
 
   <!-- ===== BARRE DE NAVIGATION FIXE ===== -->
-  <nav class="onglets" aria-label="Navigation principale" data-i18n-aria="nav.principale">
-    <button type="button" class="onglet" data-ecran="accueil"><span class="ico"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M3 10.5 12 3l9 7.5V20a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1z"/></svg></span><span data-i18n="nav.accueil">Accueil</span></button>
-    <button type="button" class="onglet" data-ecran="quiz"><span class="ico"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3M12 17h.01"/></svg></span><span data-i18n="nav.quiz">Quiz</span></button>
-    <button type="button" class="onglet" data-ecran="sujets"><span class="ico"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg></span><span data-i18n="nav.sujets">Sujets</span></button>
-    <button type="button" class="onglet" data-ecran="outils"><span class="ico"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></svg></span><span data-i18n="nav.outils">Outils</span></button>
-    <button type="button" class="onglet" data-ecran="documents"><span class="ico"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6M8 13h8M8 17h8M8 9h2"/></svg></span><span data-i18n="nav.documents">Docs</span></button>
+  <nav class="onglets" aria-label="Navigation principale">
+    <button type="button" class="onglet" data-ecran="risques"><span class="ico"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M10.29 3.86 1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><path d="M12 9v4M12 17h.01"/></svg></span>Risques</button>
+    <button type="button" class="onglet" data-ecran="quiz"><span class="ico"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3M12 17h.01"/></svg></span>Quiz</button>
+    <button type="button" class="onglet" data-ecran="sujets"><span class="ico"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg></span>Sujets</button>
+    <button type="button" class="onglet" data-ecran="outils"><span class="ico"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></svg></span>Outils</button>
+    <button type="button" class="onglet" data-ecran="historique"><span class="ico"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg></span>Historique</button>
   </nav>
 
-  <script src="js/app.js"></script>
-  <script src="js/data/sujets.js"></script>
-  <script src="js/bibliotheque.js"></script>
-  <script src="js/data/banque-management.js"></script>
-  <script src="js/data/banque-qualite.js"></script>
-  <script src="js/data/banque-sante-securite.js"></script>
-  <script src="js/data/banque-hygiene.js"></script>
-  <script src="js/data/banque-environnement.js"></script>
-  <script src="js/data/banque-transversal.js"></script>
-  <script src="js/data/banque-livret.js"></script>
-  <script src="js/data/images-livret.js"></script>
-  <script src="js/data/causes.js"></script>
-  <script src="js/data/glossaire.js"></script>
-  <script src="js/terrain.js"></script>
-  <script src="js/data/checklists-data-1.js"></script>
-  <script src="js/data/checklists-data-2.js"></script>
-  <script src="js/data/checklists-data-3.js"></script>
-  <script src="js/checklists.js"></script>
-  <script <script src="js/quiz.js"></script>
-  <script src="js/data/logo-myqhse.js?v=2"></script>
-  <script src="js/lecteur-office.js?v=3"></script>
-  <script src="js/data/documents-liste.js?v=2"></script>
-  <script src="js/documents-acces.js?v=1"></script>
-  <script src="js/documents.js?v=4"></script>
-  <script src="js/liens.js?v=2"></script>
+  <script src="app.js"></script>
+  <script src="sujets.js"></script>
+  <script src="bibliotheque.js"></script>
+  <script src="banque-management.js"></script>
+  <script src="banque-qualite.js"></script>
+  <script src="banque-sante-securite.js"></script>
+  <script src="banque-hygiene.js"></script>
+  <script src="banque-environnement.js"></script>
+  <script src="banque-transversal.js"></script>
+  <script src="causes.js"></script>
+  <script src="glossaire.js"></script>
+  <script src="terrain.js"></script>
+  <script src="quiz.js"></script>
+  <!-- Cartes du quiz : charge quiz-cartes.js depuis le MÊME dossier que quiz.js (à la racine ou dans js/). -->
+  <script>
+    (function () {
+      var s = document.querySelector('script[src$="quiz.js"]');
+      var n = document.createElement("script");
+      n.src = (s ? s.getAttribute("src").replace(/quiz\.js$/, "") : "") + "quiz-cartes.js";
+      document.body.appendChild(n);
+    })();
+  </script>
 
   <script>
     /* Navigation par onglets : un seul écran affiché à la fois.
        N'agit que sur l'affichage : calculateur, quiz et bibliothèque restent gérés par leurs propres fichiers. */
     (function () {
-      var NOMS = ["accueil", "risques", "quiz", "sujets", "outils", "causes", "glossaire", "incident", "inspection", "epi", "checklists", "assistant", "documents", "historique", "liens", "parametres", "apropos"];
-      var TITRES = { assistant: "Assistant QHSE", causes: "Analyse des causes", glossaire: "Glossaire", incident: "Incident", inspection: "Inspection", epi: "Registre EPI", checklists: "Checklists", accueil: "Accueil", risques: "Risques", quiz: "Quiz QHSE", sujets: "Sujets QHSE", outils: "Outils QHSE", documents: "Documents", historique: "Historique", liens: "Liens", parametres: "Paramètres", apropos: "À propos" };
-      var ecranCourant = "accueil";
-      function titre(nom) { return window.QHSEPrefs ? window.QHSEPrefs.t("titre." + nom) : TITRES[nom]; }
-      var ANCRES = { accueil: "accueil", risques: "risques", calculateur: "risques", matrice: "risques", quiz: "quiz", sujets: "sujets", bibliotheque: "sujets", outils: "outils", documents: "documents", assistant: "assistant", causes: "causes", glossaire: "glossaire", incident: "incident", inspection: "inspection", epi: "epi", checklists: "checklists", historique: "historique", liens: "liens", parametres: "parametres", apropos: "apropos" };
-      var GROUPE = { risques: "accueil", assistant: "outils", causes: "outils", glossaire: "outils", incident: "outils", inspection: "outils", epi: "outils", checklists: "outils" };   /* onglet allumé pour les sous-pages */
-      var boutons = document.querySelectorAll(".onglet, .btn-param, .tiroir-item, .lien-ecran, .lien-ecran-btn");
+      var NOMS = ["risques", "quiz", "sujets", "outils", "historique"];
+      var TITRES = { risques: "Risques", quiz: "Quiz QHSE", sujets: "Sujets QHSE", outils: "Outils QHSE", historique: "Historique" };
+      var ANCRES = { risques: "risques", calculateur: "risques", matrice: "risques", quiz: "quiz", sujets: "sujets", bibliotheque: "sujets", outils: "outils", causes: "outils", glossaire: "outils", incident: "outils", inspection: "outils", epi: "outils", historique: "historique" };
+      var boutons = document.querySelectorAll(".onglet");
       function afficher(nom, majUrl) {
-        if (NOMS.indexOf(nom) === -1) nom = "accueil";
+        if (NOMS.indexOf(nom) === -1) nom = "risques";
         NOMS.forEach(function (n) { document.getElementById("ecran-" + n).hidden = (n !== nom); });
         Array.prototype.forEach.call(boutons, function (b) {
-          if ((b.getAttribute("data-ecran") === nom || b.getAttribute("data-ecran") === GROUPE[nom]) && !/lien-ecran/.test(b.className)) b.setAttribute("aria-current", "page"); else b.removeAttribute("aria-current");
+          if (b.getAttribute("data-ecran") === nom) b.setAttribute("aria-current", "page"); else b.removeAttribute("aria-current");
         });
-        ecranCourant = nom;
-        document.getElementById("titre-ecran").textContent = titre(nom);
+        document.getElementById("titre-ecran").textContent = TITRES[nom];
         if (majUrl) { try { history.replaceState(null, "", "#" + nom); } catch (e) {} }
         window.scrollTo(0, 0);
       }
       Array.prototype.forEach.call(boutons, function (b) {
         b.addEventListener("click", function () { afficher(b.getAttribute("data-ecran"), true); });
       });
-      function depuisUrl() { afficher(ANCRES[(location.hash || "").replace("#", "")] || "accueil", false); }
+      function depuisUrl() { afficher(ANCRES[(location.hash || "").replace("#", "")] || "risques", false); }
       window.addEventListener("hashchange", depuisUrl);
       depuisUrl();
-      /* Changement de langue : le titre de l'écran suit */
-      window.addEventListener("qhse:prefs", function () { document.getElementById("titre-ecran").textContent = titre(ecranCourant); });
       /* Pendant la saisie au clavier, la barre est masquée pour ne pas gêner. */
-      document.addEventListener("focusin", function (e) { if (e.target && e.target.tagName === "INPUT" && !/^(radio|checkbox)$/.test(e.target.type)) document.body.classList.add("clavier"); });
+      document.addEventListener("focusin", function (e) { if (e.target && e.target.tagName === "INPUT") document.body.classList.add("clavier"); });
       document.addEventListener("focusout", function () { document.body.classList.remove("clavier"); });
+    })();
+  </script>
+
+    <script>
+    /* Écran Outils : bascule entre « Analyse des causes » et « Glossaire ». */
+    (function () {
+      var boutons = document.querySelectorAll("[data-outil]");
+      function montrer(nom) {
+        ["causes", "glossaire", "incident", "inspection", "epi"].forEach(function (n) { document.getElementById(n).hidden = (n !== nom); });
+        Array.prototype.forEach.call(boutons, function (b) {
+          var actif = b.getAttribute("data-outil") === nom;
+          b.className = "btn" + (actif ? "" : " btn-sec");
+          b.setAttribute("aria-pressed", actif ? "true" : "false");
+        });
+      }
+      Array.prototype.forEach.call(boutons, function (b) { b.addEventListener("click", function () { montrer(b.getAttribute("data-outil")); }); });
+      function depuisUrl() { var m = location.hash.replace("#", ""); montrer(["glossaire", "incident", "inspection", "epi"].indexOf(m) > -1 ? m : "causes"); }
+      window.addEventListener("hashchange", depuisUrl);
+      depuisUrl();
     })();
   </script>
 
@@ -666,20 +260,16 @@ body.tiroir-ouvert { overflow: hidden; }
        (cas fréquent sur Android quand index.html est ouvert depuis un aperçu de fichier). -->
   <script>
     window.addEventListener("load", function () {
-      var cssOk = getComputedStyle(document.documentElement).getPropertyValue("--surface").trim() !== "";   /* variable définie par style.css, valable dans tous les thèmes */
+      var cssOk = getComputedStyle(document.body).backgroundColor === "rgb(246, 250, 248)";
       var jsOk = typeof calculerScore === "function";
-      var liensOk = !!document.querySelector('link[href*="liens.css"]') && Array.prototype.some.call(document.styleSheets, function (f) { try { return f.href && /liens\.css/.test(f.href) && f.cssRules.length > 0; } catch (e) { return true; } });
-      if (cssOk && jsOk && liensOk) return;
+      if (cssOk && jsOk) return;
       var b = document.createElement("div");
       b.setAttribute("role", "alert");
       b.style.cssText = "background:#fff3cd;color:#222;border:2px solid #f2a900;padding:12px;margin:0;font:16px sans-serif";
-      b.textContent = "Fichiers manquants : " + (cssOk ? "" : "style.css ") + (jsOk ? "" : "app.js ") + (liensOk ? "" : "liens.css ") +
+      b.textContent = "Fichiers manquants : " + (cssOk ? "" : "style.css ") + (jsOk ? "" : "app.js ") +
         "n'a pas été chargé. Placez index.html, style.css et app.js dans le même dossier et ouvrez index.html depuis Chrome, ou utilisez le fichier index-autonome.html.";
       document.body.insertBefore(b, document.body.firstChild);
     });
   </script>
-  <script src="js/accueil.js?v=1"></script>
-  <script src="js/assistant.js?v=1"></script>
-  <script src="js/activite.js?v=4"></script>
 </body>
 </html>
