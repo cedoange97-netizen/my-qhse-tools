@@ -7,6 +7,15 @@
   <meta name="description" content="Outils QHSE gratuits : calculateur de risques (matrice 5 × 5), quiz, sujets, checklists, inspection, incident, registre EPI, documents et assistant IA, pour les étudiants et professionnels QHSE.">
   <meta name="theme-color" content="#075e54">
 
+  <!-- Application web installable (PWA) -->
+  <link rel="manifest" href="manifest.webmanifest">
+  <link rel="icon" type="image/png" sizes="192x192" href="icons/icon-192.png">
+  <link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-title" content="My-QHSE">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+
   <!-- Feuilles de style : premium.css en dernier (il affine les autres) -->
   <link rel="stylesheet" href="css/style.css">
   <link rel="stylesheet" href="css/quiz.css">
@@ -771,5 +780,7 @@
       document.body.insertBefore(b, document.body.firstChild);
     });
   </script>
+  <!-- PWA : service worker + invitation à installer -->
+  <script src="js/pwa.js"></script>
 </body>
 </html>
