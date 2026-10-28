@@ -302,3 +302,11 @@
     cle: CLE
   };
 })();
+
+/* Page d'entrée (Commencer / Continuer / Administrateur) : chargée ici, dans l'en-tête, pour masquer l'application
+   avant son affichage. Rien à ajouter dans index.html. */
+(function () {
+  if (document.readyState === "loading") {
+    try { document.write('<script src="js/entree.js"><\/script>'); } catch (e) {}
+  }
+})();
