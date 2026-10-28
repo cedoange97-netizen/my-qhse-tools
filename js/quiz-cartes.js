@@ -55,14 +55,14 @@
 .qc-cache { display: none !important; }
 .qc-chips { display: flex; gap: 8px; overflow-x: auto; padding: 2px 2px 8px; margin: 2px 0 6px; position: relative; scrollbar-width: none; }
 .qc-chips::-webkit-scrollbar { display: none; }
-.qc-chip { flex: none; padding: 8px 14px; border-radius: 999px; border: 1px solid var(--bordure, #d5e3db); background: #fff; color: var(--texte, #1b2b24); font: inherit; font-size: .88rem; cursor: pointer; }
+.qc-chip { flex: none; padding: 8px 14px; border-radius: 999px; border: 1px solid var(--bordure, #d5e3db); background: var(--surface, #fff); color: var(--texte, #1b2b24); font: inherit; font-size: .88rem; cursor: pointer; }
 .qc-chip[aria-pressed="true"] { background: var(--vert, #198754); border-color: var(--vert, #198754); color: #fff; font-weight: 600; }
 .qc-cartes { display: grid; grid-template-columns: repeat(auto-fill, minmax(126px, 1fr)); gap: 10px; margin-top: 4px; }
 .qc-carte {
   --c: #0f7a4f; --t: #e4f4ec;
   display: flex; flex-direction: column; align-items: flex-start; gap: 8px; text-align: left;
   min-height: 124px; padding: 11px; font: inherit; color: var(--texte, #1b2b24); cursor: pointer;
-  background: #fff; border: 1px solid var(--bordure, #d5e3db); border-radius: 16px;
+  background: var(--surface, #fff); border: 1px solid var(--bordure, #d5e3db); border-radius: 16px;
   box-shadow: 0 1px 2px rgba(16, 60, 40, .06), 0 4px 12px rgba(16, 60, 40, .04);
   transition: transform .12s ease, border-color .12s ease, box-shadow .12s ease;
 }
@@ -87,7 +87,13 @@
 .qc-mixte .qc-meta { color: rgba(255, 255, 255, .85); margin-top: 2px; font-size: .82rem; }
 .qc-mixte .qc-titre { font-size: 1rem; }
 .qc-mixte .qc-corps { display: flex; flex-direction: column; }
-@media (prefers-reduced-motion: reduce) { .qc-carte { transition: none; } }`;
+@media (prefers-reduced-motion: reduce) { .qc-carte { transition: none; } }
+/* Mode sombre : cartes, pastilles et icônes suivent le thème */
+html[data-theme="sombre"] .qc-carte:not(.qc-mixte) { box-shadow: none; }
+html[data-theme="sombre"] .qc-carte:not(.qc-mixte) .qc-ico { background: rgba(255, 255, 255, .08); border-color: rgba(255, 255, 255, .16); color: #7fe0c4; }
+html[data-theme="sombre"] .qc-carte:not(.qc-mixte):hover { border-color: #7fe0c4; }
+html[data-theme="sombre"] .qc-chip[aria-pressed="false"] { background: var(--surface, #1b2421); color: var(--texte, #e8efec); }
+`;
   document.head.appendChild(st);
 
   let famActive = "tous", recherche = "";

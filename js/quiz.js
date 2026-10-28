@@ -374,8 +374,11 @@
       (q.img ? `<img class="quiz-img" src="${esc(srcImg(q.img))}" alt="Image non chargée : vérifiez le dossier img/ ou images-livret.js">` : "") + '<div class="quiz-opts">' +
       opts.map((o, k) => `<button type="button" class="quiz-opt" data-k="${k}">${o}</button>`).join("") +
       '</div><div id="quiz-fb" aria-live="polite"></div>' +
-      '<div class="actions quiz-fin"><button id="quiz-stop" type="button" class="btn btn-sec">Terminer le quiz</button></div>';
+      '<div class="actions quiz-fin"><button id="quiz-retour" type="button" class="btn btn-sec">← Retour aux thèmes</button>' +
+      '<button id="quiz-stop" type="button" class="btn btn-sec">Terminer le quiz</button></div>';
     $("quiz-stop").onclick = terminer;
+    // Retour sans rien enregistrer : on quitte le quiz en cours et on revient au choix des thèmes (rien n'est ajouté à l'historique)
+    $("quiz-retour").onclick = () => { if (i === 0 || confirm("Quitter ce quiz sans l'enregistrer ?")) accueil(); };
     zone.querySelectorAll(".quiz-opt").forEach(b => { b.onclick = () => repondre(Number(b.dataset.k)); });
     $("quiz-q").focus();
   }
